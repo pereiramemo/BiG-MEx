@@ -11,4 +11,7 @@ git clone git@github.com:pereiramemo/ufBGCtoolbox.git
 ```
 
 ## Runnning ufBGCtoolbox: bgc_dom_annot
+
+```
 sudo ./ufBGCtoolbox/bgc_dom_annot/run_bgc_dom_annot.bash .. --help
+```
