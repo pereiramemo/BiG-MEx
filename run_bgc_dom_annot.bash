@@ -8,26 +8,28 @@ function realpath() {
 }
 
 # handle input file
-INPUT_FILE=$(basename $1)
+INPUT_FILE1=$(basename $1)
 INPUT_DIR=$(dirname $(realpath $1))
 shift
 
 if [[ -f $1 ]]; then
   INPUT_FILE2=$(basename $1)
   shift	
+fi
+
+if [[ -f $1 ]]; then
+  INPUT_FILE3=$(basename $1)
+  shift	
 fi  
 
 # handle output file
-OUTPUT_DIR=$(realpath $1)
+OUTPUT_DIR=$( dirname $(realpath $1))
+OUTPUT=$1
 shift
 
 # Links within the container
 CONTAINER_SRC_DIR=/input
 CONTAINER_DST_DIR=/output
-
-if [ ! -d ${OUTPUT_DIR} ]; then
-  mkdir ${OUTPUT_DIR}
-fi
 
 if [[ -z "${INPUT_FILE2}" ]]; then 
 
@@ -36,21 +38,36 @@ if [[ -z "${INPUT_FILE2}" ]]; then
     --volume ${OUTPUT_DIR}:${CONTAINER_DST_DIR}:rw \
     --detach=false \
     --rm \
-    epereira/bgc_dom_annot:v1 \
-    --reads "${CONTAINER_SRC_DIR}/${INPUT_FILE}" \
+    epereira/ufbgctoolbox:bgc_dom_annot \
+    --single_reads "${CONTAINER_SRC_DIR}/${INPUT_FILE1}" \
+    --outdir "${OUTPUT}" \
     $@
 
-else
+elif [[ -z "${INPUT_FILE3}" ]]; then 
 
  docker run \
     --volume ${INPUT_DIR}:${CONTAINER_SRC_DIR}:rw \
     --volume ${OUTPUT_DIR}:${CONTAINER_DST_DIR}:rw \
     --detach=false \
     --rm \
-    epereira/bgc_dom_annot:v1 \
-    --reads "${CONTAINER_SRC_DIR}/${INPUT_FILE}" \
+    epereira/ufbgctoolbox:bgc_dom_annot \
+    --reads "${CONTAINER_SRC_DIR}/${INPUT_FILE1}" \
     --reads2 "${CONTAINER_SRC_DIR}/${INPUT_FILE2}" \
+    --outdir "${OUTPUT}" \
     $@
-    
+
+else 
+
+ docker run \
+    --volume ${INPUT_DIR}:${CONTAINER_SRC_DIR}:rw \
+    --volume ${OUTPUT_DIR}:${CONTAINER_DST_DIR}:rw \
+    --detach=false \
+    --rm \
+    epereira/ufbgctoolbox:bgc_dom_annot \
+    --reads "${CONTAINER_SRC_DIR}/${INPUT_FILE1}" \
+    --reads2 "${CONTAINER_SRC_DIR}/${INPUT_FILE2}" \
+    --single_reads "${CONTAINER_SRC_DIR}/${INPUT_FILE3}" \
+    --outdir "${OUTPUT}" \
+    $@ 
 fi
 
