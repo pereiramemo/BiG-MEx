@@ -1,11 +1,16 @@
 #!/bin/bash
 
 set -o errexit
-# set -o nounset
 
 function realpath() {
-    echo $(readlink -f $1 2>/dev/null )
+  CURRENT_DIR=$( pwd )
+  DIR=$( dirname $1 );
+  FILE=$( basename $1 )
+  cd "${DIR}";
+  echo $( pwd )/"${FILE}"
+  cd "${CURRENT_DIR}"
 }
+
 
 # handle input file
 INPUT_FILE1=$(basename $1)
