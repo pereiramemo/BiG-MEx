@@ -59,7 +59,7 @@ Estimated diversities:
 Index | PKS_KS | PKS_AT
 ---|---|---
 Shannon | 3.299 | 4.172
-Evennes | 0.975 | 0.877	
+Evenness | 0.975 | 0.877	
 
 
 ## ufBGCtoolbox: bgc_model_class
