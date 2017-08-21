@@ -77,6 +77,6 @@ sudo ./run_bgc_class_models.bash \
 
 Predicted abundances:
 
-![alt 
-text](https://github.com/pereiramemo/ufBGCtoolbox/blob/master/example/
+![alt \
+text](https://github.com/pereiramemo/ufBGCtoolbox/blob/master/example/\
 bgc_class_pred.pdf)
