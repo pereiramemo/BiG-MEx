@@ -56,7 +56,7 @@ sudo ./run_bgc_dom_shannon.bash \
 Estimated diversities:
 
 | PKS_KS | PKS_AT
---|--|--
+---|---|---
 Shannon | 3.299 | 4.172
 
 
