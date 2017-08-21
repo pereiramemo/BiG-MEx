@@ -53,6 +53,14 @@ sudo ./run_bgc_dom_shannon.bash \
   --domains PKS_KS,PKS_AT
 ```
 
+Estimated diversities:
+
+| PKS_KS | PKS_AT
+--|--|--
+Shannon | 3.299 | 4.172
+
+
+
 ## ufBGCtoolbox: bgc_model_class
 
 See help
