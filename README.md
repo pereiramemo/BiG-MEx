@@ -34,6 +34,21 @@ See help
 sudo ./run_bgc_dom_shannon.bash . . . --help
 ```
 
+> Usage: bgc_dom_shannon.bash <input file> <R1> <R2> <SR> <output directory> 
+<options>
+
+>  [-h] [-d|--domains CHAR] [-t|--nslots NUM] [-c|--coverage] [-p|--place_tree] 
+ [-b|blast]
+
+> -d, --domains   target domain names. Comma separeted list.
+> -h, --help      print this help
+> -b, --blast     run blast against reference database
+> -c, --coverage  use coverage to compute diversity
+> -p, --place_tree        place sequences in reference tree
+> -t, --nslots    number of slots (default 2)
+
+
+
 With Docker, all input files should be in the same directory
 
 ```
