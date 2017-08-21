@@ -58,7 +58,7 @@ Estimated diversities:
 Index | PKS_KS | PKS_AT
 ---|---|---
 Shannon | 3.299 | 4.172
-Evennes | 0.975 | 0.877
+Evennes | 0.975 | 0.877	
 
 
 ## ufBGCtoolbox: bgc_model_class
@@ -75,4 +75,8 @@ sudo ./run_bgc_class_models.bash \
   example/out_class_models
 ```
 
+Predicted abundances:
 
+![alt 
+text](https://github.com/pereiramemo/ufBGCtoolbox/blob/master/example/
+bgc_class_pred.pdf)
