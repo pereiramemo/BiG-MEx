@@ -55,10 +55,10 @@ sudo ./run_bgc_dom_shannon.bash \
 
 Estimated diversities:
 
-index | PKS_KS | PKS_AT
+Index | PKS_KS | PKS_AT
 ---|---|---
 Shannon | 3.299 | 4.172
-
+Evennes | 0.975 | 0.877
 
 
 ## ufBGCtoolbox: bgc_model_class
