@@ -24,7 +24,7 @@ fi
 
 # handle output file
 OUTPUT_DIR=$( dirname $(realpath $1))
-OUTPUT=$1
+OUTPUT=$(basename $1)
 shift
 
 # Links within the container
