@@ -20,12 +20,11 @@ sudo ./run_bgc_dom_annot.bash . . --help
 Run 
 ```
 sudo ./run_bgc_dom_annot.bash \
+  example/sim_meta_oms-1_redu_r1.fasta.gz\
   example/sim_meta_oms-1_redu_r1.fasta.gz \
-  example/sim_meta_oms-1_redu_r2.fasta.gz \
   example/out_dom_annot \
   --intype dna \
   --nslots 4
-  
 ```
 
 ## ufBGCtoolbox: bgc_dom_shannon
@@ -65,7 +64,7 @@ Run
 ```
 sudo ./run_bgc_class_models.bash \
   example/out_dom_annot/counts.tbl \
-  example/bgc_class_rc.tbl 
+  example/out_class_models
 ```
 
 
