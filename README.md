@@ -1,5 +1,6 @@
 # ufBGCtoolbox
-ufBGCtoolbox consists of three modules designed for the mining of BGC domains and classes in metagenomic data.  
+ufBGCtoolbox consists of three modules designed for the mining of BGC domains 
+and classes in metagenomic data.  
 bgc_dom_annot: fast identification of BGC protein domains.  
 bgc_dom_shannon: BGC domain-specific diversity estimation.  
 bgc_model_class: BGC class relative count predictions.  
@@ -77,6 +78,4 @@ sudo ./run_bgc_class_models.bash \
 
 Predicted abundances:
 
-![alt \
-text](https://github.com/pereiramemo/ufBGCtoolbox/blob/master/example/\
-bgc_class_pred.pdf)
+![alt text](https://github.com/pereiramemo/ufBGCtoolbox/blob/master/example/bgc_class_pred.pdf)
