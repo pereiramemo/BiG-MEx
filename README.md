@@ -62,6 +62,13 @@ Shannon | 3.299 | 4.172
 Evenness | 0.975 | 0.877	
 
 
+Placed sequences PKS_KS
+[tree PKS_KS](https://github.com/pereiramemo/ufBGCtoolbox/blob/master/example/PKS_KS_placed_seqs.svg)
+
+Placed sequences PKS_AT
+[tree PKS_AT](https://github.com/pereiramemo/ufBGCtoolbox/blob/master/example/PKS_AT_placed_seqs.svg)
+
+
 ## ufBGCtoolbox: bgc_model_class
 
 See help
