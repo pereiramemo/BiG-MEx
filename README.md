@@ -66,7 +66,7 @@ Evenness | 0.975 | 0.877
 
 See help
 ```
-sudo ./run_bgc_dom_shannon.bash . . --help
+sudo ./run_bgc_class_models.bash . . --help
 ```
 
 Run 
