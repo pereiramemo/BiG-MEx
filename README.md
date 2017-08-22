@@ -63,10 +63,10 @@ Evenness | 0.975 | 0.877
 
 
 Placed sequences PKS_KS
-[tree PKS_KS](https://github.com/pereiramemo/ufBGCtoolbox/blob/master/example/PKS_KS_placed_seqs.svg)
+[tree PKS_KS](https://github.com/pereiramemo/ufBGCtoolbox/blob/master/example/PKS_KS_placed_seqs.png)
 
 Placed sequences PKS_AT
-[tree PKS_AT](https://github.com/pereiramemo/ufBGCtoolbox/blob/master/example/PKS_AT_placed_seqs.svg)
+[tree PKS_AT](https://github.com/pereiramemo/ufBGCtoolbox/blob/master/example/PKS_AT_placed_seqs.png)
 
 
 ## ufBGCtoolbox: bgc_model_class
