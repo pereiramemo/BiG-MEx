@@ -61,7 +61,7 @@ Index | PKS_KS | PKS_AT
 Shannon | 3.299 | 4.172
 Evenness | 0.975 | 0.877	
 
-By uploading the .jplace files produced in this step to [iTOL](https://itol.embl.de/) we can obtain the following images:
+To visualize the sequence placements the PKS_KS_placements_tree.pdf and PKS_AT_placements_tree.pdf images are generated:
 
 Placed PKS_KS sequences
 ![tree PKS_KS](https://github.com/pereiramemo/ufBGCtoolbox/blob/master/example/PKS_KS_placements_tree.png)
