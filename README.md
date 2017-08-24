@@ -64,11 +64,10 @@ Evenness | 0.975 | 0.877
 By uploading the .jplace files produced in this step to [iTOL](https://itol.embl.de/) we can obtain the following images:
 
 Placed PKS_KS sequences
-![tree PKS_KS](https://github.com/pereiramemo/ufBGCtoolbox/blob/master/example/PKS_KS_placed_seqs.png)
+![tree PKS_KS](https://github.com/pereiramemo/ufBGCtoolbox/blob/master/example/PKS_KS_placements_tree.png)
 
 Placed PKS_AT sequences
-![tree PKS_AT](https://github.com/pereiramemo/ufBGCtoolbox/blob/master/example/PKS_AT_placed_seqs.png)
-
+![tree PKS_AT](https://github.com/pereiramemo/ufBGCtoolbox/blob/master/example/PKS_AT_placements_tree.png)
 
 ## ufBGCtoolbox: bgc_model_class
 
