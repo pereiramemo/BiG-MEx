@@ -61,11 +61,12 @@ Index | PKS_KS | PKS_AT
 Shannon | 3.299 | 4.172
 
 PKS_KS subsampled distribution:
+
 ![distribution PKS_KS](https://github.com/pereiramemo/ufBGCtoolbox/blob/master/example/PKS_KS_div_est.png)
 
 PKS_AT subsampled distribution:
-![distribution PKS_AT](https://github.com/pereiramemo/ufBGCtoolbox/blob/master/example/PKS_AT_div_est.png)
 
+![distribution PKS_AT](https://github.com/pereiramemo/ufBGCtoolbox/blob/master/example/PKS_AT_div_est.png)
 
 To visualize the sequence placements the PKS_KS_placements_tree.pdf and PKS_AT_placements_tree.pdf images are generated:
 
