@@ -43,13 +43,6 @@ CONTAINER_DST_DIR=/output
 CONTAINER_SRC_DIR=/input
 CONTAINER_DST_DIR=/output
 
-# echo $INPUT_FILE
-# echo $INPUT_R1
-# echo $INPUT_R2
-# echo $INPUT_SR
-# echo $INPUT_DIR
-# echo $OUTPUT_DIR
-
 if [[ -z "${INPUT_FILE4}" ]]; then
 
   docker run \
