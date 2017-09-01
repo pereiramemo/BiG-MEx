@@ -18,65 +18,88 @@ See help
 sudo ./run_bgc_dom_annot.bash . . --help
 ```
 
-Run 
+Run
 ```
-sudo ./run_bgc_dom_annot.bash \
-  example/sim_meta_oms-1_redu_r1.fasta.gz\
-  example/sim_meta_oms-1_redu_r1.fasta.gz \
-  example/out_dom_annot \
+for i in $( seq -s" " 1  3); do
+
+  sudo ./run_bgc_dom_annot.bash \
+  example/sim_meta_oms-"${i}"_redu_r1.fasta.gz\
+  example/sim_meta_oms-"${i}"_redu_r1.fasta.gz \
+  example/out_dom_annot"${i}" \
   --intype dna \
   --nslots 4
+  
+done
+
 ```
 
 ## ufBGCtoolbox: bgc_dom_shannon
 
 See help
 ```
-sudo ./run_bgc_dom_shannon.bash . . . --help
+sudo ./run_bgc_dom_shannon.bash sample . . . --help
+sudo ./run_bgc_dom_shannon.bash merge . . --help
+
 ```
 
 With Docker, all input files should be in the same directory
 
 ```
-sudo mv example/out_dom_annot/pe_bgc_dom.gz example/
+for i in $( seq -s" " 1  3); do
+
+  sudo mv example/out_dom_annot"${i}"/pe_bgc_dom.gz example/pe_bgc_dom"${i}".gz
+  
+done
+  
 ```
-Run
+Run bgc_dom_shannon in sample mode
 ```
-sudo ./run_bgc_dom_shannon.bash \
-  example/pe_bgc_dom.gz \
-  example/sim_meta_oms-1_redu_r1.fasta.gz \
-  example/sim_meta_oms-1_redu_r2.fasta.gz \
-  example/out_dom_shannon \
+for i in $( seq -s" " 1  3); do
+
+  sudo ./run_bgc_dom_shannon.bash sample \
+  example/pe_bgc_dom"${i}".gz \
+  example/sim_meta_oms-"${i}"_redu_r1.fasta.gz \
+  example/sim_meta_oms-"${i}"_redu_r2.fasta.gz \
+  example/out_dom_shannon"${i}" \
   --blast \
   --place_tree \
   --coverage \
   --nslots 4 \
-  --domains PKS_KS,PKS_AT
+  --domains PKS_KS,Condensation
+  
+done  
 ```
 
 Estimated diversities:
 
-Index | PKS_KS | PKS_AT
+Sample | PKS_KS | Condensation
 ---|---|---
-Shannon | 3.299 | 4.172
-
-PKS_KS subsampled distribution:
-
-![distribution PKS_KS](https://github.com/pereiramemo/ufBGCtoolbox/blob/master/example/PKS_KS_div_est.png)
-
-PKS_AT subsampled distribution:
-
-![distribution PKS_AT](https://github.com/pereiramemo/ufBGCtoolbox/blob/master/example/PKS_AT_div_est.png)
+sim_meta_oms-1 | 3.299 | 4.672q
+sim_meta_oms-2 | 2.444 | 3.794
+sim_meta_oms-3 | 1.601 | 2.487
 
 To visualize the sequence placements the PKS_KS_placements_tree.pdf and PKS_AT_placements_tree.pdf images are generated:
+
+Placed Condensation sequences
+![tree PKS_KS](https://github.com/pereiramemo/ufBGCtoolbox/blob/master/example/Condensation_placements_tree.png)
 
 Placed PKS_KS sequences
 ![tree PKS_KS](https://github.com/pereiramemo/ufBGCtoolbox/blob/master/example/PKS_KS_placements_tree.png)
 
-Placed PKS_AT sequences
-![tree PKS_AT](https://github.com/pereiramemo/ufBGCtoolbox/blob/master/example/PKS_AT_placements_tree.png)
 
-## ufBGCtoolbox: bgc_model_class
+```
+Run bgc_dom_shannon in merge mode for PKS_KS
+```
+sudo ./run_bgc_dom_shannon.bash merge \
+example/out_dom_shannon1,example/out_dom_shannon2,example/out_dom_shannon3 \
+example/out_dom_merged_shannon_Condensation \
+--domain Condensation \
+--num_iter 50 \
+--sample_increment 20 \
+--plot
+
+
+## ufBGCtoolbox: bgc_model_class	
 
 See help
 ```
