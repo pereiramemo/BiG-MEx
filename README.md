@@ -50,7 +50,7 @@ for i in $( seq -s" " 1  3); do
 
   sudo ./run_bgc_dom_annot.bash \
   example/sim_meta_oms-"${i}"_redu_r1.fasta.gz\
-  example/sim_meta_oms-"${i}"_redu_r1.fasta.gz \
+  example/sim_meta_oms-"${i}"_redu_r2.fasta.gz \
   example/out_dom_annot"${i}" \
   --intype dna \
   --nslots 2
