@@ -27,7 +27,7 @@ for i in $( seq -s" " 1  3); do
   example/sim_meta_oms-"${i}"_redu_r1.fasta.gz \
   example/out_dom_annot"${i}" \
   --intype dna \
-  --nslots 4
+  --nslots 2
   
 done
 
@@ -46,9 +46,7 @@ With Docker, all input files should be in the same directory
 
 ```
 for i in $( seq -s" " 1  3); do
-
   sudo mv example/out_dom_annot"${i}"/pe_bgc_dom.gz example/pe_bgc_dom"${i}".gz
-  
 done
   
 ```
@@ -74,21 +72,21 @@ Estimated diversities:
 
 Sample | PKS_KS | Condensation
 ---|---|---
-sim_meta_oms-1 | 3.299 | 4.672q
-sim_meta_oms-2 | 2.444 | 3.794
-sim_meta_oms-3 | 1.601 | 2.487
+sim_meta_oms-1 | 3.299 | 4.672
+sim_meta_oms-2 | 2.435 | 3.928
+sim_meta_oms-3 | 2.408 | 3.712
 
-To visualize the sequence placements the PKS_KS_placements_tree.pdf and PKS_AT_placements_tree.pdf images are generated:
+To visualize the sequence placements the Condensation_placements_tree.pdf and PKS_KS_placements_tree.pdf images are generated:
 
-Placed Condensation sequences
+Placed Condensation sequences from sample sim_meta_oms-1
 ![tree PKS_KS](https://github.com/pereiramemo/ufBGCtoolbox/blob/master/example/Condensation_placements_tree.png)
 
-Placed PKS_KS sequences
+Placed PKS_KS sequences from sample sim_meta_oms-1
 ![tree PKS_KS](https://github.com/pereiramemo/ufBGCtoolbox/blob/master/example/PKS_KS_placements_tree.png)
 
 
 ```
-Run bgc_dom_shannon in merge mode for PKS_KS
+Run bgc_dom_shannon in merge mode for Condensation
 ```
 sudo ./run_bgc_dom_shannon.bash merge \
 example/out_dom_shannon1,example/out_dom_shannon2,example/out_dom_shannon3 \
@@ -97,6 +95,28 @@ example/out_dom_merged_shannon_Condensation \
 --num_iter 50 \
 --sample_increment 20 \
 --plot
+
+```
+Run bgc_dom_shannon in merge mode for PKS_KS
+```
+sudo ./run_bgc_dom_shannon.bash merge \
+example/out_dom_shannon1,example/out_dom_shannon2,example/out_dom_shannon3 \
+example/out_dom_merged_shannon_PKS_KS \
+--domain PKS_KS \
+--num_iter 50 \
+--sample_increment 20 \
+--plot
+
+```
+
+The figures Condensation_rare_div_est.pdf and PKS_KS_rare_div_est.pdf are generated showing a comparison between the Condensation and PKS_KS domain diversity between samples, respectively.
+
+Condensation rarefaction
+
+![rare Condensation]()
+
+PKS_KS rarefaction
+![rare PKS_KS]()
 
 
 ## ufBGCtoolbox: bgc_model_class	
