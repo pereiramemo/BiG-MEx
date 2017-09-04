@@ -112,10 +112,10 @@ The figures Condensation_rare_div_est.pdf and PKS_KS_rare_div_est.pdf are genera
 
 Condensation rarefaction
 
-![rare Condensation]()
+![rare Condensation](https://github.com/pereiramemo/ufBGCtoolbox/blob/master/example/Condensation_rare_div_est.png)
 
 PKS_KS rarefaction
-![rare PKS_KS]()
+![rare PKS_KS](https://github.com/pereiramemo/ufBGCtoolbox/blob/master/example/PKS_KS_rare_div_est.png)
 
 
 ## ufBGCtoolbox: bgc_model_class	
