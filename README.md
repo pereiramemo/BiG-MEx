@@ -84,9 +84,8 @@ Placed Condensation sequences from sample sim_meta_oms-1
 Placed PKS_KS sequences from sample sim_meta_oms-1
 ![tree PKS_KS](https://github.com/pereiramemo/ufBGCtoolbox/blob/master/example/PKS_KS_placements_tree.png)
 
-
-```
 Run bgc_dom_shannon in merge mode for Condensation
+
 ```
 sudo ./run_bgc_dom_shannon.bash merge \
 example/out_dom_shannon1,example/out_dom_shannon2,example/out_dom_shannon3 \
