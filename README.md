@@ -5,11 +5,24 @@ and classes in metagenomic data.
 2. bgc_dom_shannon: BGC domain-specific diversity estimation.  
 3. bgc_model_class: BGC class relative count predictions.  
 
-## Install
+# Install
+
+ufBGCtoolbox consists of four dokcer images: 
+1. epereira/ufBGCtolbox:bgc_dom_annot 
+2. epereira/ufBGCtolbox:bgc_dom_shannon 
+3. epereira/ufBGCtolbox:bgc_dom_merged_shannon 
+4. epereira/ufBGCtolbox:bgc_class_models
+
+Before running ufBGCtoolbox it is necessary to install [docker](https://www.docker.com/)
+
 
 ```
 git clone git@github.com:pereiramemo/ufBGCtoolbox.git
 ```
+
+
+
+
 
 ## ufBGCtoolbox: bgc_dom_annot
 
@@ -17,6 +30,8 @@ See help
 ```
 sudo ./run_bgc_dom_annot.bash . . --help
 ```
+
+In this example we will analize three different simulated metagenimc samples: sim_meta_oms-1, sim_meta_oms-2 and sim_meta_oms-3.
 
 Run
 ```
