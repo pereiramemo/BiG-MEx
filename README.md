@@ -136,6 +136,16 @@ done
 
 ```
 
-Predicted abundances:
+Predicted abundances :
 
-![barplot](https://github.com/pereiramemo/ufBGCtoolbox/blob/master/example/bgc_class_pred.png)
+sim_meta_oms-1
+
+![barplot1](https://github.com/pereiramemo/ufBGCtoolbox/blob/master/example/bgc_class_pred1.png)
+
+sim_meta_oms-2
+
+![barplot2](https://github.com/pereiramemo/ufBGCtoolbox/blob/master/example/bgc_class_pred2.png)
+
+sim_meta_oms-3
+
+![barplot3](https://github.com/pereiramemo/ufBGCtoolbox/blob/master/example/bgc_class_pred3.png)
