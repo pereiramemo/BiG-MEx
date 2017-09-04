@@ -42,7 +42,7 @@ sudo ./run_bgc_dom_shannon.bash merge . . --help
 
 ```
 
-With Docker, all input files should be in the same directory
+With Docker, all input files have to be in the same directory
 
 ```
 for i in $( seq -s" " 1  3); do
@@ -108,7 +108,7 @@ example/out_dom_merged_shannon_PKS_KS \
 
 ```
 
-The figures Condensation_rare_div_est.pdf and PKS_KS_rare_div_est.pdf are generated showing a comparison between the Condensation and PKS_KS domain diversity between samples, respectively.
+The figures Condensation_rare_div_est.pdf and PKS_KS_rare_div_est.pdf are generated showing a comparison of the Condensation and PKS_KS domain diversity between samples, respectively.
 
 Condensation rarefaction
 
@@ -127,9 +127,13 @@ sudo ./run_bgc_class_models.bash . . --help
 
 Run 
 ```
+
+for i in $( seq -s" " 1  3); do
 sudo ./run_bgc_class_models.bash \
-  example/out_dom_annot/counts.tbl \
-  example/out_class_models
+  example/out_dom_annot"${i}"/counts.tbl \
+  example/out_class_models"${i}"
+done
+
 ```
 
 Predicted abundances:
