@@ -131,7 +131,7 @@ example/out_dom_merged_shannon_Condensation \
 This will output the rarefaction and tree plots to compare the domain diversity and composition between the three samples.
 
 Placed Condensation sequences
-![tree PKS_KS](https://github.com/pereiramemo/ufBGCtoolbox/blob/master/example/Condensation_placements.png)
+![tree PKS_KS](https://github.com/pereiramemo/ufBGCtoolbox/blob/master/example/Condensation_merged_placements.png)
 
 Rarefied Condensation diversity
 ![rare Condensation](https://github.com/pereiramemo/ufBGCtoolbox/blob/master/example/Condensation_rare_div_est.png)
@@ -151,7 +151,7 @@ example/out_dom_merged_shannon_PKS_KS \
 
 ```
 Placed PKS_KS sequences
-![tree PKS_KS](https://github.com/pereiramemo/ufBGCtoolbox/blob/master/example/PKS_KS_placements.png)
+![tree PKS_KS](https://github.com/pereiramemo/ufBGCtoolbox/blob/master/example/PKS_KS_merged_placements.png)
 
 Rarefied PKS_KS diversity
 ![rare PKS_KS](https://github.com/pereiramemo/ufBGCtoolbox/blob/master/example/PKS_KS_rare_div_est.png)
