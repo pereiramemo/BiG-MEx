@@ -85,14 +85,17 @@ for i in $( seq -s" " 1  3); do
   example/sim_meta_oms-"${i}"_redu_r1.fasta.gz \
   example/sim_meta_oms-"${i}"_redu_r2.fasta.gz \
   example/out_dom_shannon"${i}" \
-  --blast \
-  --place_tree \
-  --coverage \
+  --blast t \
+  --identity 0.5 \
+  --plot_tree t \
+  --only_rep t \
+  --coverage t \
   --nslots 4 \
-  --verbose \
+  --verbose t \
+  --font_size 2 \
   --domains PKS_KS,Condensation
   
-done  
+done
 ```
 
 Estimated diversities:
@@ -120,7 +123,10 @@ example/out_dom_merged_shannon_Condensation \
 --domain Condensation \
 --num_iter 50 \
 --sample_increment 20 \
---plot
+--plot_rare_curve t \
+--plot_tree t \
+--only_rep t \
+--verbose t
 
 ```
 Run bgc_dom_shannon in merge mode for PKS_KS
@@ -131,7 +137,10 @@ example/out_dom_merged_shannon_PKS_KS \
 --domain PKS_KS \
 --num_iter 50 \
 --sample_increment 20 \
---plot
+--plot_rare_curve t \
+--plot_tree t \
+--only_rep t \
+--verbose t
 
 ```
 
@@ -154,7 +163,6 @@ sudo ./run_bgc_class_models.bash . . --help
 
 Run 
 ```
-
 for i in $( seq -s" " 1  3); do
 sudo ./run_bgc_class_models.bash \
   example/out_dom_annot"${i}"/counts.tbl \
