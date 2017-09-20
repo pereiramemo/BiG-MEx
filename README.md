@@ -163,8 +163,8 @@ Placed PKS_KS sequences
 ![tree PKS_KS](https://github.com/pereiramemo/ufBGCtoolbox/blob/master/example/PKS_KS_merged_placements.png)
 
 
-
 Rarefied PKS_KS diversity
+
 ![rare PKS_KS](https://github.com/pereiramemo/ufBGCtoolbox/blob/master/example/PKS_KS_rare_div_est.png)
 
 ### ufBGCtoolbox: bgc_model_class	
