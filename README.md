@@ -59,12 +59,11 @@ done
 
 ```
 
-### ufBGCtoolbox: bgc_dom_shannon
+### ufBGCtoolbox: bgc_dom_shannon sample
 
 See help
 ```
 sudo ./run_bgc_dom_shannon.bash sample . . . --help
-sudo ./run_bgc_dom_shannon.bash merge . . --help
 
 ```
 
@@ -111,11 +110,19 @@ To visualize the sequence placements the Condensation_placements_tree.pdf and PK
 Placed Condensation sequences from sample sim_meta_oms-1
 ![tree PKS_KS](https://github.com/pereiramemo/ufBGCtoolbox/blob/master/example/Condensation_placements.png)
 
+
 Placed PKS_KS sequences from sample sim_meta_oms-1
 ![tree PKS_KS](https://github.com/pereiramemo/ufBGCtoolbox/blob/master/example/PKS_KS_placements.png)
 
-Run bgc_dom_shannon in merge mode for Condensation
+### ufBGCtoolbox: bgc_dom_shannon merge
 
+See help
+```
+sudo ./run_bgc_dom_shannon.bash merge . . --help
+
+```
+
+Run bgc_dom_shannon in merge mode for Condensation
 ```
 sudo ./run_bgc_dom_shannon.bash merge \
 example/out_dom_shannon1,example/out_dom_shannon2,example/out_dom_shannon3 \
@@ -133,8 +140,10 @@ This will output the rarefaction and tree plots to compare the domain diversity 
 Placed Condensation sequences
 ![tree PKS_KS](https://github.com/pereiramemo/ufBGCtoolbox/blob/master/example/Condensation_merged_placements.png)
 
+
 Rarefied Condensation diversity
 ![rare Condensation](https://github.com/pereiramemo/ufBGCtoolbox/blob/master/example/Condensation_rare_div_est.png)
+
 
 Run bgc_dom_shannon in merge mode for PKS_KS
 ```
