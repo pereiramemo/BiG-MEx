@@ -109,10 +109,10 @@ sim_meta_oms-3 | 2.408 | 3.712
 To visualize the sequence placements the Condensation_placements_tree.pdf and PKS_KS_placements_tree.pdf images are generated:
 
 Placed Condensation sequences from sample sim_meta_oms-1
-![tree PKS_KS](https://github.com/pereiramemo/ufBGCtoolbox/blob/master/example/Condensation_placements_tree.png)
+![tree PKS_KS](https://github.com/pereiramemo/ufBGCtoolbox/blob/master/example/Condensation_placements.png)
 
 Placed PKS_KS sequences from sample sim_meta_oms-1
-![tree PKS_KS](https://github.com/pereiramemo/ufBGCtoolbox/blob/master/example/PKS_KS_placements_tree.png)
+![tree PKS_KS](https://github.com/pereiramemo/ufBGCtoolbox/blob/master/example/PKS_KS_placements.png)
 
 Run bgc_dom_shannon in merge mode for Condensation
 
@@ -127,8 +127,15 @@ example/out_dom_merged_shannon_Condensation \
 --plot_tree t \
 --only_rep t \
 --verbose t
-
 ```
+This will output the rarefaction and tree plots to compare the domain diversity and composition between the three samples.
+
+Placed Condensation sequences
+![tree PKS_KS](https://github.com/pereiramemo/ufBGCtoolbox/blob/master/example/Condensation_placements.png)
+
+Rarefied Condensation diversity
+![rare Condensation](https://github.com/pereiramemo/ufBGCtoolbox/blob/master/example/Condensation_rare_div_est.png)
+
 Run bgc_dom_shannon in merge mode for PKS_KS
 ```
 sudo ./run_bgc_dom_shannon.bash merge \
@@ -143,15 +150,10 @@ example/out_dom_merged_shannon_PKS_KS \
 --verbose t
 
 ```
+Placed PKS_KS sequences
+![tree PKS_KS](https://github.com/pereiramemo/ufBGCtoolbox/blob/master/example/PKS_KS_placements.png)
 
-The figures Condensation_rare_div_est.pdf and PKS_KS_rare_div_est.pdf are generated showing a comparison of the Condensation and PKS_KS domain diversity between samples, respectively.
-
-Condensation rarefaction
-
-![rare Condensation](https://github.com/pereiramemo/ufBGCtoolbox/blob/master/example/Condensation_rare_div_est.png)
-
-PKS_KS rarefaction
-
+Rarefied PKS_KS diversity
 ![rare PKS_KS](https://github.com/pereiramemo/ufBGCtoolbox/blob/master/example/PKS_KS_rare_div_est.png)
 
 ### ufBGCtoolbox: bgc_model_class	
