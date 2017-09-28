@@ -1,0 +1,254 @@
+---
+title: "BGC Abundance Modelling"
+author: "Emiliano Pereira"
+date: "March 4, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(cache = TRUE)
+```
+
+## __Outline__
+#### 1. Introduction
+#### 2. Linear Regression Models
+#### 3. Random Forest Regression Models
+#### 4. Random Forest Binary Classification + Regression Models
+#### 5. Evaluate Random Forest Binary Classification + Regression Models
+#### 6. Random Forest Binary Classification Models
+
+&nbsp;
+
+## __1. Introduction__
+##### In this work, we create BGC class-specific models to predict the abundance of BGC classes in metagenomic samples. These models use the class abundance as the response variables, and the domains abundance of the corresponding classes, as the predictor variables. To train and evaluate the models, the data is randomly split (within the functions) to create the training and testing data sets.
+
+&nbsp;
+
+#### __We use four functions:__
+##### __1. binary_model_fun__: Trains and tests a binary classification model to predict the presence of BGC classes.
+##### __2. regression_model_fun__: Trains and tests a regression model to predict the abundance of BGC classes.
+##### __3. double_model_fun__: Integrates the previous two models. It creates a binary model based on the complete data set and a regression model using only the non-zero abundance rows of the response variables. Briefly, this function applies the binary model to identify samples where a class is present, and subsequently applies the regression model on this subset of samples to predict their abundance.
+##### __4. iter_model_fun__: This function iteratively runs the double_model_fun to evaluate its performance by randomly generating in each iteration different training and testing data sets.  
+
+&nbsp;
+
+##### Load libraries, functions, and data
+```{r results='hide', message=FALSE, warning=FALSE}
+library(randomForest)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(vegan)
+library(miscTools)
+library(e1071)
+source("toolbox.R")
+
+TBL_DOM <- read.table("../data/138prkrich_domain_abund.csv", header=T, sep=",", row.names = 1)
+TBL_CLASS <- read.table("../data/138prkrich_class_abund.csv", header=T, sep=",", row.names = 1)
+TBL_CLASS2DOM <- read.table("../data/class2domain.csv", header=T, sep=",", row.names = 1)
+
+```
+##### Transform and join   tables
+```{r}
+TBL_DOM.trans <- decostand(TBL_DOM, method = "hellinger")
+TBL_CLASS.trans <- decostand(TBL_CLASS, method = "hellinger")
+
+
+data <- left_join(x = tibble::rownames_to_column(TBL_DOM.trans),
+                  y = tibble::rownames_to_column(TBL_CLASS.trans), 
+                  by = "rowname" )
+
+```
+##### Select bgc classes
+```{r}
+bgc_classes <- c("nrps","terpene","t1pks","t3pks","ectoine","bacteriocin")
+```
+&nbsp;
+
+## __2. Linear Regression Models__
+##### Run the regression_model_fun using lm
+```{R results='hide', message=FALSE, warning=FALSE}
+lm_abund <- regression_model_fun(bgc = bgc_classes, 
+                                 data = data,
+                                 regression_method = "lm",
+                                 class2dom = TBL_CLASS2DOM
+                                 )
+
+
+```
+
+##### Visualize output
+
+```{R}
+
+lapply(lm_abund,"[", 1:3 ) %>% 
+       do.call("rbind", .)
+
+x <- lapply(lm_abund,"[[", 5) %>% 
+      plyr::ldply(., data.frame)
+
+ggplot(x, aes(x = resp, y=pred)) +
+       geom_point() +
+       facet_wrap( ~ .id, ncol = 2, nrow = 3, scales = "free" ) +
+       xlab("response test") +
+       ylab("predicted")
+
+```
+&nbsp;
+
+### __3. Random Forest Regression Models__
+##### Run the regression_model_fun using rf 
+```{R}
+rf_abund <- regression_model_fun(bgc = bgc_classes, 
+                                 data = data,
+                                 regression_method = "rf",
+                                 class2dom = TBL_CLASS2DOM
+                                 )
+
+
+```
+
+##### Visualize output
+
+```{R}
+lapply(rf_abund,"[", 1:3 ) %>% 
+       do.call("rbind", .)
+
+x <- lapply(rf_abund,"[[", 5) %>% 
+      plyr::ldply(., data.frame)
+
+ggplot(x, aes(x = resp, y=pred)) +
+       geom_point() +
+       facet_wrap( ~ .id, ncol = 2, nrow = 3, scales = "free") +
+       xlab("response test") +
+       ylab("predicted")
+
+```
+&nbsp;
+
+## __4. Random Forest Binary Classification + Regression Models__
+##### Run the double_models_fun using rf
+```{R}
+drf_abund <- double_models_fun(bgc = bgc_classes, 
+                              data = data,
+                              binary_method = "rf",
+                              regression_method = "rf",
+                              class2dom = TBL_CLASS2DOM
+                              )
+
+
+```
+
+##### Visualize output
+
+```{R}
+
+lapply(drf_abund,"[", 1:3 ) %>% 
+       do.call("rbind", .)
+
+x <- lapply(drf_abund,"[[", 5) %>% 
+            plyr::ldply(., data.frame)
+
+ggplot(x, aes(x = resp, y=pred)) +
+       geom_point() +
+       facet_wrap( ~ .id, ncol = 2, nrow = 3, scales = "free") +
+       xlab("response test") +
+       ylab("predicted")
+
+```
+&nbsp;
+
+## __5. Evaluate Random Forest Binary Classification + Regression Models__
+#### Run the iter_model_fun with 100 iterations
+```{R}
+
+drf_abund_iter <- iter_model_fun(bgc = bgc_classes, 
+                                 data = data,
+                                 binary_method = "rf",
+                                 regression_method = "rf",
+                                 iter= 100,
+                                 class2dom = TBL_CLASS2DOM
+                                )
+
+
+```
+
+##### Visualize output: correlation distributions
+
+```{R message=FALSE, warning=FALSE}
+
+f <- function(x) lapply(x, "[[", "cor") %>% do.call("rbind", .) 
+cors <- lapply(drf_abund_iter, f ) %>%
+               plyr::ldply(., data.frame)
+
+
+ggplot(cors, aes(cor)) +
+       geom_histogram(bins = 20) +
+       facet_wrap( ~ .id, ncol = 2, nrow = 3, scales = "free") +
+       xlab("correlation") +
+       xlim(c(-0.2,1))
+```
+
+##### Visualize output: MSE distributions
+
+```{R}
+f <- function(x) lapply(x, "[[", "mse") %>% do.call("rbind", .)
+mses <- lapply(drf_abund_iter, f ) %>%
+               plyr::ldply(., data.frame)
+  
+ggplot(mses, aes(X..i..)) +
+       geom_histogram(bins = 20) +
+       facet_wrap( ~ .id, ncol = 2, nrow = 3, scales = "free") +
+       xlab("mse") +
+       xlim(c(0,0.075))
+
+```
+&nbsp;
+
+#### Visualize all model stats together:
+```{R}
+
+lm <- lapply(lm_abund,"[", 1:3 ) %>% 
+             do.call("rbind", .)
+
+rf <- lapply(rf_abund,"[", 1:3 ) %>% 
+             do.call("rbind", .)
+
+drf <- lapply(drf_abund,"[", 1:3 ) %>% 
+              do.call("rbind", .)
+
+l <- length(bgc_classes)
+model <- rep( c("lm","rf","drf"), times = c(l,l,l))
+
+rbind(lm, rf, drf ) %>%
+as.data.frame(.) %>%
+tibble::rownames_to_column(.) %>%
+cbind(model,.)
+
+```
+
+### __6. Random Forest Binary Classification Models__
+##### Run binary_model_fun using rf
+```{R}
+rf_binary <- binary_model_fun(bgc = bgc_classes, 
+                              data = data, 
+                              binary_method = "rf",
+                              class2dom = TBL_CLASS2DOM
+                              )
+
+```
+
+##### Visualize output
+
+```{R}
+
+lapply(rf_binary,"[", 1:3 ) %>% 
+       do.call("rbind", .)
+
+sapply(rf_binary,"[", 6)[1:6] 
+
+```
+
+
+
+
