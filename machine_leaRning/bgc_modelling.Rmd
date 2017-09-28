@@ -42,7 +42,7 @@ library(vegan)
 library(miscTools)
 library(e1071)
 library(metagenomeSeq)
-source("toolbox/toolbox.R")
+source("./toolbox.R")
 
 TBL_DOM <- read.table("./data/139prokrich_domain_abund_u-prot_u-orf.csv", header=T, sep=",", row.names = 1)
 TBL_CLASS <- read.table("./data/139prokrich_class_abund.csv", header=T, sep=",", row.names = 1)
