@@ -1,0 +1,151 @@
+---
+title: "bgcpred_workflow"
+author: "Emiliano Pereira"
+date: "September 29, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+&nbsp;
+
+### __1. Introduction__
+#### In this work, we create BGC class-specific models to predict the abundance of BGC classes in metagenomic samples. These models use the class relative counts (RC) as the response variables, and the domains RC of the corresponding classes, as the predictor variables. To construct a BGC class RC model, we applied a two-step zero-inflated process. First, we predicted the presence or absence of the target BGC class using a random forest (RF) binary classifier (Breiman, 2001). Second, we used a multiple linear (ML) regression to predict the BGC class RCs, but only if the class was previously predicted as present. In the cases where the number of zero values was too low (<10) or non-existent, we directly applied a ML regression. The models were trained using a simulated metagenomic dataset of 150 samples (i.e. OMs dataset, see below).
+
+&nbsp;
+
+### __2. Datasets__
+#### 1. OMs: 150 simulated metagenomes. Based on the complete and nearly complete genomes sequences of Ocean Ocean Microbial Reference Gene Catalogue (OM-RGC) (Sunagawa et al., 2015) and the Metagenome Assembled Genomes of TARA Oceans (MAGs) (Delmont, et al., 2017). 384 genomes corresponding to more than 263 different species.
+
+&nbsp;
+
+#### 2. TOGs: 150 simulated metagenomes. Based on the complete and nearly genomes corresponding to the genera found in TARA Oceans taxonomic annotation of the Operational Taxonomic Units (OTUs) (Sunagawa et al., 2015). Composed of 465 genomes from 301 different species.
+
+#### Load libraries and tables
+
+```{r, results='hide', message=FALSE, warning=FALSE }
+library(dplyr)
+library(tibble)
+library(devtools)
+library(ggplot2)
+
+OMs_domains <- read.table(file = "data/150_domain_abund_simulated_OMs.csv", 
+                          sep = ",", header = T, row.names = 1)
+TGs_domains <- read.table(file = "data/150_domain_abund_simulated_TGs.csv",
+                          sep = ",", header = T, row.names = 1)
+
+
+OMs_classes <- read.table(file = "data/150_class_abund_simulated_OMs.csv", 
+                          sep = ",", header = T, row.names = 1)
+TGs_classes <- read.table(file = "data/150_class_abund_simulated_TGs.csv",
+                          sep = ",", header = T, row.names = 1)
+
+```
+#### Join tables and convert abundances to RCs
+
+```{r}
+
+data_train <- dplyr::left_join(x = tibble::rownames_to_column( OMs_domains/rowSums(OMs_domains) ),
+                               y = tibble::rownames_to_column( OMs_classes/rowSums(OMs_classes) ), 
+                               by = "rowname" )
+
+data_test <-  dplyr::left_join(x = tibble::rownames_to_column( TGs_domains/rowSums(TGs_domains) ),
+                               y = tibble::rownames_to_column( TGs_classes/rowSums(TGs_classes) ), 
+                               by = "rowname" )
+
+```
+### __3. Creating the models__
+#### To create the models, we will use the get_domains() and class_model_train() functions from bgcpred package (although the package already includes the models: see wrap_up_predict()).
+
+```{r, results='hide', message=FALSE, warning=FALSE}
+
+devtools::install_github('pereiramemo/bgcpred')
+library(bgcpred)
+
+```
+
+#### We will create the models for the lantipeptide, nrps, t1pks, t2pks, t3pks and terpene BGC classes. First, we use the get_domains() function to extract the corresponding domains of each BGC class. Then, we use these domains and class RCs to train the models.
+```{r}
+
+bgc_classes <- c("lantipeptide","nrps","t1pks","t2pks","t3pks","terpene")
+
+bgc_model <- list()
+
+for (b in bgc_classes) {
+
+  y <- data_train[,b]
+  domains_x <- get_domains(b)
+  domains_x <- domains_x[ domains_x %in% colnames(data_train) ]
+  x <- data_train[,domains_x]
+
+  bgc_model[[b]] <- class_model_train(y = y, 
+                                      x = x, 
+                                      binary_method = "rf", 
+                                      regression_method = "lm", 
+                                      seed = 111)
+}
+
+```
+
+### __4. BGC class RCs predictions __
+#### Now that we have created the models, we use them to predict the BGC class RCs in TGs data set. For this task, we use the class_model_predit() function from bgcpred.
+
+```{r}
+
+bgc_pred <- list()
+
+for (b in bgc_classes) {
+  
+  domains_x <- get_domains(b)
+  domains_x <- domains_x[ domains_x %in% colnames(data_train) ]
+  x <- data_test[,domains_x]
+  
+ bgc_pred[[b]] <- class_model_predict(x = x, 
+                                      model_c = bgc_model[[b]]$binary_model, 
+                                      model_r = bgc_model[[b]]$regression_model)
+  
+}  
+
+```
+
+### __5. Result evaluations __
+#### Given that TGs is a simulated data set, we actually know the BGC class abundances, and can compare these with the model predictions.
+
+```{r}
+
+# select some nice colors
+class2color <- cbind(class = bgc_classes, 
+                     color = c("#ECD078","#D95B43","#C02942",
+                               "#542437","#53777A","#000000"))
+
+
+# convert predctions list to a long data frame
+pred_df <- do.call(cbind.data.frame, bgc_pred) %>% 
+           gather(key = bgc, value = pred )
+
+
+# extract and convert real abundances to a long data frame
+real_df <- data_test[, bgc_classes] %>%
+           gather(key = bgc, value = real )
+
+
+# join data frames
+X <- cbind( pred_df, real = real_df$real )
+
+
+# plot
+ggplot(X, aes(x = real, y=pred)) +
+       geom_abline(intercept = 0, slope = 1, color = "gray60") +  
+       geom_point(aes(color = bgc ), alpha = 0.5) +
+       facet_wrap( ~ bgc, ncol = 2, nrow = 3, scales = "free") +
+       scale_color_manual(values = class2color[,"color"], name = "BGC class") + 
+       xlab("Real RCs") +
+       ylab("Predicted RCs") +
+       expand_limits(y=0) 
+
+
+```
+
+
