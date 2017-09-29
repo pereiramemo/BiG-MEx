@@ -34,6 +34,11 @@ if [[ "${1}" == "sample" ]]; then
 
 
 # handle output file
+  if [[ -d "${1}" ]]; then
+    echo "output dir ${1} already exists"
+    exit
+  fi
+
   OUTPUT_DIR=$(dirname $(realpath $1))
   OUTPUT=$(basename $1)
   shift
@@ -86,6 +91,11 @@ if [[ "${1}" == "merge" ]]; then
   shift
   
   #handle output file
+   if [[ -d "${1}" ]]; then
+     echo "output dir ${1} already exists"
+     exit
+   fi 
+  
   OUTPUT_DIR=$(dirname $(realpath $1))
   OUTPUT=$(basename $1)
   shift
