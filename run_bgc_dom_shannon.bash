@@ -33,16 +33,16 @@ if [[ "${1}" == "sample" ]]; then
   fi  
 
 
-# handle output file
-  if [[ -d "${1}" ]]; then
-    echo "output dir ${1} already exists"
-    exit
-  fi
-
   OUTPUT_DIR=$(dirname $(realpath $1))
   OUTPUT=$(basename $1)
   shift
 
+  
+if [[ -d "${OUTPUT}/${OUTPUT_DIR}" ]] && [[ ${OUTPUT} != "." ]]; then
+  echo "output dir ${1} already exists"
+  exit
+fi 
+  
 # Links within the container
   CONTAINER_SRC_DIR=/input
   CONTAINER_DST_DIR=/output
@@ -90,15 +90,14 @@ if [[ "${1}" == "merge" ]]; then
   INPUT_DIR=$(dirname $( realpath ${INPUT_FILES/\,*/} ))
   shift
   
-  #handle output file
-   if [[ -d "${1}" ]]; then
-     echo "output dir ${1} already exists"
-     exit
-   fi 
-  
   OUTPUT_DIR=$(dirname $(realpath $1))
   OUTPUT=$(basename $1)
   shift
+  
+  if [[ -d "${OUTPUT}/${OUTPUT_DIR}" ]] && [[ ${OUTPUT} != "." ]]; then
+    echo "output dir ${1} already exists"
+    exit
+  fi
   
 # Links within the container
   CONTAINER_SRC_DIR=/input

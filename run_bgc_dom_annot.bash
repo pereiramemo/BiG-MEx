@@ -27,15 +27,15 @@ if [[ -f $1 ]]; then
   shift	
 fi  
 
-# handle output file
-if [[ -d "${1}" ]]; then
-  echo "output dir ${1} already exists"
-  exit
-fi
-
 OUTPUT_DIR=$( dirname $(realpath $1))
 OUTPUT=$(basename $1)
 shift
+
+# handle output file
+if [[ -d "${OUTPUT}/${OUTPUT_DIR}" ]] && [[ ${OUTPUT} != "." ]]; then
+  echo "output dir ${1} already exists"
+  exit
+fi
 
 # Links within the container
 CONTAINER_SRC_DIR=/input
