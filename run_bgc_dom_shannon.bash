@@ -39,7 +39,7 @@ if [[ "${1}" == "sample" ]]; then
 
   
 if [[ -d "${OUTPUT_DIR}/${OUTPUT}" ]] && [[ ${OUTPUT} != "." ]]; then
-  echo "output dir ${1} already exists"
+  echo "output dir ${OUTPUT_DIR}/${OUTPUT} already exists"
   exit
 fi 
   
@@ -94,8 +94,8 @@ if [[ "${1}" == "merge" ]]; then
   OUTPUT=$(basename $1)
   shift
   
-  if [[ -d "${OUTPUT}/${OUTPUT_DIR}" ]] && [[ ${OUTPUT} != "." ]]; then
-    echo "output dir ${1} already exists"
+  if [[ -d "${OUTPUT_DIR}/${OUTPUT}" ]] && [[ ${OUTPUT} != "." ]]; then
+    echo "output dir ${OUTPUT_DIR}/${OUTPUT} already exists"
     exit
   fi
   

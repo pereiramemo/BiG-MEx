@@ -33,7 +33,7 @@ shift
 
 # handle output file
 if [[ -d "${OUTPUT_DIR}/${OUTPUT}" ]] && [[ ${OUTPUT} != "." ]]; then
-  echo "output dir ${1} already exists"
+  echo "output dir ${OUTPUT_DIR}/${OUTPUT} already exists"
   exit
 fi
 
