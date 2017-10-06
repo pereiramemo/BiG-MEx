@@ -38,7 +38,7 @@ if [[ "${1}" == "sample" ]]; then
   shift
 
   
-if [[ -d "${OUTPUT}/${OUTPUT_DIR}" ]] && [[ ${OUTPUT} != "." ]]; then
+if [[ -d "${OUTPUT_DIR}/${OUTPUT}" ]] && [[ ${OUTPUT} != "." ]]; then
   echo "output dir ${1} already exists"
   exit
 fi 

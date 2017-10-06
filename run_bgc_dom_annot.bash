@@ -32,7 +32,7 @@ OUTPUT=$(basename $1)
 shift
 
 # handle output file
-if [[ -d "${OUTPUT}/${OUTPUT_DIR}" ]] && [[ ${OUTPUT} != "." ]]; then
+if [[ -d "${OUTPUT_DIR}/${OUTPUT}" ]] && [[ ${OUTPUT} != "." ]]; then
   echo "output dir ${1} already exists"
   exit
 fi

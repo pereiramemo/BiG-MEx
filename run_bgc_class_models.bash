@@ -21,7 +21,7 @@ OUTPUT_DIR=$(dirname $(realpath $1))
 OUTPUT=$(basename $1)
 shift
 
-if [[ -d "${OUTPUT}/${OUTPUT_DIR}" ]] && [[ ${OUTPUT} != "." ]]; then
+if [[ -d "${OUTPUT_DIR}/${OUTPUT}" ]] && [[ ${OUTPUT} != "." ]]; then
   echo "output dir ${1} already exists"
   exit
 fi
