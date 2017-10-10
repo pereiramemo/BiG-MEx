@@ -127,19 +127,19 @@ $(document).ready(function () {
 <p> </p>
 <div id="introduction" class="section level3">
 <h3><strong>1. Introduction</strong></h3>
-<div id="in-this-work-we-create-bgc-class-specific-models-to-predict-the-abundance-of-bgc-classes-in-metagenomic-samples.-these-models-use-the-class-relative-counts-rc-as-the-response-variables-and-the-domains-rc-of-the-corresponding-classes-as-the-predictor-variables.-to-construct-a-bgc-class-rc-model-we-applied-a-two-step-zero-inflated-process.-first-we-predicted-the-presence-or-absence-of-the-target-bgc-class-using-a-random-forest-rf-binary-classifier-breiman-2001.-second-we-used-a-multiple-linear-ml-regression-to-predict-the-bgc-class-rcs-but-only-if-the-class-was-previously-predicted-as-present.-in-the-cases-where-the-number-of-zero-values-was-too-low-10-or-non-existent-we-directly-applied-a-ml-regression.-the-models-were-trained-using-a-simulated-metagenomic-dataset-of-150-samples-i.e.oms-dataset-see-below." class="section level4">
-<h4>In this work, we create BGC class-specific models to predict the abundance of BGC classes in metagenomic samples. These models use the class relative counts (RC) as the response variables, and the domains RC of the corresponding classes, as the predictor variables. To construct a BGC class RC model, we applied a two-step zero-inflated process. First, we predicted the presence or absence of the target BGC class using a random forest (RF) binary classifier (Breiman, 2001). Second, we used a multiple linear (ML) regression to predict the BGC class RCs, but only if the class was previously predicted as present. In the cases where the number of zero values was too low (&lt;10) or non-existent, we directly applied a ML regression. The models were trained using a simulated metagenomic dataset of 150 samples (i.e. OMs dataset, see below).</h4>
+<div id="in-this-work-we-create-bgc-class-specific-models-to-predict-the-abundance-of-bgc-classes-in-metagenomic-samples.-these-models-use-the-class-relative-counts-rc-as-the-response-variables-and-the-domains-rcs-of-the-corresponding-classes-as-the-predictor-variables.-to-construct-a-bgc-class-rc-model-we-apply-a-two-step-zero-inflated-process.-first-we-predict-the-presence-or-absence-of-the-target-bgc-class-using-a-random-forest-rf-binary-classifier-breiman-2001.-second-we-use-a-multiple-linear-ml-regression-to-predict-the-bgc-class-rcs-but-only-if-the-class-was-previously-predicted-as-present.-in-the-cases-where-the-number-of-zero-values-is-too-low-10-or-non-existent-we-directly-apply-a-ml-regression.-the-models-are-trained-using-a-simulated-metagenomic-dataset-of-150-samples-i.e.oms-dataset-see-below." class="section level4">
+<h4>In this work, we create BGC class-specific models to predict the abundance of BGC classes in metagenomic samples. These models use the class relative counts (RC) as the response variables, and the domains RCs of the corresponding classes, as the predictor variables. To construct a BGC class RC model, we apply a two-step zero-inflated process. First, we predict the presence or absence of the target BGC class using a random forest (RF) binary classifier (Breiman, 2001). Second, we use a multiple linear (ML) regression to predict the BGC class RCs, but only if the class was previously predicted as present. In the cases where the number of zero values is too low (&lt;10) or non-existent, we directly apply a ML regression. The models are trained using a simulated metagenomic dataset of 150 samples (i.e. OMs dataset, see below).</h4>
 <p> </p>
 </div>
 </div>
 <div id="datasets" class="section level3">
 <h3><strong>2. Datasets</strong></h3>
-<div id="oms-150-simulated-metagenomes.-based-on-the-complete-and-nearly-complete-genomes-sequences-of-ocean-ocean-microbial-reference-gene-catalogue-om-rgc-sunagawa-et-al.-2015-and-the-metagenome-assembled-genomes-of-tara-oceans-mags-delmont-et-al.-2017.-384-genomes-corresponding-to-more-than-263-different-species." class="section level4">
-<h4>1. OMs: 150 simulated metagenomes. Based on the complete and nearly complete genomes sequences of Ocean Ocean Microbial Reference Gene Catalogue (OM-RGC) (Sunagawa et al., 2015) and the Metagenome Assembled Genomes of TARA Oceans (MAGs) (Delmont, et al., 2017). 384 genomes corresponding to more than 263 different species.</h4>
+<div id="oms-150-simulated-metagenomes.-it-is-based-on-the-complete-and-nearly-complete-genome-sequences-of-the-ocean-microbial-reference-gene-catalogue-om-rgc-sunagawa-et-al.-2015-and-the-metagenome-assembled-genomes-of-tara-oceans-mags-delmont-et-al.-2017.-384-genomes-corresponding-to-more-than-263-different-species." class="section level4">
+<h4>1. OMs: 150 simulated metagenomes. It is based on the complete and nearly complete genome sequences of the Ocean Microbial Reference Gene Catalogue (OM-RGC) (Sunagawa et al., 2015) and the Metagenome Assembled Genomes of TARA Oceans (MAGs) (Delmont, et al., 2017). 384 genomes corresponding to more than 263 different species.</h4>
 <p> </p>
 </div>
-<div id="togs-150-simulated-metagenomes.-based-on-the-complete-and-nearly-genomes-corresponding-to-the-genera-found-in-tara-oceans-taxonomic-annotation-of-the-operational-taxonomic-units-otus-sunagawa-et-al.-2015.-composed-of-465-genomes-from-301-different-species." class="section level4">
-<h4>2. TOGs: 150 simulated metagenomes. Based on the complete and nearly genomes corresponding to the genera found in TARA Oceans taxonomic annotation of the Operational Taxonomic Units (OTUs) (Sunagawa et al., 2015). Composed of 465 genomes from 301 different species.</h4>
+<div id="tgs-150-simulated-metagenomes.-it-is-based-on-the-complete-and-nearly-genomes-corresponding-to-the-genera-found-in-tara-oceans-taxonomic-annotation-of-the-operational-taxonomic-units-otus-sunagawa-et-al.-2015.-composed-of-465-genomes-from-301-different-species." class="section level4">
+<h4>2. TGs: 150 simulated metagenomes. It is based on the complete and nearly genomes corresponding to the genera found in TARA Oceans taxonomic annotation of the Operational Taxonomic Units (OTUs) (Sunagawa et al., 2015). Composed of 465 genomes from 301 different species.</h4>
 </div>
 <div id="load-libraries-and-tables" class="section level4">
 <h4>Load libraries and tables</h4>
@@ -200,8 +200,8 @@ for (b in bgc_classes) {
 </div>
 <div id="bgc-class-rcs-predictions" class="section level3">
 <h3><strong>4. BGC class RCs predictions </strong></h3>
-<div id="now-that-we-have-created-the-models-we-use-them-to-predict-the-bgc-class-rcs-in-tgs-data-set.-for-this-task-we-use-the-class_model_predit-function-from-bgcpred." class="section level4">
-<h4>Now that we have created the models, we use them to predict the BGC class RCs in TGs data set. For this task, we use the class_model_predit() function from bgcpred.</h4>
+<div id="now-that-we-have-created-the-models-we-use-them-to-predict-the-bgc-class-rcs-in-tgs-data-set.-for-this-task-we-use-the-class_model_predict-function-from-bgcpred." class="section level4">
+<h4>Now that we have created the models, we use them to predict the BGC class RCs in TGs data set. For this task, we use the class_model_predict() function from bgcpred.</h4>
 <pre class="r"><code>bgc_pred &lt;- list()
 
 for (b in bgc_classes) {
@@ -227,7 +227,7 @@ class2color &lt;- cbind(class = bgc_classes,
                                &quot;#542437&quot;,&quot;#53777A&quot;,&quot;#000000&quot;))
 
 
-# convert predctions list to a long data frame
+# convert predictions list to a long data frame
 pred_df &lt;- do.call(cbind.data.frame, bgc_pred) %&gt;% 
            gather(key = bgc, value = pred )
 
