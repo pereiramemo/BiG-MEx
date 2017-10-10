@@ -148,4 +148,12 @@ ggplot(X, aes(x = real, y=pred)) +
 
 ```
 
+### __6. Bibliography __
+
+Sunagawa, S., Coelho, L. P., Chaffron, S., Kultima, J. R., Labadie, K., Salazar, G., … Velayoudon, D. (2015). Structure and function of the global ocean microbiome. Science, 348(6237), 1261359–1261359. http://doi.org/10.1126/science.1261359   
+
+Delmont, T. O., Quince, C., Shaiber, A., Esen, O. C., Lee, S. T. M., Lucker, S., & Eren, A. M. (2017). Nitrogen-Fixing Populations Of Planctomycetes And  Proteobacteria Are Abundant In The Surface Ocean. bioRxiv, 129791. http://doi.org/10.1101/129791  
+
+Breiman, L. (2001). Random forests. Machine Learning, 45(1), 5–32.
+http://doi.org/10.1023/A:1010933404324  
 
