@@ -58,7 +58,7 @@ fi
       --volume ${OUTPUT_DIR}:${CONTAINER_DST_DIR}:rw \
       --detach=false \
       --rm \
-      epereira/ufbgctoolbox:bgc_dom_shannon \
+      epereira/ufbgctoolbox:bgc_dom_div \
         --input "${CONTAINER_SRC_DIR}/${INPUT_FILE1}" \
         --reads "${CONTAINER_SRC_DIR}/${INPUT_FILE2}" \
         --reads2 "${CONTAINER_SRC_DIR}/${INPUT_FILE3}" \
@@ -72,7 +72,7 @@ fi
       --volume ${OUTPUT_DIR}:${CONTAINER_DST_DIR}:rw \
       --detach=false \
       --rm \
-      epereira/ufbgctoolbox:bgc_dom_shannon \
+      epereira/ufbgctoolbox:bgc_dom_div \
         --input "${CONTAINER_SRC_DIR}/${INPUT_FILE1}" \
         --reads "${CONTAINER_SRC_DIR}/${INPUT_FILE2}" \
         --reads2 "${CONTAINER_SRC_DIR}/${INPUT_FILE3}" \
@@ -121,7 +121,7 @@ if [[ "${1}" == "merge" ]]; then
     --volume ${OUTPUT_DIR}:${CONTAINER_DST_DIR}:rw \
     --detach=false \
     --rm \
-    epereira/ufbgctoolbox:bgc_dom_merged_shannon \
+    epereira/ufbgctoolbox:bgc_dom_merge_div \
       --input_dirs "${INPUT}" \
       --outdir "${OUTPUT}" \
       $@
