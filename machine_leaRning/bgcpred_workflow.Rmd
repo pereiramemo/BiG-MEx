@@ -43,10 +43,23 @@ TGs_classes <- read.table(file = "data/150_class_abund_simulated_TGs.csv",
                           sep = ",", header = T, row.names = 1)
 
 ```
-#### Join tables and convert abundances to RCs
+#### Reformat TGs table
 
 ```{r}
 
+i <- ! colnames(OMs_domains) %in% colnames(TGs_domains)
+
+x <- matrix(data = 0,  nrow = dim(TGs_domains)[1], ncol = length(colnames(OMs_domains)[i]),
+            dimnames = list(row = rownames(TGs_domains), col = colnames(OMs_domains)[i]) ) %>%
+     as.data.frame()        
+
+TGs_domains <- cbind(TGs_domains, x)
+
+```
+
+#### Join tables and convert abundances to RCs
+
+```{r}
 data_train <- dplyr::left_join(x = tibble::rownames_to_column( OMs_domains/rowSums(OMs_domains) ),
                                y = tibble::rownames_to_column( OMs_classes/rowSums(OMs_classes) ), 
                                by = "rowname" )
@@ -135,11 +148,19 @@ real_df <- data_test[, bgc_classes] %>%
 X <- cbind( pred_df, real = real_df$real )
 
 
+# make titles including correlation values
+COR <- X %>% 
+       group_by(bgc) %>%
+       summarise( cor = cor(real, pred) %>% round(., digits = 3) )
+
+titles <- paste(COR$bgc, "cor:", COR$cor)
+names(titles) <- COR$bgc
+
 # plot
 ggplot(X, aes(x = real, y=pred)) +
        geom_abline(intercept = 0, slope = 1, color = "gray60") +  
        geom_point(aes(color = bgc ), alpha = 0.5) +
-       facet_wrap( ~ bgc, ncol = 2, nrow = 3, scales = "free") +
+       facet_wrap( ~ bgc, ncol = 2, nrow = 3, scales = "free", labeller = as_labeller(titles)) +
        scale_color_manual(values = class2color[,"color"], name = "BGC class") + 
        xlab("Real RCs") +
        ylab("Predicted RCs") +
