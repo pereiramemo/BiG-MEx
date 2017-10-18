@@ -12,16 +12,16 @@ knitr::opts_chunk$set(echo = TRUE)
 &nbsp;
 
 ### __1. Introduction__
-#### In this work, we create BGC class-specific models to predict the abundance of BGC classes in metagenomic samples. These models use the class relative counts (RC) as the response variables, and the domains RC of the corresponding classes, as the predictor variables. To construct a BGC class RC model, we applied a two-step zero-inflated process. First, we predicted the presence or absence of the target BGC class using a random forest (RF) binary classifier (Breiman, 2001). Second, we used a multiple linear (ML) regression to predict the BGC class RCs, but only if the class was previously predicted as present. In the cases where the number of zero values was too low (<10) or non-existent, we directly applied a ML regression. The models were trained using a simulated metagenomic dataset of 150 samples (i.e. OMs dataset, see below).
+#### In this work, we create BGC class-specific models to predict the abundance of BGC classes in metagenomic samples. These models use the class relative counts (RC) as the response variables, and the domains RCs of the corresponding classes, as the predictor variables. To construct a BGC class RC model, we apply a two-step zero-inflated process. First, we predict the presence or absence of the target BGC class using a random forest (RF) binary classifier (Breiman, 2001). Second, we use a multiple linear (ML) regression to predict the BGC class RCs, but only if the class was previously predicted as present. In the cases where the number of zero values is too low (<10) or non-existent, we directly apply a ML regression. The models are trained using a simulated metagenomic dataset of 150 samples (i.e. OMs dataset, see below).
 
 &nbsp;
 
 ### __2. Datasets__
-#### 1. OMs: 150 simulated metagenomes. Based on the complete and nearly complete genomes sequences of Ocean Ocean Microbial Reference Gene Catalogue (OM-RGC) (Sunagawa et al., 2015) and the Metagenome Assembled Genomes of TARA Oceans (MAGs) (Delmont, et al., 2017). 384 genomes corresponding to more than 263 different species.
+#### 1. OMs: 150 simulated metagenomes. It is based on the complete and nearly complete genome sequences of the Ocean Microbial Reference Gene Catalogue (OM-RGC) (Sunagawa et al., 2015) and the Metagenome Assembled Genomes of TARA Oceans (MAGs) (Delmont, et al., 2017). 384 genomes corresponding to more than 263 different species.
 
 &nbsp;
 
-#### 2. TOGs: 150 simulated metagenomes. Based on the complete and nearly genomes corresponding to the genera found in TARA Oceans taxonomic annotation of the Operational Taxonomic Units (OTUs) (Sunagawa et al., 2015). Composed of 465 genomes from 301 different species.
+#### 2. TGs: 150 simulated metagenomes. It is based on the complete and nearly genomes corresponding to the genera found in TARA Oceans taxonomic annotation of the Operational Taxonomic Units (OTUs) (Sunagawa et al., 2015). Composed of 465 genomes from 301 different species.
 
 #### Load libraries and tables
 
@@ -103,7 +103,7 @@ for (b in bgc_classes) {
 ```
 
 ### __4. BGC class RCs predictions __
-#### Now that we have created the models, we use them to predict the BGC class RCs in TGs data set. For this task, we use the class_model_predit() function from bgcpred.
+#### Now that we have created the models, we use them to predict the BGC class RCs in TGs data set. For this task, we use the class_model_predict() function from bgcpred.
 
 ```{r}
 
@@ -134,7 +134,7 @@ class2color <- cbind(class = bgc_classes,
                                "#542437","#53777A","#000000"))
 
 
-# convert predctions list to a long data frame
+# convert predictions list to a long data frame
 pred_df <- do.call(cbind.data.frame, bgc_pred) %>% 
            gather(key = bgc, value = pred )
 
@@ -169,4 +169,12 @@ ggplot(X, aes(x = real, y=pred)) +
 
 ```
 
+### __6. Bibliography __
+
+Sunagawa, S., Coelho, L. P., Chaffron, S., Kultima, J. R., Labadie, K., Salazar, G., ??? Velayoudon, D. (2015). Structure and function of the global ocean microbiome. Science, 348(6237), 1261359???1261359. http://doi.org/10.1126/science.1261359   
+
+Delmont, T. O., Quince, C., Shaiber, A., Esen, O. C., Lee, S. T. M., Lucker, S., & Eren, A. M. (2017). Nitrogen-Fixing Populations Of Planctomycetes And  Proteobacteria Are Abundant In The Surface Ocean. bioRxiv, 129791. http://doi.org/10.1101/129791  
+
+Breiman, L. (2001). Random forests. Machine Learning, 45(1), 5???32.
+http://doi.org/10.1023/A:1010933404324  
 
