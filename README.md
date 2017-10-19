@@ -4,7 +4,7 @@ ufBGCtoolbox  tool for the mining of BGC domains  and classes in metagenomic dat
 2. bgc_dom_div: BGC domain-specific diversity estimation.  
 3. bgc_model_class: BGC class relative count predictions.  
 
-## Install
+## Installation
 
 ufBGCtoolbox consists of four dokcer images: 
 1. epereira/ufBGCtolbox:bgc_dom_annot 
