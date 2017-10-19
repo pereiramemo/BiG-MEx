@@ -14,13 +14,19 @@ function realpath() {
 if [[ "${1}" == "sample" ]]; then
   shift
 
-# handle input file
+  # check input parameters
+  if [[ "$#" -lt 3 ]]; then
+    echo -e "Missing parameters.\nSee run_bgc_dom_div.bash sample . . . --help"
+    exit
+  fi
+  
+  # handle input file
   INPUT_FILE1=$(basename $1)
   INPUT_DIR=$(dirname $(realpath $1))
   shift
 
   INPUT_FILE2=$(basename $1)
-  shift	
+  shift
 
   if [[ -f $1 ]]; then
     INPUT_FILE3=$(basename $1)
@@ -30,18 +36,11 @@ if [[ "${1}" == "sample" ]]; then
   if [[ -f $1 ]]; then
     INPUT_FILE4=$(basename $1)
     shift	
-  fi  
-
+  fi
 
   OUTPUT_DIR=$(dirname $(realpath $1))
   OUTPUT=$(basename $1)
   shift
-
-  
-if [[ -d "${OUTPUT_DIR}/${OUTPUT}" ]] && [[ ${OUTPUT} != "." ]]; then
-  echo "output dir ${OUTPUT_DIR}/${OUTPUT} already exists"
-  exit
-fi 
   
 # Links within the container
   CONTAINER_SRC_DIR=/input
@@ -64,7 +63,7 @@ fi
         --reads2 "${CONTAINER_SRC_DIR}/${INPUT_FILE3}" \
 	--outdir "${OUTPUT}" \
         $@
-
+        
   else
 
     docker run \
@@ -80,12 +79,21 @@ fi
         --outdir "${OUTPUT}" \
         $@
   fi
+  
+  FLAG="1"
+  
 fi
 
 if [[ "${1}" == "merge" ]]; then
   shift
 
-# handle input file
+  # check input parameters
+  if [[ "$#" -lt 2 ]]; then
+    echo -e "Missing parameters.\nSee run_bgc_dom_div.bash merge . . --help"
+    exit
+  fi
+  
+  # handle input file
   INPUT_FILES="${1}"
   INPUT_DIR=$(dirname $( realpath ${INPUT_FILES/\,*/} ))
   shift
@@ -93,11 +101,6 @@ if [[ "${1}" == "merge" ]]; then
   OUTPUT_DIR=$(dirname $(realpath $1))
   OUTPUT=$(basename $1)
   shift
-  
-  if [[ -d "${OUTPUT_DIR}/${OUTPUT}" ]] && [[ ${OUTPUT} != "." ]]; then
-    echo "output dir ${OUTPUT_DIR}/${OUTPUT} already exists"
-    exit
-  fi
   
 # Links within the container
   CONTAINER_SRC_DIR=/input
@@ -125,5 +128,13 @@ if [[ "${1}" == "merge" ]]; then
       --input_dirs "${INPUT}" \
       --outdir "${OUTPUT}" \
       $@
+  
+  FLAG="1"
+fi
 
+# failed run
+if [[ "${FLAG}" != "1" ]]; then
+  echo -e "Missing parameters.\nSee run_bgc_dom_div.bash sample . . . --help\n\
+See run_bgc_dom_div.bash merge . . --help"
+  exit
 fi

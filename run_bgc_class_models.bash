@@ -12,6 +12,12 @@ function realpath() {
   cd "${CURRENT_DIR}"
 }
 
+# check input parameters
+if [[ "$#" -lt 2 ]]; then
+  echo -e "Missing parameters.\nSee run_bgc_class_models . . --help"
+  exit
+fi
+
 # handle input file
 INPUT_FILE=$(basename $1)
 INPUT_DIR=$(dirname $(realpath $1))

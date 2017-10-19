@@ -11,6 +11,10 @@ function realpath() {
   cd "${CURRENT_DIR}"
 }
 
+if [[ "$#" -lt 2 ]]; then
+  echo "see run_bgc_dom_annot.bash . . --help"
+  exit
+fi  
 
 # handle input file
 INPUT_FILE1=$(basename $1)
@@ -30,12 +34,6 @@ fi
 OUTPUT_DIR=$( dirname $(realpath $1))
 OUTPUT=$(basename $1)
 shift
-
-# handle output file
-if [[ -d "${OUTPUT_DIR}/${OUTPUT}" ]] && [[ ${OUTPUT} != "." ]]; then
-  echo "output dir ${OUTPUT_DIR}/${OUTPUT} already exists"
-  exit
-fi
 
 # Links within the container
 CONTAINER_SRC_DIR=/input
