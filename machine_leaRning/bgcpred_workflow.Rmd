@@ -45,7 +45,7 @@ TGs_classes <- read.table(file = "data/150_class_abund_simulated_TGs.csv",
 ```
 #### Reformat TGs table
 
-```{r}
+```{r, warning=FALSE}
 
 i <- ! colnames(OMs_domains) %in% colnames(TGs_domains)
 
@@ -59,7 +59,7 @@ TGs_domains <- cbind(TGs_domains, x)
 
 #### Join tables and convert abundances to RCs
 
-```{r}
+```{r, warning=FALSE}
 data_train <- dplyr::left_join(x = tibble::rownames_to_column( OMs_domains/rowSums(OMs_domains) ),
                                y = tibble::rownames_to_column( OMs_classes/rowSums(OMs_classes) ), 
                                by = "rowname" )
@@ -74,21 +74,20 @@ data_test <-  dplyr::left_join(x = tibble::rownames_to_column( TGs_domains/rowSu
 
 ```{r, results='hide', message=FALSE, warning=FALSE}
 
-devtools::install_github('pereiramemo/bgcpred')
+# devtools::install_github('pereiramemo/bgcpred')
 library(bgcpred)
 
 ```
 
 #### We will create the models for the lantipeptide, nrps, t1pks, t2pks, t3pks and terpene BGC classes. First, we use the get_domains() function to extract the corresponding domains of each BGC class. Then, we use these domains and class RCs to train the models.
-```{r}
+```{r, warning=FALSE}
 
 bgc_classes <- c("lantipeptide","nrps","t1pks","t2pks","t3pks","terpene")
 
 bgc_model <- list()
 
-#data_train <- data_train %>% select(-strK_like2)
 
-for (b in bgc_classes_all) {
+for (b in bgc_classes) {
 
   y <- data_train[,b, drop = T ]
   domains_x <- get_domains(b)
@@ -107,24 +106,15 @@ for (b in bgc_classes_all) {
 ### __4. BGC class RCs predictions __
 #### Now that we have created the models, we use them to predict the BGC class RCs in TGs data set. For this task, we use the class_model_predict() function from bgcpred.
 
-```{r}
+```{r, warning=FALSE}
 
 bgc_pred <- list()
 
-for (b in bgc_classes_all) {
+for (b in bgc_classes) {
   
-  print(b)
   domains_x <- get_domains(b)
   domains_x <- domains_x[ domains_x %in% colnames(data_test) ]
   x <- data_test[,domains_x, drop = F ]
-  
-  domains_x_model <- names(bgc_model[[b]]$regression_model$coefficients)[-1]
-  zeros_ncol <- domains_x_model[! domains_x_model %in% domains_x ] 
-  if (length(zeros_ncol) > 0 ) {
-    zeros2add <- matrix(0, nrow = dim(x)[1], ncol = length(zeros_ncol)) %>% as.data.frame()
-    colnames(zeros2add) <- zeros_ncol
-    x <- cbind(x,zeros2add)
-  }
   
  bgc_pred[[b]] <- class_model_predict(x = x, 
                                       model_c = bgc_model[[b]]$binary_model, 
@@ -137,7 +127,7 @@ for (b in bgc_classes_all) {
 ### __5. Result evaluations __
 #### Given that TGs is a simulated data set, we actually know the BGC class abundances, and can compare these with the model predictions.
 
-```{r}
+```{r, warning=FALSE}
 
 # select some nice colors
 class2color <- cbind(class = bgc_classes, 
@@ -182,10 +172,10 @@ ggplot(X, aes(x = real, y=pred)) +
 
 ### __6. Bibliography __
 
-Sunagawa, S., Coelho, L. P., Chaffron, S., Kultima, J. R., Labadie, K., Salazar, G., ??? Velayoudon, D. (2015). Structure and function of the global ocean microbiome. Science, 348(6237), 1261359???1261359. http://doi.org/10.1126/science.1261359   
+Breiman, L. (2001). Random forests. Machine Learning, 45(1), 5???32.
+http://doi.org/10.1023/A:1010933404324  
 
 Delmont, T. O., Quince, C., Shaiber, A., Esen, O. C., Lee, S. T. M., Lucker, S., & Eren, A. M. (2017). Nitrogen-Fixing Populations Of Planctomycetes And  Proteobacteria Are Abundant In The Surface Ocean. bioRxiv, 129791. http://doi.org/10.1101/129791  
 
-Breiman, L. (2001). Random forests. Machine Learning, 45(1), 5???32.
-http://doi.org/10.1023/A:1010933404324  
+Sunagawa, S., Coelho, L. P., Chaffron, S., Kultima, J. R., Labadie, K., Salazar, G., ??? Velayoudon, D. (2015). Structure and function of the global ocean microbiome. Science, 348(6237), 1261359???1261359. http://doi.org/10.1126/science.1261359   
 
