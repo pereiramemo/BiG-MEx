@@ -53,5 +53,5 @@ See help
 sudo ./run_bgc_class_models.bash . . --help
 ```
 
-### See [wiki](https://github.com/pereiramemo/ufBGCtoolbox/wiki) for further documentation.
+### See the [wiki](https://github.com/pereiramemo/ufBGCtoolbox/wiki) for further documentation.
 
