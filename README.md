@@ -6,7 +6,7 @@ ufBGCtoolbox: a tool for the mining of BGC domains and classes in metagenomic da
 
 ## Installation
 
-ufBGCtoolbox consists of four dokcer images: 
+ufBGCtoolbox consists of four docker images: 
 1. epereira/ufBGCtolbox:bgc_dom_annot 
 2. epereira/ufBGCtolbox:bgc_dom_div 
 3. epereira/ufBGCtolbox:bgc_dom_merged_div 
