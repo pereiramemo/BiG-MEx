@@ -1,13 +1,13 @@
 ---
-title: "bgcpred_workflow"
+title: "bgcpred workflow"
 author: "Emiliano Pereira"
 date: "September 29, 2017"
-output: html_document
+output:
+  html_document:
+    toc: true
+    toc_depth: 3
+    toc_float: true
 ---
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
 
 &nbsp;
 
@@ -21,7 +21,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 &nbsp;
 
-#### 2. TGs: 150 simulated metagenomes. It is based on the complete and nearly genomes corresponding to the genera found in TARA Oceans taxonomic annotation of the Operational Taxonomic Units (OTUs) (Sunagawa et al., 2015). Composed of 465 genomes from 301 different species.
+#### 2 TGs: 150 simulated metagenomes. It is based on the complete and nearly genomes corresponding to the genera found in TARA Oceans taxonomic annotation of the Operational Taxonomic Units (OTUs) (Sunagawa et al., 2015). Composed of 465 genomes from 301 different species.
 
 #### Load libraries and tables
 
@@ -124,7 +124,7 @@ for (b in bgc_classes) {
 
 ```
 
-### __5. Result evaluations __
+### __5. Results evaluation __
 #### Given that TGs is a simulated data set, we actually know the BGC class abundances, and can compare these with the model predictions.
 
 ```{r, warning=FALSE}
