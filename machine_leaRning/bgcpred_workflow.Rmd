@@ -73,13 +73,15 @@ bgc_classes <- c("lantipeptide","nrps","t1pks","t2pks","t3pks","terpene")
 
 bgc_model <- list()
 
-for (b in bgc_classes) {
+#data_train <- data_train %>% select(-strK_like2)
 
-  y <- data_train[,b]
+for (b in bgc_classes_all) {
+
+  y <- data_train[,b, drop = T ]
   domains_x <- get_domains(b)
   domains_x <- domains_x[ domains_x %in% colnames(data_train) ]
-  x <- data_train[,domains_x]
-
+  x <- data_train[,domains_x, drop = F ]
+  
   bgc_model[[b]] <- class_model_train(y = y, 
                                       x = x, 
                                       binary_method = "rf", 
@@ -96,11 +98,20 @@ for (b in bgc_classes) {
 
 bgc_pred <- list()
 
-for (b in bgc_classes) {
+for (b in bgc_classes_all) {
   
+  print(b)
   domains_x <- get_domains(b)
-  domains_x <- domains_x[ domains_x %in% colnames(data_train) ]
-  x <- data_test[,domains_x]
+  domains_x <- domains_x[ domains_x %in% colnames(data_test) ]
+  x <- data_test[,domains_x, drop = F ]
+  
+  domains_x_model <- names(bgc_model[[b]]$regression_model$coefficients)[-1]
+  zeros_ncol <- domains_x_model[! domains_x_model %in% domains_x ] 
+  if (length(zeros_ncol) > 0 ) {
+    zeros2add <- matrix(0, nrow = dim(x)[1], ncol = length(zeros_ncol)) %>% as.data.frame()
+    colnames(zeros2add) <- zeros_ncol
+    x <- cbind(x,zeros2add)
+  }
   
  bgc_pred[[b]] <- class_model_predict(x = x, 
                                       model_c = bgc_model[[b]]$binary_model, 
