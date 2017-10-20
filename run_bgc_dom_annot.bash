@@ -12,7 +12,7 @@ function realpath() {
 }
 
 if [[ "$#" -lt 2 ]]; then
-  echo "see run_bgc_dom_annot.bash . . --help"
+  echo -e "Missing parameters.\nSee run_bgc_dom_annot.bash . . --help"
   exit
 fi  
 
