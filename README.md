@@ -33,7 +33,7 @@ sudo ./run_bgc_dom_annot.bash . . --help
 
 ### 2. bgc_dom_div
 
-bgc_dom_div has two different modes: sample and merge. The sample mode takes as an input metagenomic unassembled data and generates a targeted assembly of the domains. Subsequently, it clusters the assembled sequences, places these on pre-computed reference trees and computes the Shannon diversity index. The merge mode integrates the sample mode results to compute the diversity based on rarefied subsamples and integrates the phylogenetic placement.
+bgc_dom_div has two different modes: sample and merge. The sample mode takes as an input metagenomic unassembled data and generates a targeted assembly of the domains. Subsequently, it clusters the assembled sequences, places these on pre-computed reference trees and computes the Shannon diversity index. The merge mode integrates the sample mode results to compute the diversity based on rarefied subsamples and integrates the phylogenetic placement.  
 
 See help
 ```
