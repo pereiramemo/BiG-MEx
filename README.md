@@ -41,9 +41,6 @@ See help
 ```
 sudo ./run_bgc_dom_div.bash sample . . . --help
 
-```
-See help
-```
 sudo ./run_bgc_dom_div.bash merge . . --help
 
 ```
