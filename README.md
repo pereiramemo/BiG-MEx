@@ -1,7 +1,7 @@
 # ufBGCtoolbox
 ufBGCtoolbox: a tool for the mining of BGC domains and classes in metagenomic data. It consists of the following modules:
-1. bgc_dom_annot: fast identification of BGC protein domains.  
-2. bgc_dom_div: BGC domain-specific diversity analysis.  
+1. run_bgc_dom_annot: fast identification of BGC protein domains.  
+2. run_bgc_dom_div: BGC domain-specific diversity analysis.  
 3. bgc_model_class: BGC class relative count predictions.  
 
 ## Installation
@@ -23,12 +23,14 @@ All four images are in [dockerhub](https://hub.docker.com/). These will be downl
 
 ## Documentation
 
+All scripts run the docker images, which include all the scripts, dependencies and data used in the analysis. This implies that the run_bgc_* scripts have to be executed as sudo in Linux OS.
+
 ### 1. bgc_dom_annot
 This first module runs [UProC](http://uproc.gobics.de/) using a BGC domain profile database. It takes as an input metagenomic unassembled data and outputs an abundance BGC domain profile table.
 
 See help
 ```
-(sudo) ./run_bgc_dom_annot.bash . . --help
+sudo ./run_bgc_dom_annot.bash . . --help
 ```
 
 ### 2. bgc_dom_div
@@ -42,7 +44,7 @@ sudo ./run_bgc_dom_div.bash sample . . . --help
 ```
 See help
 ```
-(sudo) ./run_bgc_dom_div.bash merge . . --help
+sudo ./run_bgc_dom_div.bash merge . . --help
 
 ```
 
@@ -51,7 +53,7 @@ This module is based on the [bgcpred](https://github.com/pereiramemo/bgcpred) R 
 
 See help
 ```
-(sudo) ./run_bgc_class_models.bash . . --help
+sudo ./run_bgc_class_models.bash . . --help
 ```
 
 ### See the [wiki](https://github.com/pereiramemo/ufBGCtoolbox/wiki) for further documentation.
