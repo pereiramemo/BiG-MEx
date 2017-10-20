@@ -57,25 +57,27 @@ Now is time to create our tables for the training and test of our models. In add
 ```{r, warning=FALSE}
 data_train <- bind_rows(OMs_domains %>%
                           gather(bgc, counts, -metaG) %>%
-                          group_by(bgc) %>%
+                          group_by(metaG) %>%
                           mutate(rc = prop.table(counts)),
-                        OMs_classes %>%
+                          OMs_classes %>%
                           gather(bgc, counts, -metaG) %>%
-                          group_by(bgc) %>%
+                          group_by(metaG) %>%
                           mutate(rc = prop.table(counts))) %>%
   select(metaG, bgc, rc) %>%
-  spread(bgc, rc, fill = 0)
+  spread(bgc, rc, fill = 0) %>%
+  ungroup()
 
 data_test <- bind_rows(TGs_domains %>%
                          gather(bgc, counts, -metaG) %>%
-                         group_by(bgc) %>%
+                         group_by(metaG) %>%
                          mutate(rc = prop.table(counts)),
                        TGs_classes %>%
                          gather(bgc, counts, -metaG) %>%
-                         group_by(bgc) %>%
+                         group_by(metaG) %>%
                          mutate(rc = prop.table(counts))) %>%
   select(metaG, bgc, rc) %>%
-  spread(bgc, rc, fill = 0)
+  spread(bgc, rc, fill = 0) %>%
+  ungroup()
 ```
 
 ## 3.4 Creating the models
