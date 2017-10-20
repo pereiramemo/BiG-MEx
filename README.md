@@ -30,7 +30,7 @@ This first module runs [UProC](http://uproc.gobics.de/) using a BGC domain profi
 
 See help
 ```
-sudo ./run_bgc_dom_annot.bash . . --help
+./run_bgc_dom_annot.bash . . --help
 ```
 
 ### 2. bgc_dom_div
@@ -39,9 +39,9 @@ bgc_dom_div has two different modes: sample and merge. The sample mode takes as 
 
 See help
 ```
-sudo ./run_bgc_dom_div.bash sample . . . --help
+./run_bgc_dom_div.bash sample . . . --help
 
-sudo ./run_bgc_dom_div.bash merge . . --help
+./run_bgc_dom_div.bash merge . . --help
 
 ```
 
@@ -50,7 +50,7 @@ This module is based on the [bgcpred](https://github.com/pereiramemo/bgcpred) R 
 
 See help
 ```
-sudo ./run_bgc_class_models.bash . . --help
+./run_bgc_class_models.bash . . --help
 ```
 
 ### See the [wiki](https://github.com/pereiramemo/ufBGCtoolbox/wiki) for further documentation.
