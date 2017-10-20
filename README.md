@@ -4,10 +4,6 @@ ufBGCtoolbox: a tool for the mining of BGC domains and classes in metagenomic da
 2. run_bgc_dom_div: BGC domain-specific diversity analysis.  
 3. bgc_model_class: BGC class relative count predictions.  
 
-### Table of Contents
-1. [Documentation](#Documentation)
-2. [bgc_dom_annot](#bgc_dom_annot)
-
 ## Installation
 
 ufBGCtoolbox consists of four docker images: 
