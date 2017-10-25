@@ -236,8 +236,6 @@ To compare the domain diversity between samples, we have the rarefaction plot `O
 </p>
 
 
-
-
 It may be useful to analyze the phylogenteic placement of all the samples togehter. You can find this integrated placement under `OSD_DATA/out_dom_merged_div_osd_PKS_AT/PKS_AT_tree_data/`, including the tree plot.
 
 <p align="center">
