@@ -36,6 +36,7 @@ docker run \
   --volume ${OUTPUT_DIR}:${CONTAINER_DST_DIR}:rw \
   --detach=false \
   --rm \
+  --user $(id -u):$(id -g) \
    epereira/ufbgctoolbox:bgc_class_models \
   --input "${CONTAINER_SRC_DIR}/${INPUT_FILE}" \
   --outdir "${OUTPUT}" \

@@ -46,6 +46,7 @@ if [[ -z "${INPUT_FILE2}" ]]; then
     --volume ${OUTPUT_DIR}:${CONTAINER_DST_DIR}:rw \
     --detach=false \
     --rm \
+    -u $(id -u):$(id -g) \
     epereira/ufbgctoolbox:bgc_dom_annot \
     --single_reads "${CONTAINER_SRC_DIR}/${INPUT_FILE1}" \
     --outdir "${OUTPUT}" \
@@ -58,6 +59,7 @@ elif [[ -z "${INPUT_FILE3}" ]]; then
     --volume ${OUTPUT_DIR}:${CONTAINER_DST_DIR}:rw \
     --detach=false \
     --rm \
+    --user $(id -u):$(id -g) \
     epereira/ufbgctoolbox:bgc_dom_annot \
     --reads "${CONTAINER_SRC_DIR}/${INPUT_FILE1}" \
     --reads2 "${CONTAINER_SRC_DIR}/${INPUT_FILE2}" \
@@ -71,6 +73,7 @@ else
     --volume ${OUTPUT_DIR}:${CONTAINER_DST_DIR}:rw \
     --detach=false \
     --rm \
+    --user $(id -u):$(id -g) \
     epereira/ufbgctoolbox:bgc_dom_annot \
     --reads "${CONTAINER_SRC_DIR}/${INPUT_FILE1}" \
     --reads2 "${CONTAINER_SRC_DIR}/${INPUT_FILE2}" \

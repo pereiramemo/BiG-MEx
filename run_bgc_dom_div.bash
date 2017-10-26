@@ -57,6 +57,7 @@ if [[ "${1}" == "sample" ]]; then
       --volume ${OUTPUT_DIR}:${CONTAINER_DST_DIR}:rw \
       --detach=false \
       --rm \
+      --user $(id -u):$(id -g) \
       epereira/ufbgctoolbox:bgc_dom_div \
         --input "${CONTAINER_SRC_DIR}/${INPUT_FILE1}" \
         --reads "${CONTAINER_SRC_DIR}/${INPUT_FILE2}" \
@@ -71,6 +72,7 @@ if [[ "${1}" == "sample" ]]; then
       --volume ${OUTPUT_DIR}:${CONTAINER_DST_DIR}:rw \
       --detach=false \
       --rm \
+      --user $(id -u):$(id -g) \
       epereira/ufbgctoolbox:bgc_dom_div \
         --input "${CONTAINER_SRC_DIR}/${INPUT_FILE1}" \
         --reads "${CONTAINER_SRC_DIR}/${INPUT_FILE2}" \
@@ -124,6 +126,7 @@ if [[ "${1}" == "merge" ]]; then
     --volume ${OUTPUT_DIR}:${CONTAINER_DST_DIR}:rw \
     --detach=false \
     --rm \
+    --user $(id -u):$(id -g) \
     epereira/ufbgctoolbox:bgc_dom_merge_div \
       --input_dirs "${INPUT}" \
       --outdir "${OUTPUT}" \
