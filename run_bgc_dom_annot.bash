@@ -47,7 +47,7 @@ if [[ -z "${INPUT_FILE2}" ]]; then
     --detach=false \
     --rm \
     -u $(id -u):$(id -g) \
-    epereira/ufbgctoolbox:bgc_dom_annot \
+    epereira/bgc_dom_annot:latest \
     --single_reads "${CONTAINER_SRC_DIR}/${INPUT_FILE1}" \
     --outdir "${OUTPUT}" \
     $@
@@ -60,7 +60,7 @@ elif [[ -z "${INPUT_FILE3}" ]]; then
     --detach=false \
     --rm \
     --user $(id -u):$(id -g) \
-    epereira/ufbgctoolbox:bgc_dom_annot \
+    epereira/bgc_dom_annot:latest \
     --reads "${CONTAINER_SRC_DIR}/${INPUT_FILE1}" \
     --reads2 "${CONTAINER_SRC_DIR}/${INPUT_FILE2}" \
     --outdir "${OUTPUT}" \
@@ -74,7 +74,7 @@ else
     --detach=false \
     --rm \
     --user $(id -u):$(id -g) \
-    epereira/ufbgctoolbox:bgc_dom_annot \
+     epereira/bgc_dom_annot:latest  \
     --reads "${CONTAINER_SRC_DIR}/${INPUT_FILE1}" \
     --reads2 "${CONTAINER_SRC_DIR}/${INPUT_FILE2}" \
     --single_reads "${CONTAINER_SRC_DIR}/${INPUT_FILE3}" \

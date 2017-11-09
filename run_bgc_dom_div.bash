@@ -58,7 +58,7 @@ if [[ "${1}" == "sample" ]]; then
       --detach=false \
       --rm \
       --user $(id -u):$(id -g) \
-      epereira/ufbgctoolbox:bgc_dom_div \
+      epereira/bgc_dom_div:latest \
         --input "${CONTAINER_SRC_DIR}/${INPUT_FILE1}" \
         --reads "${CONTAINER_SRC_DIR}/${INPUT_FILE2}" \
         --reads2 "${CONTAINER_SRC_DIR}/${INPUT_FILE3}" \
@@ -73,7 +73,7 @@ if [[ "${1}" == "sample" ]]; then
       --detach=false \
       --rm \
       --user $(id -u):$(id -g) \
-      epereira/ufbgctoolbox:bgc_dom_div \
+      epereira/bgc_dom_div:latest \
         --input "${CONTAINER_SRC_DIR}/${INPUT_FILE1}" \
         --reads "${CONTAINER_SRC_DIR}/${INPUT_FILE2}" \
         --reads2 "${CONTAINER_SRC_DIR}/${INPUT_FILE3}" \
@@ -127,7 +127,7 @@ if [[ "${1}" == "merge" ]]; then
     --detach=false \
     --rm \
     --user $(id -u):$(id -g) \
-    epereira/ufbgctoolbox:bgc_dom_merge_div \
+    epereira/bgc_dom_merge_div:latest \
       --input_dirs "${INPUT}" \
       --outdir "${OUTPUT}" \
       $@
