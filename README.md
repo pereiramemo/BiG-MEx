@@ -50,7 +50,7 @@ This module is based on the [bgcpred](https://github.com/pereiramemo/bgcpred) R 
 
 See help
 ```
-./run_bgc_class_models.bash . . --help
+./run_bgc_class_pred.bash . . --help
 ```
 
 ### See the [wiki](https://github.com/pereiramemo/ufBGCtoolbox/wiki) for further documentation.
