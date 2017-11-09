@@ -2,15 +2,15 @@
 ufBGCtoolbox: a tool for the mining of BGC domains and classes in metagenomic data. It consists of the following modules:
 1. run_bgc_dom_annot: fast identification of BGC protein domains.  
 2. run_bgc_dom_div: BGC domain-specific diversity analysis.  
-3. bgc_model_class: BGC class relative count predictions.  
+3. run_bgc_class_pred: BGC class relative count predictions.  
 
 ## Installation
 
 ufBGCtoolbox consists of four docker images: 
-1. epereira/ufBGCtolbox:bgc_dom_annot 
-2. epereira/ufBGCtolbox:bgc_dom_div 
-3. epereira/ufBGCtolbox:bgc_dom_merged_div 
-4. epereira/ufBGCtolbox:bgc_class_models
+1. epereira/bgc_dom_annot  
+2. epereira/bgc_dom_div  
+3. epereira/bgc_dom_merge_div  
+4. epereira/bgc_class_pred  
 
 Before running ufBGCtoolbox it is necessary to install [docker](https://www.docker.com/).
 
