@@ -1,0 +1,177 @@
+---
+title: "BGC_class_models_CV.Rmd"
+output: html_document
+---
+
+We will carry out a series of CV procedures to evaluate the performance of the BGC class RC models.
+First, let's load the R packages we will need.
+
+
+```{r, include=FALSE}
+
+library(tidyverse)
+library(cowplot)
+library(bgcpred)
+library(gridExtra)
+
+
+```
+
+And load and transform the data.
+
+```{r}
+
+TBL_DOM <- read.table(file = "data/metagenomes_dom_annot_wide_general.tsv",
+                      header=T, sep="\t", row.names = 1)
+TBL_CLASS <- read.table(file = "data/ref_genomes_class_cov_wide_general.tsv",
+                        header=T, sep="\t", row.names = 1)
+
+
+data <- inner_join(x = tibble::rownames_to_column( TBL_DOM/rowSums(TBL_DOM) ),
+                   y = tibble::rownames_to_column(TBL_CLASS/rowSums(TBL_CLASS) ),
+                   by = "rowname" )
+
+```
+
+
+We will use some custom R functions necessary to carry out the cross-validation procedures. Although there are some R packages that do this, by using our functions, it easier to have full control of the process. 
+
+1) create_cv_objects() randomly defines the training and testing groups. It creates a matrix storing the row numbers that will be used in each CV procedure and a vector that specifies which rows will be used as the training and testing groups.
+
+2) run_cv() consist of three nested for loops that run the CV procedures according to the training and testing groups defined by create_cv_objects(), and computes the Mean Squared Error and Pearson Correlation Coefficient between for each iteration.
+
+```{r}
+
+source(file = "./toolbox.R")
+
+```
+
+We will carry out 100 three fold CV procedures. 
+
+```{r, include=FALSE}
+
+cv_objects <- create_cv_objects( samples_n = 150, rep = 100 , folds = 3)
+
+
+bgc_classes <- c("nrps","terpene","lantipeptide",
+                 "t1pks","t2pks","t3pks")
+
+model_cv_results <- run_cv(bgc_classes = bgc_classes,
+                            subsets = cv_objects$matrix,
+                            folds = cv_objects$folds,
+                            verbose =  T)
+
+
+```
+
+Now we will extract Mean Squared Error and Pearson Correlation coefficient of model_cv_results.
+
+```{r}
+
+f <- function(x) lapply(x, "[[", "mse") %>% do.call("rbind", .)
+mse <- lapply(model_cv_results, f ) %>%
+       plyr::ldply(., data.frame)
+colnames(mse) <- c("class","mse")
+
+
+f <- function(x) lapply(x, "[[", "cor") %>% do.call("rbind", .)
+cors <- lapply(model_cv_results, f ) %>%
+        plyr::ldply(., data.frame) 
+colnames(cors) <- c("class","cor")
+
+
+```
+
+We will use the mse and cor data framse to plot the distribution of MSE and correlation coefficients.
+
+
+```{r}
+pmse <- ggplot(mse, aes(x = class, y = mse, fill = class)) +
+        geom_jitter(alpha = .1) +
+        geom_violin( aes(fill = class), alpha = .5,  trim = T, scale = "width" ) +
+        stat_summary(fun.y = median ,geom='point', size = 0.5) +
+        xlab("BGC class") +
+        ylab("Mean Squared Error") +
+        theme_light() +
+        scale_fill_hue(c=70, l=40,h.start = 200,direction = -1) +
+        theme( axis.text.y =  element_text(size= 8, color = "black"),
+               axis.text.x =  element_text(size= 8, color = "black", angle = 45, hjust = 1) ,
+               axis.title.x = element_text(size = 10, color = "black" , margin = unit(c(2, 0, 0, 0),"mm") ),
+             axis.title.y = element_text(size = 10, color = "black", margin = unit(c(0, 5, 5, 0),"mm") ) ) +
+      scale_x_discrete(position = "bottom") +
+      guides(fill=FALSE)
+
+pcor <- ggplot(cors, aes(x = class, y = cor, fill = class)) +
+       geom_jitter(alpha = .1) +
+       geom_violin( aes(fill = class), alpha = .5, trim = T, scale = "width") +
+       #geom_boxplot(alpha = .5) +
+       stat_summary(fun.y = median ,geom='point', size = 0.5) +
+       xlab("BGC class") +
+       ylab("Pearson's correlation coefficient") +
+       theme_light() +
+       scale_fill_hue(c=70, l=40,h.start = 200,direction = -1) +
+       theme( axis.text.y =  element_text(size = 8, color = "black"),
+              axis.text.x = element_blank(),
+             # axis.text.x = element_text(size = 6, color = "black", angle = 45, hjust = 1 ),
+              axis.title.x = element_blank(),
+              axis.title.y = element_text(size = 10, color = "black", margin = unit(c(0, 5, 0, 0),"mm") ) ) +
+      scale_x_discrete(position = "bottom") +
+      guides(fill=FALSE)
+
+```
+
+And visualize them together.
+
+```{r}
+plot_grid(pcor,pmse, nrow = 2, align = "v",
+          rel_heights = c(0.7,0.9) )
+
+```
+
+Lastly, let's see how the correlation looks like in a scatter plot. For this, we will select the first CV procedure.
+
+First, we have to extract the predicted and real RC of the first iteration for each BGC class.
+```{r}
+X <- lapply(model_cv_results, "[[",1  ) %>%
+     plyr::ldply(., data.frame) %>%
+     .[,1:3]
+colnames(X) <- c("class","real","pred")
+
+```
+
+Now we can plot the real vs the predicted.
+
+```{r}
+
+
+# in this command, we will just create a title for each BGC class including the Pearson correlation coefficient.
+class2cor <- X %>%
+             group_by(class) %>%
+             summarise(cor = cor(x = real, y = pred ) ) %>%
+             as.data.frame()
+class2cor$cor <- round(class2cor$cor,2)
+titles <- paste(class2cor$class, "Pearson's r =", class2cor$cor)
+names(titles) <- class2cor$class
+
+# this is the plot
+ggplot(X, aes(x = real, y = pred, color =  class ) ) +
+  geom_abline(intercept = 0, slope = 1, color = "gray50") +
+  geom_point( alpha = 0.5) +
+  scale_color_hue(c=70, l=40,h.start = 200,direction = -1) +
+  facet_wrap( ~ class, ncol = 2, nrow = 4, scales = "free", labeller = as_labeller(titles)) +
+  xlab("Real relative counts") +
+  ylab("Predicted relative counts") +
+  theme_light() +
+  expand_limits(y=0, x=0) +
+  scale_x_continuous(labels = scales::percent) +
+  scale_y_continuous(labels = scales::percent) +
+  theme( axis.text.y =  element_text(size = 6, color = "black" ),
+         axis.text.x =  element_text(size = 6, color = "black", hjust = 1 ),
+         axis.title.x = element_text(size = 8, color = "black", margin = unit(c(5, 0, 0, 0),"mm") ),
+         axis.title.y = element_text(size = 8, color = "black", margin = unit(c(0, 5, 0, 0),"mm") ),
+         strip.text.x = element_text(size = 7, colour = "black" ),
+         strip.background = element_blank(),
+         strip.text = element_text(color = "black", size=6) ) +
+  guides(color=FALSE)
+
+```
