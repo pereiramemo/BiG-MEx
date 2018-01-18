@@ -42,7 +42,6 @@ See help
 ./run_bgc_dom_div.bash sample . . . --help
 
 ./run_bgc_dom_div.bash merge . . --help
-
 ```
 
 ### 3. bgc_class_pred
