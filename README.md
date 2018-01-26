@@ -1,22 +1,22 @@
-# ufBGCtoolbox
-ufBGCtoolbox: a tool for the mining of BGC domains and classes in metagenomic data. It consists of the following modules:
+# BiG-MEx
+BiG-MEx: a tool for the mining of BGC domains and classes in metagenomic data. It consists of the following modules:
 1. run_bgc_dom_annot: fast identification of BGC protein domains.  
 2. run_bgc_dom_div: BGC domain-specific diversity analysis.  
 3. run_bgc_class_pred: BGC class relative count predictions.  
 
 ## Installation
 
-ufBGCtoolbox consists of four docker images: 
+BiG-MEx consists of four docker images: 
 1. epereira/bgc_dom_annot  
 2. epereira/bgc_dom_div  
 3. epereira/bgc_dom_merge_div  
 4. epereira/bgc_class_pred  
 
-Before running ufBGCtoolbox it is necessary to install [docker](https://www.docker.com/).
+Before running BiG-MEx it is necessary to install [docker](https://www.docker.com/).
 
 Then just clone the GitHub repository:
 ```
-git clone git@github.com:pereiramemo/ufBGCtoolbox.git
+git clone git@github.com:pereiramemo/BiG-MEx.git
 ```
 
 All four images are in [dockerhub](https://hub.docker.com/). These will be downloaded automatically the first time you run the scripts.
@@ -52,5 +52,5 @@ See help
 ./run_bgc_class_pred.bash . . --help
 ```
 
-### See the [wiki](https://github.com/pereiramemo/ufBGCtoolbox/wiki) for further documentation.
+### See the [wiki](https://github.com/pereiramemo/BiGMEx/wiki) for further documentation.
 
