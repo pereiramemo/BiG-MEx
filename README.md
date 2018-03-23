@@ -52,5 +52,5 @@ See help
 ./run_bgc_class_pred.bash . . --help
 ```
 
-### See the [wiki](https://github.com/pereiramemo/BiGMEx/wiki) for further documentation.
+### See the [wiki](https://github.com/pereiramemo/BiG-MEx/wiki) for further documentation.
 
