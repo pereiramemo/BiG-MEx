@@ -11,12 +11,13 @@ output:
 ---
 # 1. Introduction
 
-In the following tutorial we are going to create BGC class-specific models to predict the abundance of BGC classes in metagenomic samples. These models use the class relative counts (RC) as the response variables, and the domains RCs of the corresponding classes, as the predictor variables. To construct a BGC class RC model, we apply a two-step zero-inflated process. First, we predict the presence or absence of the target BGC class using a random forest (RF) binary classifier (Breiman, 2001). Second, we use a multiple linear (ML) regression to predict the BGC class RCs, but only if the class was previously predicted as present. In the cases where the number of zero values is too low (<10) or non-existent, we directly apply a ML regression. The models are trained using a simulated metagenomic dataset of 150 samples (i.e. OMs dataset, see below).
+In the following tutorial we are going to create BGC class-specific models to predict the abundance of BGC classes in metagenomic samples. These models use the class abundance as the response variables, and the domains abundance of the corresponding classes, as the predictor variables. To construct a BGC class model, we apply a two-step zero-inflated process. First, we predict the presence or absence of the target BGC class using a random forest (RF) binary classifier (Breiman, 2001). Second, we use a multiple linear (ML) regression to predict the BGC class abundance, but only if the class was previously predicted as present. In the cases where the number of zero values is too low (<10) or non-existent, we directly apply a ML regression. The models are trained using a simulated metagenomic dataset of 150 samples (i.e. OMs dataset, see below).
 
 # 2. Datasets
 
-1. __OMs:__ 150 simulated metagenomes. It is based on the complete and nearly complete genome sequences of the Ocean Microbial Reference Gene Catalogue (OM-RGC) (Sunagawa et al., 2015) and the Metagenome Assembled Genomes of TARA Oceans (MAGs) (Delmont, et al., 2017). 384 genomes corresponding to more than 263 different species.
-2. __TGs:__ 150 simulated metagenomes. It is based on the complete and nearly complete genome sequences corresponding to the genera found in the TARA Oceans taxonomic annotation of the Operational Taxonomic Units (OTUs) (Sunagawa et al., 2015). Composed of 465 genomes from 301 different species.
+1. __OMs:__ 150 simulated metagenomes. It is based on the complete and nearly complete genome sequences of the Ocean Microbial Reference Gene Catalogue (OM-RGC) (Sunagawa et al., 2015). Composed of 376 different species.
+
+2. __TGs:__ 150 simulated metagenomes. It is based on the complete and nearly complete genome sequences corresponding to the genera found in the TARA Oceans taxonomic annotation of the Operational Taxonomic Units (OTUs) (Sunagawa et al., 2015). Composed of 331 different species.
 
 # 3. Step-by-step tutorial
 
@@ -52,7 +53,7 @@ for (n in colnames(OMs_domains)[i]){
 
 ## 3.3 Create training and test data
 
-Now is time to create our tables for the training and test of our models. In addition we are going to transform the data into relative counts
+Now is time to create our tables for the training and test of our models.
 
 ```{r, warning=FALSE}
 data_train <- bind_rows(OMs_domains %>%
