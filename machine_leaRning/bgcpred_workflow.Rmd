@@ -28,20 +28,24 @@ First we need to load the necessary libraries and data. Bgcpred installation ins
 library(tidyverse)
 library(bgcpred)
 
-train_data_domains <- read_csv(file = "data/150_domain_abund_simulated_OMs.csv", col_names = TRUE) %>%
-  rename(metaG = X1)
-test_data_domains <- read_csv(file = "data/150_domain_abund_simulated_TGs.csv", col_names = TRUE) %>%
-  rename(metaG = X1)
+URL <- "https://github.com/pereiramemo/BiG-MEx/wiki/files/"
 
-train_data_classes <- read_csv(file = "data/150_class_abund_simulated_OMs.csv", col_names = TRUE) %>%
-  rename(metaG = X1)
-test_data_classes <- read_csv(file = "data/150_class_abund_simulated_TGs.csv", col_names = TRUE) %>%
-  rename(metaG = X1)
+URL_train_data_domains <- paste(URL,"OMs_metagenomes_dom_annot_wide.tsv", sep = "")
+train_data_domains <- read_tsv(file = URL_train_data_domains, col_names = TRUE)
+
+URL_test_data_domains <- paste(URL,"TGs_metagenomes_dom_annot_wide.tsv", sep = "")
+test_data_domains <- read_tsv(file = URL_test_data_domains, col_names = TRUE)
+
+URL_train_data_classes <- paste(URL,"OMs_ref_genomes_class_cov_wide.tsv", sep = "")
+train_data_classes <- read_tsv(file = URL_train_data_classes, col_names = TRUE) 
+
+URL_test_data_classes <- paste(URL,"TGs_ref_genomes_class_cov_wide.tsv", sep = "")
+test_data_classes <- read_tsv(file = URL_test_data_classes, col_names = TRUE) 
 ```
 
 ## 3.2 Reformat test domain table
 
-And massage a little bit the data. First we will add a few domains not present in the TGs_domains table but present in the OMs_domains table, this will make our life easier later for the prediction and training
+And massage a little bit the data. First we will add a few domains not present in the test_data_domains table but present in the train_data_domains table, this will make our life easier later in the prediction and training
 
 ```{r, warning=FALSE}
 i <- !colnames(train_data_domains) %in% colnames(test_data_domains)
@@ -58,7 +62,7 @@ For the model creation we will use the __get_domains()__ and __class_model_train
 We will create the models for the lantipeptide, nrps, t1pks, t2pks, t3pks and terpene BGC classes. First, we use the get_domains() function to extract the corresponding domains of each BGC class. Then, we use these domains and classes RCs to train the models.
 
 ```{r, warning=FALSE}
-bgc_classes <- c("lantipeptide","nrps","t1pks","t2pks","t3pks","terpene")
+bgc_classes <- c("nrps","t1pks","t2pks","terpene")
 
 bgc_model <- list()
 
@@ -102,8 +106,7 @@ Given that TGs is a simulated data set, we actually know the BGC class abundance
 ```{r, warning=FALSE}
 # select some nice colors
 class2color <- cbind(class = bgc_classes, 
-                     color = c("#ECD078","#D95B43","#C02942",
-                               "#542437","#53777A","#000000"))
+                     color = c("#ECD078","#D95B43","#C02942","#000000"))
 
 
 # convert predictions list to a long data frame
@@ -134,7 +137,7 @@ names(titles) <- COR$bgc
 ggplot(X, aes(x = real, y=pred)) +
   geom_abline(intercept = 0, slope = 1, color = "gray60") +  
   geom_point(aes(color = bgc ), alpha = 0.5) +
-  facet_wrap( ~ bgc, ncol = 2, nrow = 3, scales = "free", labeller = as_labeller(titles)) +
+  facet_wrap( ~ bgc, ncol = 2, nrow = 2, scales = "free", labeller = as_labeller(titles)) +
   scale_color_manual(values = class2color[,"color"], name = "BGC class") + 
   xlab("Real abundance") +
   ylab("Predicted abundance") +
