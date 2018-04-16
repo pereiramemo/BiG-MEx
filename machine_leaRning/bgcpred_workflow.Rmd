@@ -39,7 +39,7 @@ test_data_classes <- read_csv(file = "data/150_class_abund_simulated_TGs.csv", c
   rename(metaG = X1)
 ```
 
-## 3.2 Reformat TGs table
+## 3.2 Reformat test domain table
 
 And massage a little bit the data. First we will add a few domains not present in the TGs_domains table but present in the OMs_domains table, this will make our life easier later for the prediction and training
 

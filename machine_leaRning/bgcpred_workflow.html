@@ -268,8 +268,8 @@ train_data_classes &lt;- read_csv(file = &quot;data/150_class_abund_simulated_OM
 test_data_classes &lt;- read_csv(file = &quot;data/150_class_abund_simulated_TGs.csv&quot;, col_names = TRUE) %&gt;%
   rename(metaG = X1)</code></pre>
 </div>
-<div id="reformat-tgs-table" class="section level2">
-<h2>3.2 Reformat TGs table</h2>
+<div id="reformat-test-domain-table" class="section level2">
+<h2>3.2 Reformat test domain table</h2>
 <p>And massage a little bit the data. First we will add a few domains not present in the TGs_domains table but present in the OMs_domains table, this will make our life easier later for the prediction and training</p>
 <pre class="r"><code>i &lt;- !colnames(train_data_domains) %in% colnames(test_data_domains)
 for (n in colnames(train_data_domains)[i]){
