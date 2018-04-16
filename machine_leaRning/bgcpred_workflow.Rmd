@@ -11,7 +11,7 @@ output:
 ---
 # 1. Introduction
 
-In the following tutorial we are going to create BGC class-specific models to predict the abundance of BGC classes in metagenomic samples. These models use the class abundance as the response variables, and the domains abundance of the corresponding classes, as the predictor variables. To construct a BGC class model, we apply a two-step zero-inflated process. First, we predict the presence or absence of the target BGC class using a random forest (RF) binary classifier (Breiman, 2001). Second, we use a multiple linear (ML) regression to predict the BGC class abundance, but only if the class was previously predicted as present. In the cases where the number of zero values is too low (<10) or non-existent, we directly apply a ML regression. The models are trained using a simulated metagenomic dataset of 150 samples (i.e. OMs dataset, see below).
+In the following tutorial we are going to create BGC class-specific models to predict the abundance of BGC classes in metagenomic samples. We used a machine-learning approach to create the models, which are class-specific, and were created using the abundance of each class and its corresponding domains as the response and predictor variables, respectively. Each model consists of a two-step zero-inflated process: First, the presence/absence of the BGC class is predicted using a random forest (RF) classifier; Second, the abundance is predicted with a multiple linear (ML) regression only if the class was previously predicted as present. The models are trained using a simulated metagenomic dataset of 150 samples (i.e. OMs dataset, see below).
 
 # 2. Datasets
 
@@ -28,14 +28,14 @@ First we need to load the necessary libraries and data. Bgcpred installation ins
 library(tidyverse)
 library(bgcpred)
 
-OMs_domains <- read_csv(file = "data/150_domain_abund_simulated_OMs.csv", col_names = TRUE) %>%
+train_data_domains <- read_csv(file = "data/150_domain_abund_simulated_OMs.csv", col_names = TRUE) %>%
   rename(metaG = X1)
-TGs_domains <- read_csv(file = "data/150_domain_abund_simulated_TGs.csv", col_names = TRUE) %>%
+test_data_domains <- read_csv(file = "data/150_domain_abund_simulated_TGs.csv", col_names = TRUE) %>%
   rename(metaG = X1)
 
-OMs_classes <- read_csv(file = "data/150_class_abund_simulated_OMs.csv", col_names = TRUE) %>%
+train_data_classes <- read_csv(file = "data/150_class_abund_simulated_OMs.csv", col_names = TRUE) %>%
   rename(metaG = X1)
-TGs_classes <- read_csv(file = "data/150_class_abund_simulated_TGs.csv", col_names = TRUE) %>%
+test_data_classes <- read_csv(file = "data/150_class_abund_simulated_TGs.csv", col_names = TRUE) %>%
   rename(metaG = X1)
 ```
 
@@ -44,44 +44,14 @@ TGs_classes <- read_csv(file = "data/150_class_abund_simulated_TGs.csv", col_nam
 And massage a little bit the data. First we will add a few domains not present in the TGs_domains table but present in the OMs_domains table, this will make our life easier later for the prediction and training
 
 ```{r, warning=FALSE}
-i <- !colnames(OMs_domains) %in% colnames(TGs_domains)
-for (n in colnames(OMs_domains)[i]){
-  TGs_domains <- TGs_domains %>%
+i <- !colnames(train_data_domains) %in% colnames(test_data_domains)
+for (n in colnames(train_data_domains)[i]){
+  test_data_domains <- test_data_domains %>%
     mutate_(.dots = setNames(0, n))
 }
 ```
 
-## 3.3 Create training and test data
-
-Now is time to create our tables for the training and test of our models.
-
-```{r, warning=FALSE}
-data_train <- bind_rows(OMs_domains %>%
-                          gather(bgc, counts, -metaG) %>%
-                          group_by(metaG) %>%
-                          mutate(rc = prop.table(counts)),
-                          OMs_classes %>%
-                          gather(bgc, counts, -metaG) %>%
-                          group_by(metaG) %>%
-                          mutate(rc = prop.table(counts))) %>%
-  select(metaG, bgc, rc) %>%
-  spread(bgc, rc, fill = 0) %>%
-  ungroup()
-
-data_test <- bind_rows(TGs_domains %>%
-                         gather(bgc, counts, -metaG) %>%
-                         group_by(metaG) %>%
-                         mutate(rc = prop.table(counts)),
-                       TGs_classes %>%
-                         gather(bgc, counts, -metaG) %>%
-                         group_by(metaG) %>%
-                         mutate(rc = prop.table(counts))) %>%
-  select(metaG, bgc, rc) %>%
-  spread(bgc, rc, fill = 0) %>%
-  ungroup()
-```
-
-## 3.4 Creating the models
+## 3.3 Training the models
 
 For the model creation we will use the __get_domains()__ and __class_model_train()__ functions from bgcpred package (although the package already includes the models: see wrap_up_predict()).  
 
@@ -94,10 +64,10 @@ bgc_model <- list()
 
 for (b in bgc_classes) {
   
-  y <- data_train %>% select(b) %>% unlist
+  y <- train_data_classes %>% select(b) %>% unlist
   domains_x <- get_domains(b)
-  domains_x <- domains_x[ domains_x %in% colnames(data_train) ]
-  x <- data_train %>% select(domains_x)
+  domains_x <- domains_x[ domains_x %in% colnames(train_data_domains) ]
+  x <- train_data_domains %>% select(domains_x)
   bgc_model[[b]] <- class_model_train(y = y, 
                                       x = x, 
                                       binary_method = "rf", 
@@ -106,9 +76,9 @@ for (b in bgc_classes) {
 }
 ```
 
-## 3.5 BGC class RCs predictions
+## 3.4 BGC class abundance predictions
 
-Now that we have created the models, we will use them to predict the BGC class RCs in the TGs data set. For this task, we are going to use the __class_model_predict()__ function from bgcpred.
+Now that we have created the models, we will use them to predict the BGC class abundance in the test data set. For this task, we are going to use the __class_model_predict()__ function from bgcpred.
 
 ```{r, warning=FALSE}
 bgc_pred <- list()
@@ -116,8 +86,8 @@ bgc_pred <- list()
 for (b in bgc_classes) {
   
   domains_x <- get_domains(b)
-  domains_x <- domains_x[ domains_x %in% colnames(data_test) ]
-  x <- data_test %>% select(domains_x)
+  domains_x <- domains_x[ domains_x %in% colnames(test_data_domains) ]
+  x <- test_data_domains %>% select(domains_x)
   
   bgc_pred[[b]] <- class_model_predict(x = x, 
                                        model_c = bgc_model[[b]]$binary_model, 
@@ -125,7 +95,7 @@ for (b in bgc_classes) {
 }  
 ```
 
-## 3.7 Results evaluation
+## 3.5 Results evaluation
 
 Given that TGs is a simulated data set, we actually know the BGC class abundances, and we can compare those with the model predictions.
 
@@ -143,7 +113,7 @@ pred_df <- bgc_pred %>%
 
 
 # extract and convert real abundances to a long data frame
-real_df <- data_test %>% 
+real_df <- test_data_classes %>% 
   select(bgc_classes) %>%
   gather(key = bgc, value = real)
 
@@ -155,7 +125,7 @@ X <- bind_cols(pred_df, real = real_df$real )
 # make titles including correlation values
 COR <- X %>% 
   group_by(bgc) %>%
-  summarise(cor = cor(real, pred) %>% round(., digits = 3))
+  summarise(cor = cor(real, pred) %>% round(., digits = 2))
 
 titles <- paste(COR$bgc, "cor:", COR$cor)
 names(titles) <- COR$bgc
@@ -166,14 +136,12 @@ ggplot(X, aes(x = real, y=pred)) +
   geom_point(aes(color = bgc ), alpha = 0.5) +
   facet_wrap( ~ bgc, ncol = 2, nrow = 3, scales = "free", labeller = as_labeller(titles)) +
   scale_color_manual(values = class2color[,"color"], name = "BGC class") + 
-  xlab("Real RCs") +
-  ylab("Predicted RCs") +
+  xlab("Real abundance") +
+  ylab("Predicted abundance") +
   expand_limits(y=0) +
   theme_light() +
   theme(strip.background = element_blank(),
-        strip.text = element_text(color = "black", face = "bold")) +
-  scale_x_continuous(labels = scales::percent) +
-  scale_y_continuous(labels = scales::percent)
+        strip.text = element_text(color = "black", face = "bold"))
 ```
 
 # 4. Bibliography
