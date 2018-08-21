@@ -149,9 +149,8 @@ ggplot(X, aes(x = ref, y=pred)) +
 
 
 # 4. Checking MLR assumptions
-Next, we will check MLR assumptions through the visualization of different plots.
 
-1. Residuals normality
+## 4.1 Residuals normality  
 Here we simply plot the distribution of the residuals.
 
 ```{r, warning=FALSE}
@@ -178,19 +177,19 @@ ggplot(res_df, aes(res)) +
 
 ```
 
-2. Homoscedasticity
+## 4.2 Homoscedasticity  
 Now, we plot the residuals vs. the fitted values. The idea is to check if the variability of the residuals stays constant as the fitted values increase.
 
 ```{r, warning=FALSE}
-pred_df2 <- lapply(bgc_model,"[[", "regression_model") %>%
-            lapply(., fitted) %>%
-            plyr::ldply(., cbind)
+fit_df <- lapply(bgc_model,"[[", "regression_model") %>%
+                  lapply(., fitted) %>%
+                  plyr::ldply(., cbind)
 
-colnames(pred_df2) <- c("bgc","pred")
-pred2res_df <- data.frame(bgc = pred_df2$bgc, pred = pred_df2$pred, res = res_df$res)
+colnames(fit_df) <- c("bgc","fit")
+fit2res_df <- data.frame(bgc = fit_df$bgc, fit = fit_df$fit, res = res_df$res)
 
 # plot
-ggplot(pred2res_df, aes(x = pred, y = res)) +
+ggplot(fit2res_df, aes(x = fit, y = res)) +
   geom_abline(intercept = 0, slope = 0, color = "gray60") +  
   geom_point(aes(color = bgc ), alpha = 0.5) + 
   facet_wrap( ~ bgc, ncol = 2, nrow = 2, scales = "free" ) +
@@ -206,7 +205,7 @@ ggplot(pred2res_df, aes(x = pred, y = res)) +
 
 ```
 
-3. Linearity
+## 4.3 Linearity  
 Lastly, we check if there is a linear relationship between the predictor and response variables. To do this, we will plot the residuals vs. the predictor variables. Given that we have to create a plot for each domain, we only show the plots for the nrps domains. 
 
 ```{r, warning=FALSE}
@@ -217,6 +216,8 @@ domains_x <- domains_x[ domains_x %in% colnames(train_data_domains) ]
 dom_abund2res_df <- data.frame(train_data_domains[ ,domains_x], res = res_redu_df$res) %>%
                     gather(key = "domain", value = "abund", domains_x )
   
+
+# select domain colors
 domain2colors <- c("#C02842","#B75131","#AE8539","#A0A540","#759D46")
         
 
@@ -231,8 +232,6 @@ ggplot(dom_abund2res_df, aes(x = abund, y = res)) +
   theme_light() +
   theme(strip.background = element_blank(),
         strip.text = element_text(color = "black", face = "bold"))
-
-
 
 
 ```
