@@ -163,7 +163,7 @@ colnames(res_df) <- c("bgc","res")
 
 # plot
 ggplot(res_df, aes(res)) +
-  geom_histogram(aes(fill = bgc), alpha = 0.8) +  
+  geom_histogram(aes(fill = bgc), alpha = 0.8, bins = 30) +  
   facet_wrap( ~ bgc, ncol = 2, nrow = 2, scales = "free" ) +
   scale_fill_manual(values = class2color[,"color"], name = "BGC class") + 
   xlab("MLR residuals") +
