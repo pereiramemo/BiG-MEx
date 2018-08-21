@@ -149,7 +149,7 @@ ggplot(X, aes(x = ref, y=pred)) +
 
 
 # 4. Checking MLR assumptions
-Next, we will extract the residuals and fitted values from the MLR models in the bgc_model list, to check MLR assumptions through the visualization of different plots.
+Next, we will check MLR assumptions through the visualization of different plots.
 
 1. Residuals normality
 Here we simply plot the distribution of the residuals.
@@ -179,7 +179,7 @@ ggplot(res_df, aes(res)) +
 ```
 
 2. Homoscedasticity
-Here we plot the residuales vs. the fitted values. The idea is to check if the variability of the residuals stays constant as the fitted values increase.
+Now, we plot the residuals vs. the fitted values. The idea is to check if the variability of the residuals stays constant as the fitted values increase.
 
 ```{r, warning=FALSE}
 pred_df2 <- lapply(bgc_model,"[[", "regression_model") %>%
@@ -207,11 +207,11 @@ ggplot(pred2res_df, aes(x = pred, y = res)) +
 ```
 
 3. Linearity
-Lastly, we check if there is a linar relationship between predictor and response variables. To do this, we will plot the residuales vs. the predictor variables. Given that we will have to to a plot for each domain, we only show the plots for the nrps.  
+Lastly, we check if there is a linear relationship between the predictor and response variables. To do this, we will plot the residuals vs. the predictor variables. Given that we have to create a plot for each domain, we only show the plots for the nrps domains. 
 
 ```{r, warning=FALSE}
 res_redu_df <- res_df %>% filter(bgc == "nrps")
-domains_x <- get_domains(target_class)
+domains_x <- get_domains("nrps")
 domains_x <- domains_x[ domains_x %in% colnames(train_data_domains) ]
 
 dom_abund2res_df <- data.frame(train_data_domains[ ,domains_x], res = res_redu_df$res) %>%
