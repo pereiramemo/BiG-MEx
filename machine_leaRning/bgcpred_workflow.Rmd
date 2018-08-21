@@ -147,7 +147,97 @@ ggplot(X, aes(x = ref, y=pred)) +
         strip.text = element_text(color = "black", face = "bold"))
 ```
 
-# 4. Bibliography
+
+# 4. Checking MLR assumptions
+Next, we will extract the residuals and fitted values from the MLR models in the bgc_model list, to check MLR assumptions through the visualization of different plots.
+
+1. Residuals normality
+Here we simply plot the distribution of the residuals.
+
+```{r, warning=FALSE}
+res_df <- lapply(bgc_model,"[[", "regression_model") %>%
+          lapply(., residuals) %>%
+          plyr::ldply(., cbind)
+
+colnames(res_df) <- c("bgc","res")
+
+
+# plot
+ggplot(res_df, aes(res)) +
+  geom_histogram(aes(fill = bgc), alpha = 0.8) +  
+  facet_wrap( ~ bgc, ncol = 2, nrow = 2, scales = "free" ) +
+  scale_fill_manual(values = class2color[,"color"], name = "BGC class") + 
+  xlab("MLR residuals") +
+  ylab("Counts") +
+  expand_limits(y=0) +
+  theme_light() +
+  theme(strip.background = element_blank(),
+        strip.text = element_text(color = "black", face = "bold"))
+
+
+
+```
+
+2. Homoscedasticity
+Here we plot the residuales vs. the fitted values. The idea is to check if the variability of the residuals stays constant as the fitted values increase.
+
+```{r, warning=FALSE}
+pred_df2 <- lapply(bgc_model,"[[", "regression_model") %>%
+            lapply(., fitted) %>%
+            plyr::ldply(., cbind)
+
+colnames(pred_df2) <- c("bgc","pred")
+pred2res_df <- data.frame(bgc = pred_df2$bgc, pred = pred_df2$pred, res = res_df$res)
+
+# plot
+ggplot(pred2res_df, aes(x = pred, y = res)) +
+  geom_abline(intercept = 0, slope = 0, color = "gray60") +  
+  geom_point(aes(color = bgc ), alpha = 0.5) + 
+  facet_wrap( ~ bgc, ncol = 2, nrow = 2, scales = "free" ) +
+  scale_color_manual(values = class2color[,"color"], name = "BGC class") + 
+  xlab("Residuals") +
+  ylab("Fitted") +
+  expand_limits(y=0) +
+  theme_light() +
+  theme(strip.background = element_blank(),
+        strip.text = element_text(color = "black", face = "bold"))
+
+
+
+```
+
+3. Linearity
+Lastly, we check if there is a linar relationship between predictor and response variables. To do this, we will plot the residuales vs. the predictor variables. Given that we will have to to a plot for each domain, we only show the plots for the nrps.  
+
+```{r, warning=FALSE}
+res_redu_df <- res_df %>% filter(bgc == "nrps")
+domains_x <- get_domains(target_class)
+domains_x <- domains_x[ domains_x %in% colnames(train_data_domains) ]
+
+dom_abund2res_df <- data.frame(train_data_domains[ ,domains_x], res = res_redu_df$res) %>%
+                    gather(key = "domain", value = "abund", domains_x )
+  
+domain2colors <- c("#C02842","#B75131","#AE8539","#A0A540","#759D46")
+        
+
+ggplot(dom_abund2res_df, aes(x = abund, y = res)) +
+  geom_abline(intercept = 0, slope = 0, color = "gray60") +  
+  geom_point(aes(color = domain ), alpha = 0.5) + 
+  facet_wrap( ~ domain, ncol = 2, nrow = 2, scales = "free" ) +
+  scale_color_manual(values = domain2colors, name = "BGC domain") + 
+  xlab("Abundance") +
+  ylab("Residuals") +
+  expand_limits(y=0) +
+  theme_light() +
+  theme(strip.background = element_blank(),
+        strip.text = element_text(color = "black", face = "bold"))
+
+
+
+
+```
+
+# 5. Bibliography
 
 * Breiman, L. (2001). Random forests. Machine Learning, 45(1), 5???32.
 http://doi.org/10.1023/A:1010933404324  
@@ -156,7 +246,7 @@ http://doi.org/10.1023/A:1010933404324
 
 * Sunagawa, S., Coelho, L. P., Chaffron, S., Kultima, J. R., Labadie, K., Salazar, G., ??? Velayoudon, D. (2015). Structure and function of the global ocean microbiome. Science, 348(6237), 1261359???1261359. http://doi.org/10.1126/science.1261359   
 
-# 5. Session Info
+# 6. Session Info
 ```{r, warning=FALSE}
 sessionInfo()
 ```
