@@ -143,31 +143,32 @@ pred_df <- bgc_pred %>%
 
 
 # extract and convert real abundances to a long data frame
-real_df <- data_test %>% 
+
+ref_df <- test_data_classes %>% 
   select(bgc_classes) %>%
-  gather(key = bgc, value = real)
+  gather(key = bgc, value = ref)
 
 
 # join data frames
-X <- bind_cols(pred_df, real = real_df$real )
+X <- bind_cols(pred_df, ref = ref_df$ref )
 
 
 # make titles including correlation values
 COR <- X %>% 
   group_by(bgc) %>%
-  summarise(cor = cor(real, pred) %>% round(., digits = 3))
+  summarise(cor = cor(ref, pred) %>% round(., digits = 2))
 
 titles <- paste(COR$bgc, "cor:", COR$cor)
 names(titles) <- COR$bgc
 
 # plot
-ggplot(X, aes(x = real, y=pred)) +
+ggplot(X, aes(x = ref, y=pred)) +
   geom_abline(intercept = 0, slope = 1, color = "gray60") +  
   geom_point(aes(color = bgc ), alpha = 0.5) +
   facet_wrap( ~ bgc, ncol = 2, nrow = 3, scales = "free", labeller = as_labeller(titles)) +
   scale_color_manual(values = class2color[,"color"], name = "BGC class") + 
-  xlab("Real RCs") +
-  ylab("Predicted RCs") +
+  xlab("Reference abundance") +
+  ylab("Predicted abundance") +
   expand_limits(y=0) +
   theme_light() +
   theme(strip.background = element_blank(),
