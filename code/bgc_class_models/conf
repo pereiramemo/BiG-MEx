@@ -1,0 +1,12 @@
+## folders
+SOFTWARE_DIR="/bioinfo/software/"
+RESOURCES_DIR="/bioinfo/resources/"
+OUTDIR_LOCAL="/output/"
+INPUT="/input/"
+SCRATCH="/scratch/"
+
+# software
+r_interpreter="/usr/bin/R" 
+
+# defaults
+NOCONVERT=0

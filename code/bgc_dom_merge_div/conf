@@ -1,0 +1,34 @@
+## folders
+SOFTWARE_DIR="/bioinfo/software/"
+RESOURCES_DIR="/bioinfo/resources/"
+OUTDIR_LOCAL="/output/"
+SCRATCH="/scratch/"
+
+## files
+REF_PKG_DIR="${RESOURCES_DIR}/bgc_refpkgs/"
+
+## software 
+mmseqs_version="3b696aae6aa7d3b3a331acd2c594bc4ac6405fce"
+mmseqs="${SOFTWARE_DIR}"/MMseqs2/build/bin/mmseqs
+
+r_interpreter="/usr/bin/R" 
+
+filterbyname="${SOFTWARE_DIR}"/bbmap/filterbyname.sh
+
+pplacer_version="Linux-v1.1.alpha19"
+pplacer="${SOFTWARE_DIR}"/pplacer-${pplacer_version}/pplacer
+
+guppy_version="Linux-v1.1.alpha19"
+guppy="${SOFTWARE_DIR}"/pplacer-${guppy_version}/guppy
+
+mafft_version="7.310-with-extensions"
+mafft="${SOFTWARE_DIR}"/mafft-${mafft_version}/scripts/mafft
+
+famsa="${SOFTWARE_DIR}/FAMSA/famsa"
+
+## default parameters
+NSLOTS="2"
+OUTDIR_EXPORT="merged_div_out"
+
+
+

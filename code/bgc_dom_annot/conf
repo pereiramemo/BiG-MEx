@@ -1,0 +1,27 @@
+## folders
+SOFTWARE_DIR="/bioinfo/software/"
+DBDIR="${SOFTWARE_DIR}/bgc13062014/"
+MODELDIR="${SOFTWARE_DIR}/model/"
+OUTDIR_LOCAL="/output/"
+SCRATCH="/scratch/"
+
+## files
+CLASS2DOMAINS="${SOFTWARE_DIR}/class2domains.list"
+
+## uproc
+urpoc_verstion="1.2.0"
+uproc_dna="/bioinfo/software/uproc-${urpoc_verstion}/uproc-dna"
+uproc_prot="/bioinfo/software/uproc-${urpoc_verstion}/uproc-prot"
+
+## variables
+NSLOTS=2
+SAMPLE="metagenomeX"
+OUTDIR_EXPORT="dom_annot_out"
+
+
+
+
+
+
+
+
