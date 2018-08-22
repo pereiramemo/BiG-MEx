@@ -206,7 +206,7 @@ ggplot(fit2res_df, aes(x = fit, y = res)) +
 ```
 
 ## 4.3 Linearity  
-Lastly, we check if there is a linear relationship between the predictor and response variables. To do this, we will plot the residuals vs. the predictor variables. Given that we have to create a plot for each domain, we only show the plots for the nrps domains. 
+Lastly, we check if there is a linear relationship between the predictor and response variables. To do this, we will plot the predictor variables vs. the residuals and check if the residuals "bounce randomly" around the 0 line. Given that we would have to create a plot for each domain, here we only show the plots for the nrps domains.
 
 ```{r, warning=FALSE}
 res_redu_df <- res_df %>% filter(bgc == "nrps")
