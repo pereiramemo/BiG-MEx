@@ -416,7 +416,7 @@ ggplot(fit2res_df, aes(x = fit, y = res)) +
 </div>
 <div id="linearity" class="section level2">
 <h2>4.3 Linearity</h2>
-<p>Lastly, we check if there is a linear relationship between the predictor and response variables. To do this, we will plot the residuals vs. the predictor variables. Given that we have to create a plot for each domain, we only show the plots for the nrps domains.</p>
+<p>Lastly, we check if there is a linear relationship between the predictor and response variables. To do this, we will plot the predictor variables vs. the residuals and check if the residuals “bounce randomly” around the 0 line. Given that we would have to create a plot for each domain, here we only show the plots for the nrps domains.</p>
 <pre class="r"><code>res_redu_df &lt;- res_df %&gt;% filter(bgc == &quot;nrps&quot;)
 domains_x &lt;- get_domains(&quot;nrps&quot;)
 domains_x &lt;- domains_x[ domains_x %in% colnames(train_data_domains) ]
