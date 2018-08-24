@@ -1,4 +1,4 @@
-BGC domain	# seq in MIBiG	# seq in phylo	Clust. threshold	Subst. model	Coph. dist. mean	Coph. dist. sd	Coph. dist. max	Coph. dist. min	Phylo. Div.	BGC class
+BGC domain	# seq in MIBiG	# seq in phylo	Clust. threshold	Subst. model	Coph. dist. mean	Coph. dist. sd	Coph. dist. max	Coph. dist. min	Phylo. Div. (Faith's PD)	BGC class
 AMP-binding	2265	1355	0.7	LG	3.22830718880502	0.980726284543373	7.05655388034724	0.269073769002022	2982.37889464816	nrps,other
 ATd	538	445	0.7	LG	2.02668636705043	0.505237429391094	4.11091463588957	0.253588496288294	767.131008855312	transatpks
 BLS	58	49	0.9	LG	2.11544167727398	0.87608318156118	4.30685791126071	0.113406091899059	64.3540391580981	blactam
