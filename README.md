@@ -54,3 +54,4 @@ See help
 
 ### See the [wiki](https://github.com/pereiramemo/BiG-MEx/wiki) for further documentation.
 
+#### BiG-MEx is presented in the work titled "Mining metagenomes for natural product biosynthetic gene clusters: unlocking new potential with ultrafast techniques"
