@@ -3,14 +3,13 @@
 set -o pipefail
 
 ###############################################################################
-# 1. load general configuration
+# 1. Load general configuration
 ###############################################################################
 
 source /bioinfo/software/conf
-#source /home/memo/Google_Drive/Doctorado/workspace/ufBGCtoolbox/bgc_dom_merge_div/resources/conf_local
 
 ###############################################################################
-# 2. set parameters
+# 2. Set parameters
 ###############################################################################
 
 while :; do
@@ -92,14 +91,15 @@ OUT_DIR="${OUT_DIR}/${DOMAIN}_tree_data"
 mkdir "${OUT_DIR}"
 
 ###############################################################################
-# 3. clean fasta file
+# 3. Clean fasta file
 ###############################################################################
 
 tr "[ -%,;\(\):=\.\\\*[]\"\']" "_" < "${INPUT}" > "${OUT_DIR}/query_clean.fasta"
 
 ###############################################################################
-# 4. add sequences to profile
+# 4. Add sequences to profile
 ###############################################################################
+
 unset MAFFT_BINARIES
 
 "${mafft}" \
@@ -112,7 +112,7 @@ unset MAFFT_BINARIES
 # "${REF_ALIGN}" "${OUT_DIR}/ref_added_query.align.fasta"
 
 ###############################################################################
-# 5. place sequences on tree
+# 5. Place sequences onto tree
 ###############################################################################
 
 "${pplacer}" \
@@ -124,7 +124,7 @@ unset MAFFT_BINARIES
   "${OUT_DIR}/ref_added_query.align.fasta"
 
 ###############################################################################
-# 6. visualize tree
+# 6. Visualize tree
 ###############################################################################
 
 "${guppy}" fat \
@@ -134,7 +134,6 @@ unset MAFFT_BINARIES
   -o "${OUT_DIR}/${DOMAIN}_query.phyloxml" \
   "${OUT_DIR}/${DOMAIN}_query.jplace"
 
-
 "${guppy}" tog \
   --node-numbers \
   --pp \
@@ -142,9 +141,8 @@ unset MAFFT_BINARIES
   -o "${DOMAIN}_query.newick" \
   "${OUT_DIR}/${DOMAIN}_query.jplace"
 
-  
 ###############################################################################
-# 7. compute stats
+# 7. Compute stats
 ###############################################################################  
 
 "${guppy}" to_csv \
@@ -154,7 +152,7 @@ unset MAFFT_BINARIES
   "${OUT_DIR}/${DOMAIN}_query.jplace"
 
 ###############################################################################
-# 8. compute edpl
+# 8. Compute edpl
 ###############################################################################
   
 "${guppy}" edpl \
@@ -163,9 +161,8 @@ unset MAFFT_BINARIES
   -o "${OUT_DIR}/${DOMAIN}_query_edpl.csv" \
   "${OUT_DIR}/${DOMAIN}_query.jplace"
 
-  
 ###############################################################################
-# 9. left join tables: info and edpl
+# 9. Left join tables: info and edpl
 ###############################################################################
 
 awk 'BEGIN {FS=","; OFS="," } { 
@@ -191,7 +188,7 @@ awk 'BEGIN {FS=","; OFS="," } {
 > "${OUT_DIR}/${DOMAIN}_tmp.csv"
 
 ###############################################################################
-# 10. clean
+# 10. Clean
 ###############################################################################
 
 mv "${OUT_DIR}/${DOMAIN}_tmp.csv" "${OUT_DIR}/${DOMAIN}_query_info.csv"

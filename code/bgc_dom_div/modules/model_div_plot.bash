@@ -4,15 +4,15 @@
 
 set -o pipefail
 
-#############################################################################
-### 1 - Load general configuration
-#############################################################################
+###############################################################################
+# 1. Load general configuration
+###############################################################################
 
 source /bioinfo/software/conf
-#source /home/memo/Google_Drive/Doctorado/workspace/ufBGCtoolbox/bgc_dom_div/tmp_vars.bash
-##############################################################################
-#### 2 - parse parameters 
-##############################################################################
+
+###############################################################################
+# 2. Parse parameters
+###############################################################################
 
 while :; do
   case "${1}" in
@@ -39,7 +39,7 @@ while :; do
   ;;
   --font_size=?*)
   FONT_SIZE="${1#*=}" # Delete everything up to "=" and assign the 
-# remainder.
+                      # remainder.
   ;;
   --font_size=) # Handle the empty case
   printf 'Using default environment.\n' >&2
@@ -53,7 +53,7 @@ while :; do
   ;;
   --outdir=?*)
   OUTDIR_EXPORT="${1#*=}" # Delete everything up to "=" and assign the 
-# remainder.
+                          # remainder.
   ;;
   --outdir=) # Handle the empty case
   printf 'Using default environment.\n' >&2
@@ -67,7 +67,7 @@ while :; do
   ;;
   --plot_model_violin=?*)
   PLOT_MODEL_VIOLIN="${1#*=}" # Delete everything up to "=" and assign the 
-# remainder.
+                              # remainder.
   ;;
   --plot_model_violin=) # Handle the empty case
   printf 'Using default environment.\n' >&2
@@ -81,7 +81,7 @@ while :; do
   ;;
   --prefix=?*)
   PREFIX="${1#*=}" # Delete everything up to "=" and assign the 
-# remainder.
+                   # remainder.
   ;;
   --prefix=) # Handle the empty case
   printf 'Using default environment.\n' >&2
@@ -95,7 +95,7 @@ while :; do
   ;;
   --plot_width=?*)
   PLOT_WIDTH="${1#*=}" # Delete everything up to "=" and assign the 
-# remainder.
+                       # remainder.
   ;;
   --plot_width=) # Handle the empty case
   printf 'Using default environment.\n' >&2
@@ -109,7 +109,7 @@ while :; do
   ;;
   --plot_height=?*)
   PLOT_HEIGHT="${1#*=}" # Delete everything up to "=" and assign the 
-# remainder.
+                        # remainder.
   ;;
   --plot_height=) # Handle the empty case
   printf 'Using default environment.\n' >&2
@@ -123,7 +123,7 @@ while :; do
   ;;
   --num_iter=?*)
   NUM_ITER="${1#*=}" # Delete everything up to "=" and assign the 
-# remainder.
+                     # remainder.
   ;;
   --num_iter=) # Handle the empty case
   printf 'Using default environment.\n' >&2
@@ -137,13 +137,13 @@ while :; do
   ;;
   --sample_increment=?*)
   SAMPLE_INCREMENT="${1#*=}" # Delete everything up to "=" and assign the 
-# remainder.
+                             # remainder.
   ;;
   --sample_increment=) # Handle the empty case
   printf 'Using default environment.\n' >&2
   ;;   
 #############
-    --)              # End of all options.
+    --)                # End of all options.
     shift
     break
     ;;
@@ -156,18 +156,18 @@ while :; do
     shift
 done
 
-#############################################################################
-### 3 - Define output
-#############################################################################
+###############################################################################
+# 3. Define output
+###############################################################################
 
 THIS_JOB_TMP_DIR="${OUTDIR_EXPORT}"
 THIS_OUTPUT_TMP_MODEL_TSV="${THIS_JOB_TMP_DIR}/${PREFIX}_model_div_est.tsv"
 THIS_OUTPUT_TMP_SUMM_TSV="${THIS_JOB_TMP_DIR}/${PREFIX}_summary_model_div_est.tsv"
 THIS_OUTPUT_TMP_IMAGE="${THIS_JOB_TMP_DIR}/${PREFIX}_violin_div_est.pdf"
 
-#############################################################################
-### 4 - diversiy estimates
-#############################################################################
+###############################################################################
+# 4. Diversity estimates
+###############################################################################
 
 "${r_interpreter}" --vanilla --slave <<RSCRIPT
 

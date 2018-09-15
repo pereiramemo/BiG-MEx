@@ -3,15 +3,15 @@
 # set -x
 set -o pipefail
 
-#############################################################################
+###############################################################################
 # 1. Load general configuration
-#############################################################################
+###############################################################################
 
 source /bioinfo/software/conf
 
-#############################################################################
-# 2. set parameters
-#############################################################################
+###############################################################################
+# 2. Set parameters
+###############################################################################
 
 show_usage(){
   cat <<EOF
@@ -48,9 +48,9 @@ hmmsearch, mmseqs cluster, bwa mem and samtools parameter
 EOF
 }
 
-##############################################################################
-# 3. parse parameters ########################################################
-##############################################################################
+###############################################################################
+# 3. Parse parameters 
+###############################################################################
 
 while :; do
   case "${1}" in
@@ -111,7 +111,7 @@ while :; do
   ;;
   --font_size=?*)
   FONT_SIZE="${1#*=}" # Delete everything up to "=" and assign the 
-# remainder.
+                      # remainder.
   ;;
   --font_size=) # Handle the empty case
   printf 'Using default environment.\n' >&2
@@ -125,7 +125,7 @@ while :; do
     ;;
     --font_tree_size=?*)
     FONT_TREE_SIZE="${1#*=}" # Delete everything up to "=" and assign the 
-# remainder.
+                             # remainder.
     ;;
     --font_tree_size=) # Handle the empty case
     printf 'Using default environment.\n' >&2
@@ -167,7 +167,7 @@ while :; do
   ;;
   --num_iter=?*)
   NUM_ITER="${1#*=}" # Delete everything up to "=" and assign the 
-# remainder.
+                     # remainder.
   ;;
   --num_iter=) # Handle the empty case
   printf 'Using default environment.\n' >&2
@@ -181,7 +181,7 @@ while :; do
   ;;
   --output_assembly=?*)
   OUTPUT_ASSEM="${1#*=}" # Delete everything up to "=" and assign the 
-# remainder.
+                         # remainder.
   ;;
   --output_assembly=) # Handle the empty case
   printf 'Using default environment.\n' >&2
@@ -195,7 +195,7 @@ while :; do
   ;;
   --only_rep=?*)
   ONLY_REP="${1#*=}" # Delete everything up to "=" and assign the 
-# remainder.
+                     # remainder.
   ;;
   --only_rep=) # Handle the empty case
   printf 'Using default environment.\n' >&2
@@ -209,7 +209,7 @@ while :; do
   ;;
   --outdir=?*)
   OUTDIR_EXPORT="${1#*=}" # Delete everything up to "=" and assign the 
-# remainder.
+                          # remainder.
   ;;
   --outdir=) # Handle the empty case
   printf 'Using default environment.\n' >&2
@@ -223,7 +223,7 @@ while :; do
   ;;
   --plot_tree=?*)
   PLOT_TREE="${1#*=}" # Delete everything up to "=" and assign the 
-# remainder.
+                      # remainder.
   ;;
   --place_tree=) # Handle the empty case
   printf 'Using default environment.\n' >&2
@@ -237,7 +237,7 @@ while :; do
   ;;
   --plot_width=?*)
   PLOT_WIDTH="${1#*=}" # Delete everything up to "=" and assign the 
-# remainder.
+                       # remainder.
   ;;
   --plot_width=) # Handle the empty case
   printf 'Using default environment.\n' >&2
@@ -251,7 +251,7 @@ while :; do
   ;;
   --plot_height=?*)
   PLOT_HEIGHT="${1#*=}" # Delete everything up to "=" and assign the 
-# remainder.
+                        # remainder.
   ;;
   --plot_height=) # Handle the empty case
   printf 'Using default environment.\n' >&2
@@ -265,7 +265,7 @@ while :; do
   ;;
   --plot_tree_height=?*)
   PLOT_TREE_HEIGHT="${1#*=}" # Delete everything up to "=" and assign the 
-# remainder.
+                             # remainder.
   ;;
   --plot_rare_height=) # Handle the empty case
   printf 'Using default environment.\n' >&2
@@ -279,7 +279,7 @@ while :; do
   ;;
   --plot_tree_width=?*)
   PLOT_TREE_WIDTH="${1#*=}" # Delete everything up to "=" and assign the 
-# remainder.
+                            # remainder.
   ;;
   --plot_tree_width=) # Handle the empty case
   printf 'Using default environment.\n' >&2
@@ -367,7 +367,7 @@ while :; do
   printf 'Using default environment.\n' >&2
   ;;    
 ############
-    --)              # End of all options.
+    --)         # End of all options.
     shift
     break
     ;;
@@ -380,10 +380,9 @@ while :; do
     shift
 done
 
-
-#############################################################################
-# 4. check mandatory parameters
-#############################################################################
+###############################################################################
+# 4. Check mandatory parameters
+###############################################################################
 
 if [[ ! -f "${INPUT}" ]]; then
  echo "missing input file: uproc annotation"
@@ -453,10 +452,9 @@ else
 }
 fi
 
-
-#############################################################################
+###############################################################################
 # 5. Check output directories
-#############################################################################
+###############################################################################
 
 if [[ -d "${OUTDIR_LOCAL}/${OUTDIR_EXPORT}" ]]; then
   if [[ "${OVERWRITE}" != "t" ]]; then
@@ -465,16 +463,16 @@ if [[ -d "${OUTDIR_LOCAL}/${OUTDIR_EXPORT}" ]]; then
   fi
 fi  
 
-#############################################################################
+###############################################################################
 # 6. Create output directories
-#############################################################################
+###############################################################################
 
 THIS_JOB_TMP_DIR="${SCRATCH}/${OUTDIR_EXPORT}"
 mkdir -p "${THIS_JOB_TMP_DIR}"
   
-########################################################################
+###############################################################################
 # 7. Subset sequence data to speed up later searches
-########################################################################
+###############################################################################
 
 DOM_ALL_TMP="${THIS_JOB_TMP_DIR}/dom_all.list"
 ALL_HEADERS="${THIS_JOB_TMP_DIR}/all.headers"
@@ -531,9 +529,9 @@ if [[ -n "${SR}" ]]; then
     
 fi
 
-########################################################################
+###############################################################################
 # 8. Search, assembly and cluster for each domain
-########################################################################
+###############################################################################
 
 for DOMAIN in $( cat "${DOM_ALL_TMP}" ); do
 
@@ -569,7 +567,7 @@ for DOMAIN in $( cat "${DOM_ALL_TMP}" ); do
   else
   
   #############################################################################
-  # 8.1. Get domains seqs
+  # 8.1. Get domain seqs
   #############################################################################
 
     if [[ -f "${R1_REDU}" ]] && [[ -f "${R2_REDU}" ]]; then
@@ -647,8 +645,9 @@ for DOMAIN in $( cat "${DOM_ALL_TMP}" ); do
   fi  
       
   #############################################################################
-  # 8.3. get orfs
+  # 8.3. Get ORFs
   #############################################################################
+  
   "${fraggenescan}" \
   -genome="${ASSEM_DIR}_assem"/contigs.fasta \
   -out="${TMP_NAME}_orfs" \
@@ -679,7 +678,7 @@ for DOMAIN in $( cat "${DOM_ALL_TMP}" ); do
   awk 'BEGIN {OFS="\t"} {print $1,$8-1,$9 }' > "${TMP_NAME}_aa.bed"
 
   #############################################################################
-  # 8.5. subset seqs coordinates
+  # 8.5. Subset seq coordinates
   #############################################################################
   "${fastafrombed}" \
   -fi "${TMP_NAME}_orfs.faa" \
@@ -691,7 +690,7 @@ for DOMAIN in $( cat "${DOM_ALL_TMP}" ); do
     exit 1
   fi
     
-  # check nuber of subsequences found
+  # check number of subsequences found
   NSEQ=$(egrep -c ">" "${NAME}_subseqs.faa")
   if [[ "${NSEQ}" -lt "5" ]]; then
     echo "Not enough ${DOMAIN} subsequences found: ${NSEQ}"
@@ -699,8 +698,9 @@ for DOMAIN in $( cat "${DOM_ALL_TMP}" ); do
   fi
     
   #############################################################################
-  # 8.6. cluster
+  # 8.6. Cluster
   #############################################################################
+  
   "${SOFTWARE_DIR}"/mmseqs_runner.bash \
   --prefix "${NAME}" \
   --tmp_prefix "${TMP_NAME}" \
@@ -757,7 +757,7 @@ for DOMAIN in $( cat "${DOM_ALL_TMP}" ); do
   else
     
     ###########################################################################
-    # 8.8 Create cluster table with no coverage
+    # 8.8. Create cluster table with no coverage
     ###########################################################################
      
     "${SOFTWARE_DIR}"/cluster_seqs_with_no_cov.bash \
@@ -771,7 +771,7 @@ for DOMAIN in $( cat "${DOM_ALL_TMP}" ); do
   fi  
     
   #############################################################################
-  # 8.9 Compute sampled diversity
+  # 8.9. Compute diversity
   #############################################################################
     
   "${SOFTWARE_DIR}"/model_div_plot.bash \
@@ -789,10 +789,10 @@ for DOMAIN in $( cat "${DOM_ALL_TMP}" ); do
     exit 1
   fi  
   
-  
   #############################################################################
-  # 8.10 Blast search
+  # 8.10. Blast search
   ############################################################################# 
+  
   if [[ "${BLAST}" == "t" ]]; then
     "${SOFTWARE_DIR}"/blast_runner.bash \
     --domain "${DOMAIN}" \
@@ -806,8 +806,9 @@ for DOMAIN in $( cat "${DOM_ALL_TMP}" ); do
   fi
   
   #############################################################################
-  # 8.11 Tree placement and drawing
+  # 8.11. Tree placement and drawing
   #############################################################################
+  
   if [[ "${PLOT_TREE}" == "t" ]]; then
     
     if [[ ! -d "${REF_PKG_DIR}/${DOMAIN}.refpkg" ]]; then
@@ -869,7 +870,7 @@ for DOMAIN in $( cat "${DOM_ALL_TMP}" ); do
 done;
 
 ###############################################################################
-# 9. clean
+# 9. Clean
 ###############################################################################
     
 rm -r "${THIS_JOB_TMP_DIR}"/tmp*
@@ -887,7 +888,7 @@ if [[ -f "${SR_REDU}" ]]; then
 fi
 
 ###############################################################################
-# 10. move output for export
+# 10. Move output for export
 ###############################################################################
 
 rsync -a --delete "${THIS_JOB_TMP_DIR}" "${OUTDIR_LOCAL}"

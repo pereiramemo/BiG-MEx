@@ -3,15 +3,15 @@
 # set -x
 set -o pipefail
 
-#############################################################################
-# 1. load general configuration
-#############################################################################
+###############################################################################
+# 1. Load general configuration
+###############################################################################
 
 source /bioinfo/software/conf
 
-#############################################################################
-# 2. set help
-#############################################################################
+###############################################################################
+# 2. Set help
+###############################################################################
 
 show_usage(){
   cat <<EOF
@@ -46,9 +46,9 @@ show_usage(){
 EOF
 }
 
-##############################################################################
-# 3. parse parameters 
-##############################################################################
+###############################################################################
+# 3. Parse parameters 
+###############################################################################
 
 while :; do
   case "${1}" in
@@ -109,7 +109,7 @@ while :; do
     ;;
     --font_size=?*)
     FONT_SIZE="${1#*=}" # Delete everything up to "=" and assign the 
-# remainder.
+                        # remainder.
     ;;
     --font_size=) # Handle the empty case
     printf 'Using default environment.\n' >&2
@@ -123,7 +123,7 @@ while :; do
     ;;
     --font_tree_size=?*)
     FONT_TREE_SIZE="${1#*=}" # Delete everything up to "=" and assign the 
-# remainder.
+                             # remainder.
     ;;
     --font_tree_size=) # Handle the empty case
     printf 'Using default environment.\n' >&2
@@ -137,7 +137,7 @@ while :; do
   ;;
   --outdir=?*)
   OUTDIR_EXPORT="${1#*=}" # Delete everything up to "=" and assign the 
-# remainder.
+                          # remainder.
   ;;
   --outdir=) # Handle the empty case
   printf 'Using default environment.\n' >&2
@@ -151,7 +151,7 @@ while :; do
   ;;
   --only_rep=?*)
   ONLY_REP="${1#*=}" # Delete everything up to "=" and assign the 
-# remainder.
+                     # remainder.
   ;;
   --only_rep=) # Handle the empty case
   printf 'Using default environment.\n' >&2
@@ -165,7 +165,7 @@ while :; do
   ;;
   --num_iter=?*)
   NUM_ITER="${1#*=}" # Delete everything up to "=" and assign the 
-# remainder.
+                     # remainder.
   ;;
   --num_iter=) # Handle the empty case
   printf 'Using default environment.\n' >&2
@@ -179,7 +179,7 @@ while :; do
   ;;
   --sample_increment=?*)
   SAMPLE_INCREMENT="${1#*=}" # Delete everything up to "=" and assign the 
-# remainder.
+                             # remainder.
   ;;
   --sample_increment=) # Handle the empty case
   printf 'Using default environment.\n' >&2
@@ -193,7 +193,7 @@ while :; do
   ;;
   --plot_rare_curve=?*)
   PLOT_RARE_CURVE="${1#*=}" # Delete everything up to "=" and assign the 
-# remainder.
+                            # remainder.
   ;;
   --plot_rare_curve=) # Handle the empty case
   printf 'Using default environment.\n' >&2
@@ -207,7 +207,7 @@ while :; do
   ;;
   --plot_tree=?*)
   PLOT_TREE="${1#*=}" # Delete everything up to "=" and assign the 
-# remainder.
+                      # remainder.
   ;;
   --plot_tree=) # Handle the empty case
   printf 'Using default environment.\n' >&2
@@ -221,7 +221,7 @@ while :; do
   ;;
   --plot_height=?*)
   PLOT_HEIGHT="${1#*=}" # Delete everything up to "=" and assign the 
-# remainder.
+                        # remainder.
   ;;
   --plot_height=) # Handle the empty case
   printf 'Using default environment.\n' >&2
@@ -235,7 +235,7 @@ while :; do
   ;;
   --plot_width=?*)
   PLOT_WIDTH="${1#*=}" # Delete everything up to "=" and assign the 
-# remainder.
+                       # remainder.
   ;;
   --plot_width=) # Handle the empty case
   printf 'Using default environment.\n' >&2
@@ -249,7 +249,7 @@ while :; do
   ;;
   --plot_tree_height=?*)
   PLOT_TREE_HEIGHT="${1#*=}" # Delete everything up to "=" and assign the 
-# remainder.
+                             # remainder.
   ;;
   --plot_rare_height=) # Handle the empty case
   printf 'Using default environment.\n' >&2
@@ -263,7 +263,7 @@ while :; do
   ;;
   --plot_tree_width=?*)
   PLOT_TREE_WIDTH="${1#*=}" # Delete everything up to "=" and assign the 
-# remainder.
+                            # remainder.
   ;;
   --plot_tree_width=) # Handle the empty case
   printf 'Using default environment.\n' >&2
@@ -290,7 +290,7 @@ while :; do
   ;;
   --verbose=?*)
   VERBOSE="${1#*=}" # Delete everything up to "=" and assign the 
-# remainder.
+                    # remainder.
   ;;
   --verbose=) # Handle the empty case
   printf 'Using default environment.\n' >&2
@@ -304,7 +304,7 @@ while :; do
   ;;
   --overwrite=?*)
   OVERWRITE="${1#*=}" # Delete everything up to "=" and assign the
-# remainder.
+                      # remainder.
   ;;
   --overwrite=) # Handle the empty case
   printf 'Using default environment.\n' >&2
@@ -323,9 +323,9 @@ while :; do
     shift
 done
 
-#############################################################################
+###############################################################################
 # 4. Set defaults and check variables
-#############################################################################
+###############################################################################
 
 if [[ -z "${DOMAIN}" ]]; then
   echo "--domain is not defiened. Please use the --domain flag: \
@@ -386,10 +386,9 @@ else
 }
 fi
 
-
-#############################################################################
+###############################################################################
 # 5. Check output directories
-#############################################################################
+###############################################################################
 
 if [[ -d "${OUTDIR_LOCAL}/${OUTDIR_EXPORT}" ]]; then
   if [[ "${OVERWRITE}" != "t" ]]; then
@@ -398,9 +397,9 @@ if [[ -d "${OUTDIR_LOCAL}/${OUTDIR_EXPORT}" ]]; then
   fi
 fi
 
-#############################################################################
-# 5. Define output
-#############################################################################
+###############################################################################
+# 6. Define output
+###############################################################################
 
 THIS_JOB_TMP_DIR="${SCRATCH}/${OUTDIR_EXPORT}"
 NAME="${THIS_JOB_TMP_DIR}/${DOMAIN}"
@@ -408,9 +407,10 @@ TMP_NAME="${THIS_JOB_TMP_DIR}/tmp_${DOMAIN}"
 
 mkdir "${THIS_JOB_TMP_DIR}"
 
-################################################################################
+###############################################################################
 # 7. Concat and add file id to fasta files
-################################################################################
+###############################################################################
+
 "${SOFTWARE_DIR}"/concat_faa.bash \
 --input_dirs "${INPUT_DIRS}" \
 --domain "${DOMAIN}" \
@@ -420,9 +420,11 @@ if [[ $? != "0" ]]; then
   echo "concat_faa.bash failed"
   exit 1
 fi
-################################################################################
+
+###############################################################################
 # 8. Concat and add file id to cluster files
-################################################################################
+###############################################################################
+
 "${SOFTWARE_DIR}"/concat_clust.bash \
 --input_dirs "${INPUT_DIRS}" \
 --domain "${DOMAIN}" \
@@ -436,6 +438,7 @@ fi
 ###############################################################################
 # 9. Cluster seqs
 ###############################################################################
+
 "${SOFTWARE_DIR}"/mmseqs_runner.bash \
 --identity "${ID}" \
 --tmp_prefix "${TMP_NAME}" \
@@ -449,7 +452,8 @@ fi
 
 ###############################################################################
 # 10. Map coverage
-#############################################################################
+###############################################################################
+
 "${SOFTWARE_DIR}"/map_coverage.bash \
 --coverage_tsv "${TMP_NAME}_all-coverage.table" \
 --cluster_tsv   "${TMP_NAME}_all_clu".tsv \
@@ -460,9 +464,10 @@ if [[ $? != "0" ]]; then
   exit 1
 fi
 
-#############################################################################
+###############################################################################
 # 11. Estimate diversity
-#############################################################################
+###############################################################################
+
 "${SOFTWARE_DIR}"/model_div_plot.bash \
   --abund_table "${NAME}_cluster2abund".tsv \
   --font_size "${FONT_SIZE}" \
@@ -478,9 +483,10 @@ if [[ $? != 0 ]]; then
   exit 1
 fi
 
-#############################################################################
+###############################################################################
 # 12. Make rarefaction
-#############################################################################
+###############################################################################
+
 if [[ "${PLOT_RARE_CURVE}" == "t" ]]; then
 
   "${SOFTWARE_DIR}"/rare_div_plot.bash \
@@ -511,9 +517,9 @@ if [[ "${PLOT_TREE}" == "t" ]]; then
     continue
   fi
   
-  ###########################################################################
-  # 13.1  Concat cluster2abund.tsv tables
-  ###########################################################################
+  #############################################################################
+  # 13.1. Concat cluster2abund.tsv tables
+  #############################################################################
   "${SOFTWARE_DIR}"/concat_cluster2abund.bash \
   --input_dirs "${INPUT_DIRS}" \
   --domain "${DOMAIN}" \
@@ -526,9 +532,9 @@ if [[ "${PLOT_TREE}" == "t" ]]; then
   
   if [[ "${ONLY_REP}" == "t" ]]; then
   
-    #########################################################################
-    # 13.2  extract rep seqs
-    #########################################################################
+    ###########################################################################
+    # 13.2. Extract repseqs
+    ###########################################################################
     "${SOFTWARE_DIR}"/extract_only_rep_seqs.bash \
     --clust2abund_tsv "${TMP_NAME}_concat_cluster2abund.tsv" \
     --tmp_prefix "${TMP_NAME}"
@@ -543,17 +549,18 @@ if [[ "${PLOT_TREE}" == "t" ]]; then
 
   else
 
-    #########################################################################
-    # 13.3 rename, with no repseq extraction
-    #########################################################################
+    ###########################################################################
+    # 13.3. Rename, with no repseq extraction
+    ###########################################################################
     TREE_INPUT_SEQ="${TMP_NAME}_all.faa"
     TREE_CLUST_ABUND="${TMP_NAME}_concat_cluster2abund.tsv"
 
   fi
   
-  ###########################################################################
-  # 13.4 place seqs
-  ###########################################################################
+  #############################################################################
+  # 13.4. Place seqs
+  #############################################################################
+  
   "${SOFTWARE_DIR}"/tree_pplacer.bash \
   --domain "${DOMAIN}" \
   --input "${TREE_INPUT_SEQ}" \
@@ -564,9 +571,10 @@ if [[ "${PLOT_TREE}" == "t" ]]; then
     exit 1
   fi
   
-  ###########################################################################
-  # 13.5 make tree figure
-  ###########################################################################
+  #############################################################################
+  # 13.5. Make tree figure
+  #############################################################################
+  
   INFO_PPLACE="${THIS_JOB_TMP_DIR}/${DOMAIN}_tree_data/${DOMAIN}_query_info.csv"
   TREE="${THIS_JOB_TMP_DIR}/${DOMAIN}_tree_data/${DOMAIN}_query.newick"
       
@@ -586,16 +594,16 @@ if [[ "${PLOT_TREE}" == "t" ]]; then
   fi
 fi
 
-#############################################################################
+###############################################################################
 # 14. Clean
-#############################################################################
+###############################################################################
 
 rm -r "${TMP_NAME}"*
 rm -r  "${THIS_JOB_TMP_DIR}"/tmp
 
-#############################################################################
-# 15. move output for export
-#############################################################################
+###############################################################################
+# 15. Move output for export
+###############################################################################
 
 rsync -a --delete "${THIS_JOB_TMP_DIR}" "${OUTDIR_LOCAL}"
 

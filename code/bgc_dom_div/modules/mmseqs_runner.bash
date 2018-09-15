@@ -2,21 +2,21 @@
 
 set -o pipefail
 
-#############################################################################
+###############################################################################
 # 1. Load general configuration
-#############################################################################
+###############################################################################
 
 source /bioinfo/software/conf
-#source /home/memo/Google_Drive/Doctorado/workspace/ufBGCtoolbox/bgc_dom_div/tmp_vars.bash
-#############################################################################
-# 2. set parameters
-#############################################################################
+
+###############################################################################
+# 2. Set parameters
+###############################################################################
 
 while :; do
   case "${1}" in
 #############
    -id|--identity) # Takes an option argument, ensuring it has been
-                # specified.
+                   # specified.
     if [[ -n "${2}" ]]; then
       ID="${2}"
       shift
@@ -28,9 +28,9 @@ argument.\n' >&2
     ;;
     --identity=?*)
     ID=${1#*=} # Delete everything up to "=" and assign the
-# remainder.
+               # remainder.
     ;;
-    --identity=)     # Handle the case of an empty --file=
+    --identity=)  # Handle the case of an empty --file=
     printf 'ERROR: "--identity" requires a non-empty option argument.\n' >&2
     exit 1
     ;;   
@@ -50,13 +50,13 @@ argument.\n' >&2
     NAME=${1#*=} # Delete everything up to "=" and assign the
 # remainder.
     ;;
-    --prefix=)     # Handle the case of an empty --file=
+    --prefix=)   # Handle the case of an empty --file=
     printf 'ERROR: "--prefix" requires a non-empty option argument.\n' >&2
     exit 1
     ;;
 #############
     -tp|--tmp_prefix) # Takes an option argument, ensuring it has been
-                # specified.
+                      # specified.
     if [[ -n "${2}" ]]; then
       TMP_NAME="${2}"
       shift
@@ -68,15 +68,15 @@ argument.\n' >&2
     ;;
     --tmp_prefix=?*)
     TMP_NAME=${1#*=} # Delete everything up to "=" and assign the
-# remainder.
+                     # remainder.
     ;;
-    --tmp_prefix=)     # Handle the case of an empty --file=
+    --tmp_prefix=)   # Handle the case of an empty --file=
     printf 'ERROR: "--tmp_prefix" requires a non-empty option argument.\n' >&2
     exit 1
     ;; 
 #############
    -tf|--tmp_folder) # Takes an option argument, ensuring it has been
-                # specified.
+                     # specified.
     if [[ -n "${2}" ]]; then
       TMP_FOLDER="${2}"
       shift
@@ -88,7 +88,7 @@ argument.\n' >&2
     ;;
     --tmp_prefix=?*)
     TMP_FOLDER=${1#*=} # Delete everything up to "=" and assign the
-# remainder.
+                       # remainder.
     ;;
     --tmp_folder=)     # Handle the case of an empty --file=
     printf 'ERROR: "--tmp_folder" requires a non-empty option argument.\n' >&2
@@ -96,7 +96,7 @@ argument.\n' >&2
     ;; 
 #############
    -t|--threads) # Takes an option argument, ensuring it has been
-                # specified.
+                 # specified.
     if [[ -n "${2}" ]]; then
       NSLOTS="${2}"
       shift
@@ -108,14 +108,14 @@ argument.\n' >&2
     ;;
     --threads=?*)
     NSLOTS=${1#*=} # Delete everything up to "=" and assign the
-# remainder.
+                   # remainder.
     ;;
-    --threads=)     # Handle the case of an empty --file=
+    --threads=)    # Handle the case of an empty --file=
     printf 'ERROR: "--threads" requires a non-empty option argument.\n' >&2
     exit 1
     ;;       
 #############
-    --)              # End of all options.
+    --)            # End of all options.
     shift
     break
     ;;
@@ -128,9 +128,9 @@ argument.\n' >&2
     shift
 done
 
-#############################################################################
-# 3. cluster seqs
-#############################################################################
+###############################################################################
+# 3. Cluster seqs
+###############################################################################
 
 if [[ -d "${TMP_FOLDER}" ]]; then
   rm -r "${TMP_FOLDER}"

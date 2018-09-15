@@ -2,21 +2,21 @@
 
 set -o pipefail
 
-#############################################################################
+###############################################################################
 # 1. Load general configuration
-#############################################################################
+###############################################################################
 
 source /bioinfo/software/conf
-#source /home/memo/Google_Drive/Doctorado/workspace/ufBGCtoolbox/bgc_dom_div/tmp_vars.bash
-#############################################################################
-# 2. set parameters
-#############################################################################
+
+###############################################################################
+# 2. Set parameters
+###############################################################################
 
 
 while :; do
   case "${1}" in
     -c|--clust_tsv) # Takes an option argument, ensuring it has been
-                # specified.
+                    # specified.
     if [[ -n "${2}" ]]; then
       CLUST_TSV="${2}"
       shift
@@ -34,7 +34,7 @@ while :; do
     ;;
 #############
     -p|--prefix) # Takes an option argument, ensuring it has been
-                # specified.
+                 # specified.
     if [[ -n "${2}" ]]; then
       NAME="${2}"
       shift
@@ -46,14 +46,14 @@ argument.\n' >&2
     ;;
     --prefix=?*)
     NAME=${1#*=} # Delete everything up to "=" and assign the
-# remainder.
+                 # remainder.
     ;;
-    --prefix=)     # Handle the case of an empty --file=
+    --prefix=)   # Handle the case of an empty --file=
     printf 'ERROR: "--prefix" requires a non-empty option argument.\n' >&2
     exit 1
     ;;        
 #############
-    --)              # End of all options.
+    --)          # End of all options.
     shift
     break
     ;;
@@ -66,10 +66,9 @@ argument.\n' >&2
     shift
 done
 
-
-#############################################################################
-# 3. Create cluter to abundance table
-#############################################################################
+###############################################################################
+# 3. Create cluster to abundance table
+###############################################################################
 
 awk 'BEGIN {OFS="\t"} {
 

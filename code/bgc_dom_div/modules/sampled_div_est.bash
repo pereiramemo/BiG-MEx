@@ -4,17 +4,15 @@
 
 set -o pipefail
 
-#############################################################################
-# 1 - Load general configuration
-#############################################################################
+###############################################################################
+# 1. Load general configuration
+###############################################################################
 
 source /bioinfo/software/conf
-#source /home/memo/Google_Drive/Doctorado/workspace/ufBGCtoolbox/bgc_dom_div/tmp_vars.bash
 
-#############################################################################
-# 2 - set parameters
-#############################################################################
-
+###############################################################################
+# 2. Set parameters
+###############################################################################
 
 while :; do
   case "${1}" in
@@ -55,7 +53,7 @@ while :; do
   ;;
   --output_prefix=?*)
   PREFIX="${1#*=}" # Delete everything up to "=" and assign the 
-# remainder.
+                   # remainder.
   ;;
   --output_prefix=) # Handle the empty case
   printf 'Using default environment.\n' >&2
@@ -73,7 +71,7 @@ while :; do
   ;;
   --subsample_number=?*)
   SUBSAMPLE_NUMBER="${1#*=}" # Delete everything up to "=" and assign the 
-# remainder.
+                             # remainder.
   ;;
   --subsample_number=) # Handle the empty case
   printf "ERROR: --subsample_number requires a non-empty option argument.\n">&2
@@ -88,7 +86,7 @@ while :; do
   ;;
   --subsample_size=?*)
   SUBSAMPLE_SIZE="${1#*=}" # Delete everything up to "=" and assign the 
-# remainder.
+                           # remainder.
   ;;
   --subsample_size=) # Handle the empty case
   printf "ERROR: --subsample_size requires a non-empty option argument.\n"  >&2
@@ -108,16 +106,16 @@ while :; do
     shift
 done
 
-#############################################################################
-# define variables
-#############################################################################
+###############################################################################
+# 3. Define variables
+###############################################################################
 
 OUT_TSV="${OUTPUT_DIR}"/"${PREFIX}.tsv"
 OUT_PDF="${OUTPUT_DIR}"/"${PREFIX}.pdf"
 
-#############################################################################
-# diversiy estimates
-#############################################################################
+###############################################################################
+# 4. Diversity estimates
+###############################################################################
 
 "${r_interpreter}" --vanilla --slave <<RSCRIPT
 

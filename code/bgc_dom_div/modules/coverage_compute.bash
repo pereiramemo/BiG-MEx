@@ -2,22 +2,21 @@
 
 set -o pipefail
 
-#############################################################################
+###############################################################################
 # 1. Load general configuration
-#############################################################################
+###############################################################################
 
 source /bioinfo/software/conf
-#source /home/memo/Google_Drive/Doctorado/workspace/ufBGCtoolbox/bgc_dom_div/tmp_vars.bash
 
-#############################################################################
-# 2. set parameters
-#############################################################################
+###############################################################################
+# 2. Set parameters
+###############################################################################
 
 while :; do
   case "${1}" in
 #############
     -b|--bed) # Takes an option argument, ensuring it has been
-                # specified.
+              # specified.
     if [[ -n "${2}" ]]; then
       BED="${2}"
       shift
@@ -35,7 +34,7 @@ while :; do
     ;;
 #############
     -c|--clust_tsv) # Takes an option argument, ensuring it has been
-                # specified.
+                    # specified.
     if [[ -n "${2}" ]]; then
       CLUST_TSV="${2}"
       shift
@@ -53,7 +52,7 @@ while :; do
     ;;    
 #############
     -i|--input_orfs) # Takes an option argument, ensuring it has been
-                # specified.
+                     # specified.
     if [[ -n "${2}" ]]; then
       FGS_ORFS="${2}"
       shift
@@ -65,13 +64,13 @@ while :; do
     --input_orfs=?*)
     FGS_ORFS=${1#*=} # Delete everything up to "=" and assign the remainder.
     ;;
-    --input_orfs=)     # Handle the case of an empty --file=
+    --input_orfs=)   # Handle the case of an empty --file=
     printf 'ERROR: "--input_orfs" requires a non-empty option argument.\n' >&2
     exit 1
     ;;
 #############
-    -p|--prefix) # Takes an option argument, ensuring it has been
-                # specified.
+    -p|--prefix)     # Takes an option argument, ensuring it has been
+                     # specified.
     if [[ -n "${2}" ]]; then
       NAME="${2}"
       shift
@@ -82,16 +81,16 @@ argument.\n' >&2
     fi
     ;;
     --prefix=?*)
-    NAME=${1#*=} # Delete everything up to "=" and assign the
-# remainder.
+    NAME=${1#*=}     # Delete everything up to "=" and assign the
+                     # remainder.
     ;;
-    --prefix=)     # Handle the case of an empty --file=
+    --prefix=)       # Handle the case of an empty --file=
     printf 'ERROR: "--prefix" requires a non-empty option argument.\n' >&2
     exit 1
     ;;    
 #############
-    -r1|--reads1) # Takes an option argument, ensuring it has been
-                # specified.
+    -r1|--reads1)    # Takes an option argument, ensuring it has been
+                     # specified.
     if [[ -n "${2}" ]]; then
       R1_DOM_FASTQ="${2}"
       shift
@@ -103,13 +102,13 @@ argument.\n' >&2
     --reads1=?*)
     R1_DOM_FASTQ=${1#*=} # Delete everything up to "=" and assign the remainder.
     ;;
-    --reads1=)     # Handle the case of an empty --file=
+    --reads1=)           # Handle the case of an empty --file=
     printf 'ERROR: "--reads1" requires a non-empty option argument.\n' >&2
     exit 1
     ;;
 #############
     -r2|--reads2) # Takes an option argument, ensuring it has been
-                # specified.
+                  # specified.
     if [[ -n "${2}" ]]; then
       R2_DOM_FASTQ="${2}"
       shift
@@ -121,13 +120,13 @@ argument.\n' >&2
     --reads2=?*)
     R2_DOM_FASTQ=${1#*=} # Delete everything up to "=" and assign the remainder.
     ;;
-    --reads2=)     # Handle the case of an empty --file=
+    --reads2=)           # Handle the case of an empty --file=
     printf 'ERROR: "--reads2" requires a non-empty option argument.\n' >&2
     exit 1
     ;;
 #############
     -sr|--single_reads) # Takes an option argument, ensuring it has been
-                # specified.
+                        # specified.
     if [[ -n "${2}" ]]; then
       SR_DOM_FASTQ="${2}"
       shift
@@ -146,7 +145,7 @@ argument.\n' >&2
     ;;
 #############
     -tp|--tmp_prefix) # Takes an option argument, ensuring it has been
-                # specified.
+                      # specified.
     if [[ -n "${2}" ]]; then
       TMP_NAME="${2}"
       shift
@@ -158,15 +157,15 @@ argument.\n' >&2
     ;;
     --tmp_prefix=?*)
     TMP_NAME=${1#*=} # Delete everything up to "=" and assign the
-# remainder.
+                     # remainder.
     ;;
-    --tmp_prefix=)     # Handle the case of an empty --file=
+    --tmp_prefix=)   # Handle the case of an empty --file=
     printf 'ERROR: "--tmp_prefix" requires a non-empty option argument.\n' >&2
     exit 1
     ;;
 #############
     -t|--nslots) # Takes an option argument, ensuring it has been
-                # specified.
+                 # specified.
     if [[ -n "${2}" ]]; then
       NSLTOS="${2}"
       shift
@@ -185,7 +184,7 @@ argument.\n' >&2
     exit 1
     ;;
 #############
-    --)              # End of all options.
+    --)            # End of all options.
     shift
     break
     ;;
@@ -200,13 +199,13 @@ done
 
 
 ###############################################################################
-# 3. convert bed file coordinates
+# 3. Convert bed file coordinates
 ###############################################################################
 
 awk 'OFS="\t" {print $1,$2*3,$3*3 }' "${BED}"_aa.bed > "${BED}"_nuc.bed
 
 ###############################################################################
-# 4. extract sequences
+# 4. Extract sequences
 ###############################################################################
 
 "${fastafrombed}" \
@@ -215,7 +214,7 @@ awk 'OFS="\t" {print $1,$2*3,$3*3 }' "${BED}"_aa.bed > "${BED}"_nuc.bed
   -fo "${NAME}"_subseqs.ffn
 
 ###############################################################################
-# 5. map
+# 5. Map
 ###############################################################################
 
 "${bwa}" index -p "${TMP_NAME}" "${NAME}"_subseqs.ffn
@@ -229,7 +228,7 @@ if [[ -f "${SR_DOM_FASTQ}" ]]; then
 fi
   
 ###############################################################################
-# 6. convert to bam
+# 6. Convert to bam
 ###############################################################################
 
 "${samtools}" view -@ "${NSLOTS}" -q 10 -F 4 -b \
@@ -240,7 +239,7 @@ if [[ -f "${TMP_NAME}"-SE.sam ]]; then
   "${TMP_NAME}"-SE.sam > "${TMP_NAME}"-SE.bam
 fi 
 ###############################################################################
-# 7. sort
+# 7. Sort
 ###############################################################################
 
 "${samtools}" sort  -@ "${NSLOTS}" \
@@ -251,7 +250,7 @@ if [[ -f "${TMP_NAME}"-SE.bam ]]; then
   "${TMP_NAME}"-SE.sam > "${TMP_NAME}"-SE.sorted.bam
 fi
 ###############################################################################
-# 8. merge
+# 8. Merge
 ###############################################################################
 
 if [[ -f "${SR_DOM_FASTQ}" ]]; then
@@ -269,13 +268,13 @@ else
 fi
 
 ###############################################################################
-# 9. sort merged data
+# 9. Sort merged data
 ###############################################################################
 
 "${samtools}" index -@ "${NSLOTS}" "${TMP_NAME}".sorted.bam
 
 ###############################################################################
-# 10. remove duplicates
+# 10. Remove duplicates
 ###############################################################################
 
 java -jar "${picard}" MarkDuplicates \
@@ -287,7 +286,7 @@ java -jar "${picard}" MarkDuplicates \
         MAX_FILE_HANDLES_FOR_READ_ENDS_MAP=900
 
 ###############################################################################
-# 11. compute coverage
+# 11. Compute coverage
 ###############################################################################
 
 "${genomecoveragebed}" -d \
@@ -333,7 +332,7 @@ awk  '{ if ( Gp==$1 ) {
 
 
 ###############################################################################
-# 12. cross tables
+# 12. Cross tables
 ###############################################################################
 
 awk 'BEGIN {OFS="\t"} {  
@@ -373,7 +372,7 @@ awk 'BEGIN {OFS="\t"} {
    "${NAME}_cluster2abund".tsv
 
 ###############################################################################
-# 13. clean
+# 13. Clean
 ###############################################################################
 
 rm \

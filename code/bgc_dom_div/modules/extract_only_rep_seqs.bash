@@ -2,21 +2,21 @@
 
 set -o pipefail
 
-#############################################################################
+###############################################################################
 # 1. Load general configuration
-#############################################################################
+###############################################################################
 
 source /bioinfo/software/conf
-#source /home/memo/Google_Drive/Doctorado/workspace/ufBGCtoolbox/bgc_dom_div/tmp_vars.bash
-#############################################################################
-# 2. set parameters
-#############################################################################
+
+###############################################################################
+# 2. Set parameters
+###############################################################################
 
 while :; do
   case "${1}" in
 #############  
     -c|--clust2abund_tsv) # Takes an option argument, ensuring it has been
-                # specified.
+                          # specified.
     if [[ -n "${2}" ]]; then
       CLUST2ABUND_TSV="${2}"
       shift
@@ -34,7 +34,7 @@ while :; do
     ;;
 #############
     -p|--prefix) # Takes an option argument, ensuring it has been
-                # specified.
+                 # specified.
     if [[ -n "${2}" ]]; then
       NAME="${2}"
       shift
@@ -46,15 +46,15 @@ argument.\n' >&2
     ;;
     --prefix=?*)
     NAME=${1#*=} # Delete everything up to "=" and assign the
-# remainder.
+                 # remainder.
     ;;
-    --prefix=)     # Handle the case of an empty --file=
+    --prefix=)   # Handle the case of an empty --file=
     printf 'ERROR: "--prefix" requires a non-empty option argument.\n' >&2
     exit 1
     ;;
 #############
     -tp|--tmp_prefix) # Takes an option argument, ensuring it has been
-                # specified.
+                      # specified.
     if [[ -n "${2}" ]]; then
       TMP_NAME="${2}"
       shift
@@ -66,9 +66,9 @@ argument.\n' >&2
     ;;
     --tmp_prefix=?*)
     TMP_NAME=${1#*=} # Delete everything up to "=" and assign the
-# remainder.
+                     # remainder.
     ;;
-    --tmp_prefix=)     # Handle the case of an empty --file=
+    --tmp_prefix=)   # Handle the case of an empty --file=
     printf 'ERROR: "--tmp_prefix" requires a non-empty option argument.\n' >&2
     exit 1
     ;;        
@@ -86,9 +86,9 @@ argument.\n' >&2
     shift
 done
 
-#############################################################################
-# 3. collapse table
-#############################################################################
+###############################################################################
+# 3. Collapse table
+###############################################################################
 
 awk 'BEGIN {OFS="\t"}; {
 
@@ -107,16 +107,16 @@ awk 'BEGIN {OFS="\t"}; {
   }
 }' "${CLUST2ABUND_TSV}" > "${TMP_NAME}_onlyrep_cluster2abund.tsv"
 
-#############################################################################
-# 4. extract headers
-#############################################################################
+###############################################################################
+# 4. Extract headers
+###############################################################################
 
 cut -f2 "${TMP_NAME}_onlyrep_cluster2abund.tsv" | sed "s/_repseq$//" > \
 "${TMP_NAME}.onlyrep_headers"
 
-#############################################################################
-# 5. extract seqs
-#############################################################################
+###############################################################################
+# 5. Extract seqs
+###############################################################################
 
 "${filterbyname}" \
 in="${NAME}_subseqs.faa" \

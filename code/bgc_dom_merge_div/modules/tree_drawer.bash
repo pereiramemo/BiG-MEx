@@ -5,14 +5,13 @@
 set -o pipefail
 
 ###############################################################################
-# 1. load general configuration
+# 1. Load general configuration
 ###############################################################################
 
 source /bioinfo/software/conf
-#source /home/memo/Google_Drive/Doctorado/workspace/ufBGCtoolbox/bgc_dom_merge_div/resources/conf_local
 
 ##############################################################################
-# 2. parse parameters 
+# 2. Parse parameters 
 ##############################################################################
 
 while :; do
@@ -68,7 +67,7 @@ while :; do
   ;;
   --font_size=?*)
   FONT_SIZE="${1#*=}" # Delete everything up to "=" and assign the 
-# remainder.
+                      # remainder.
   ;;
   --font_size=) # Handle the empty case
   printf 'Using default environment.\n' >&2
@@ -82,7 +81,7 @@ while :; do
   ;;
   --outdir=?*)
   OUTDIR_EXPORT="${1#*=}" # Delete everything up to "=" and assign the 
-# remainder.
+                          # remainder.
   ;;
   --outdir=) # Handle the empty case
   printf 'Using default environment.\n' >&2
@@ -96,7 +95,7 @@ while :; do
   ;;
   --plot_width=?*)
   PLOT_WIDTH="${1#*=}" # Delete everything up to "=" and assign the 
-# remainder.
+                       # remainder.
   ;;
   --plot_width=) # Handle the empty case
   printf 'Using default environment.\n' >&2
@@ -110,7 +109,7 @@ while :; do
   ;;
   --plot_height=?*)
   PLOT_HEIGHT="${1#*=}" # Delete everything up to "=" and assign the 
-# remainder.
+                        # remainder.
   ;;
   --plot_height=) # Handle the empty case
   printf 'Using default environment.\n' >&2
@@ -143,16 +142,16 @@ while :; do
     shift
 done
 
-##############################################################################
-# 3. define output
-##############################################################################
+###############################################################################
+# 3. Define output
+###############################################################################
 
 THIS_JOB_TMP_DIR="${OUTDIR_EXPORT}"
 THIS_OUTPUT_TMP_IMAGE="${THIS_JOB_TMP_DIR}/"${DOMAIN}"_placements_tree.pdf"
 
-##############################################################################
-# 4. clean abund2clust.tsv table
-##############################################################################
+###############################################################################
+# 4. Clean abund2clust.tsv table
+###############################################################################
 
 awk 'BEGIN {OFS="\t"} {
   gsub(/:|\./,"_",$2)
@@ -162,9 +161,9 @@ awk 'BEGIN {OFS="\t"} {
 
 ABUND_TABLE="${THIS_JOB_TMP_DIR}/abund2clust_clean.tsv"
 
-##############################################################################
+###############################################################################
 # 5. Make image
-##############################################################################
+###############################################################################
 
 "${r_interpreter}" --vanilla --slave <<RSCRIPT
 
