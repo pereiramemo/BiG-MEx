@@ -53,7 +53,7 @@ EOF
 while :; do
   case "${1}" in
 
-    -h|-\?|--help) # Call a "show_help" function to display a synopsis, then
+    -h|-\?|--help) # Call a "show_usage" function to display a synopsis, then
                    # exit.
     show_usage
     exit 1;
