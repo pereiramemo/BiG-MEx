@@ -260,16 +260,16 @@ library(bgcpred)
 
 URL &lt;- &quot;https://github.com/pereiramemo/BiG-MEx/wiki/files/&quot;
 
-URL_train_data_domains &lt;- paste(URL,&quot;OMs_metagenomes_dom_annot_wide.tsv&quot;, sep = &quot;&quot;)
+URL_train_data_domains &lt;- paste(URL,&quot;Marine-RM_dom_abund.tsv&quot;, sep = &quot;&quot;)
 train_data_domains &lt;- read_tsv(file = URL_train_data_domains, col_names = TRUE)
 
-URL_test_data_domains &lt;- paste(URL,&quot;TGs_metagenomes_dom_annot_wide.tsv&quot;, sep = &quot;&quot;)
+URL_test_data_domains &lt;- paste(URL,&quot;Marine-TM_dom_abund.tsv&quot;, sep = &quot;&quot;)
 test_data_domains &lt;- read_tsv(file = URL_test_data_domains, col_names = TRUE)
 
-URL_train_data_classes &lt;- paste(URL,&quot;OMs_ref_genomes_class_cov_wide.tsv&quot;, sep = &quot;&quot;)
+URL_train_data_classes &lt;- paste(URL,&quot;Marine-RM_class_abund.tsv&quot;, sep = &quot;&quot;)
 train_data_classes &lt;- read_tsv(file = URL_train_data_classes, col_names = TRUE) 
 
-URL_test_data_classes &lt;- paste(URL,&quot;TGs_ref_genomes_class_cov_wide.tsv&quot;, sep = &quot;&quot;)
+URL_test_data_classes &lt;- paste(URL,&quot;Marine-TM_class_abund.tsv&quot;, sep = &quot;&quot;)
 test_data_classes &lt;- read_tsv(file = URL_test_data_classes, col_names = TRUE) </code></pre>
 </div>
 <div id="reformat-test-domain-table" class="section level2">

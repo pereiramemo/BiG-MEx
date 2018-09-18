@@ -30,16 +30,16 @@ library(bgcpred)
 
 URL <- "https://github.com/pereiramemo/BiG-MEx/wiki/files/"
 
-URL_train_data_domains <- paste(URL,"OMs_metagenomes_dom_annot_wide.tsv", sep = "")
+URL_train_data_domains <- paste(URL,"Marine-RM_dom_abund.tsv", sep = "")
 train_data_domains <- read_tsv(file = URL_train_data_domains, col_names = TRUE)
 
-URL_test_data_domains <- paste(URL,"TGs_metagenomes_dom_annot_wide.tsv", sep = "")
+URL_test_data_domains <- paste(URL,"Marine-TM_dom_abund.tsv", sep = "")
 test_data_domains <- read_tsv(file = URL_test_data_domains, col_names = TRUE)
 
-URL_train_data_classes <- paste(URL,"OMs_ref_genomes_class_cov_wide.tsv", sep = "")
+URL_train_data_classes <- paste(URL,"Marine-RM_class_abund.tsv", sep = "")
 train_data_classes <- read_tsv(file = URL_train_data_classes, col_names = TRUE) 
 
-URL_test_data_classes <- paste(URL,"TGs_ref_genomes_class_cov_wide.tsv", sep = "")
+URL_test_data_classes <- paste(URL,"Marine-TM_class_abund.tsv", sep = "")
 test_data_classes <- read_tsv(file = URL_test_data_classes, col_names = TRUE) 
 ```
 
