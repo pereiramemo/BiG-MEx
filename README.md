@@ -8,7 +8,6 @@ BiG-MEx: a tool for the mining of Biosynthetic Gene Cluster (BGC) domains and cl
 Pereira-Flores, E., Buttigieg, P. L., Medema, M. H., Meinicke, P., Glöckner, F. O. and Fernandez-Guerra, A.. (2018+). _Mining metagenomes for natural product biosynthetic gene clusters: unlocking new potential with ultrafast techniques_. Under review.
 
 ## Installation
-
 BiG-MEx consists of four docker images: 
 1. epereira/bgc_dom_annot  
 2. epereira/bgc_dom_div  
