@@ -1,5 +1,6 @@
 #!/bin/bash -l
 
+# set -x
 set -o pipefail
 
 ###############################################################################
@@ -14,7 +15,7 @@ source /bioinfo/software/conf
 
 show_usage(){
   cat <<EOF
-  Usage: run_bgc_dom_div.bash sample <input file> <R1> <R2> <SR> \
+  Usage: run_bgc_dom_div.bash meta <input file> <R1> <R2> <SR> \
 <output directory> <options>
   
   [-h|--help] [-b|--blast t|f] [-c|--coverage t|f] [-d|--domains CHAR] 
@@ -36,10 +37,10 @@ show_usage(){
 -oa, --output_assembly	t or f, keep all assembly output directory in output (default f)
 -or, --only_rep t or f, use only representative cluster sequences in tree placement (default t)
 -p, --plot_tree t or f, place sequences in reference tree and generate plot
--ph, --plot_height	tree plot height (default 3). R parameter
--pw, --plot_width	tree plot width (default 3). R parameter
--pth, --plot_tree_height	plot height (default 12). R parameter
--ptw, --plot_tree_width	plot width (default 14). R parameter
+-ph, --plot_height	violin plot height (default 3). R parameter
+-pw, --plot_width	violin plot width (default 3). R parameter
+-pth, --plot_tree_height	tree plot height (default 12). R parameter
+-ptw, --plot_tree_width	tree plot width (default 14). R parameter
 -t, --nslots	number of slots (default 2). metaSPAdes, FragGeneScan, \
 hmmsearch, mmseqs cluster, bwa mem and samtools parameter  
 -v, --verbose	t or f, run verbosely (default f)

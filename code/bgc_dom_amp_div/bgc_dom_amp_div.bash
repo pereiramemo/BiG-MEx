@@ -1,5 +1,6 @@
 #!/bin/bash -l
 
+# set -x
 set -o pipefail
 
 ###############################################################################
@@ -14,7 +15,7 @@ source /bioinfo/software/conf
 
 show_usage(){
   cat <<EOF
-  Usage: run_bgc_dom_div.bash sample <R> <output directory> <options>
+  Usage: run_bgc_dom_div.bash amp <R> <output directory> <options>
   
   [-h|--help] [-b|--blast t|f] [-d|--domain CHAR] [-f|--font_size NUM] 
   [-fts|--font_tree_size NUM] [-id|--identity NUM] [-n|--num_iter NUM] 
@@ -34,12 +35,11 @@ show_usage(){
 -or, --only_rep t or f, use only representative cluster sequences in tree 
 placement (default t)
 -p, --plot_tree t or f, place sequences in reference tree and generate plot
--ph, --plot_height	tree plot height (default 3). R parameter
--pw, --plot_width	tree plot width (default 3). R parameter
--pth, --plot_tree_height	plot height (default 12). R parameter
--ptw, --plot_tree_width	plot width (default 14). R parameter
--t, --nslots	number of slots (default 2). FragGeneScan, \
-hmmsearch, and mmseqs cluster
+-ph, --plot_height	violin plot height (default 3). R parameter
+-pw, --plot_width	violin plot width (default 3). R parameter
+-pth, --plot_tree_height    tree plot height (default 12). R parameter
+-ptw, --plot_tree_width tree plot width (default 14). R parameter
+-t, --nslots	number of slots (default 2). FragGeneScan, and mmseqs cluster
 -v, --verbose	t or f, run verbosely (default f)
 -w, --overwrite t or f, overwrite current directory (default f)
 EOF

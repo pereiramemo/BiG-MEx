@@ -1,5 +1,6 @@
 #!/bin/bash -l
 
+# set -x
 set -o pipefail
 
 ###############################################################################
@@ -33,11 +34,11 @@ show_usage(){
 -n, --num_iter	number of iterations in each random subsampling (default 100)
 -or, --only_rep	t or f, use only representative cluster sequences in tree placement (default t)
 -pr, --plot_rare_curve	t or f, make rare curve plot (default f)
--ph, --plot_height	plot height (default 4). R parameter
+-ph, --plot_height  plot height (default 4). R parameter
 -pw, --plot_width	plot width (default 8). R parameter
 -pt, --plot_tree	t or f, make tree plot (default f)
--pth, --plot_tree_height	plot height (default 12). R parameter
--ptw, --plot_tree_width	plot width (default 14). R parameter
+-pth, --plot_tree_height	tree plot height (default 12). R parameter
+-ptw, --plot_tree_width	tree plot width (default 14). R parameter
 -s, --sample_increment 	increment in rarefaction (default 50)
 -t, --nslots	number of slots (default 2). mmseqs cluster parameter
 -v, --verbose	t or f, run verbosely (default f)
