@@ -3,16 +3,16 @@
 set -o errexit
 
 function realpath() {
-  CURRENT_DIR=$( pwd )
-  DIR=$( dirname $1 );
-  FILE=$( basename $1 )
+  CURRENT_DIR=$(pwd)
+  DIR=$(dirname $1);
+  FILE=$(basename $1)
   cd "${DIR}";
-  echo $( pwd )/"${FILE}"
+  echo $(pwd)/"${FILE}"
   cd "${CURRENT_DIR}"
 }
 
 if [[ "$#" -lt 2 ]]; then
-  echo -e "Missing parameters.\nSee run_bgc_dom_annot.bash . . --help"
+  echo -e "Failed. Missing parameters.\nSee run_bgc_dom_annot.bash . . --help"
   exit
 fi  
 

@@ -4,9 +4,9 @@ set -o errexit
 
 
 function realpath() {
-  CURRENT_DIR=$( pwd )
-  DIR=$( dirname $1 );
-  FILE=$( basename $1 )
+  CURRENT_DIR=$(pwd)
+  DIR=$(dirname $1);
+  FILE=$(basename $1)
   cd "${DIR}";
   echo $( pwd )/"${FILE}"
   cd "${CURRENT_DIR}"
@@ -14,7 +14,7 @@ function realpath() {
 
 # check input parameters
 if [[ "$#" -lt 2 ]]; then
-  echo -e "Missing parameters.\nSee run_bgc_class_models . . --help"
+  echo -e "Failed. Missing parameters.\nSee run_bgc_class_models . . --help"
   exit
 fi
 
@@ -29,7 +29,7 @@ if [[ -f $1 ]]; then
   shift
 fi
 
-OUTPUT_DIR=$( dirname $(realpath $1))
+OUTPUT_DIR=$(dirname $(realpath $1))
 OUTPUT=$(basename $1)
 shift
 
