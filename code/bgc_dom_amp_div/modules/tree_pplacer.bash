@@ -9,26 +9,30 @@ set -o pipefail
 source /bioinfo/software/conf
 
 ###############################################################################
-# 2. Set parameters
+# 2. Parse parameters
 ###############################################################################
 
 while :; do
   case "${1}" in
-  -d|--domain)
+#############
+  --env) # Takes an option argument, ensuring it has been specified.
   if [[ -n "${2}" ]]; then
-   DOMAIN="${2}"
-   shift
+    ENV="${2}"
+    shift
+  else
+    printf 'ERROR: "--env" requires a non-empty option argument.\n' >&2
+    exit 1
   fi
   ;;
-  --domain=?*)
-  DOMAIN="${1#*=}" # Delete everything up to "=" and assign the remainder.
+  --env=?*)
+  ENV=${1#*=} # Delete everything up to "=" and assign the remainder.
   ;;
-  --domain=) # Handle the empty case
-  printf "ERROR: --domain requires a non-empty option argument.\n"  >&2
+  --env=)   # Handle the case of an empty --file=
+  printf 'ERROR: "--env" requires a non-empty option argument.\n' >&2
   exit 1
   ;;  
 #############
-  -i|--input)
+  --input)
   if [[ -n "${2}" ]]; then
    INPUT="${2}"
    shift
@@ -41,62 +45,40 @@ while :; do
   printf "ERROR: --input requires a non-empty option argument.\n"  >&2
   exit 1
   ;;
-#############
-  -o|--outdir)
-  if [[ -n "${2}" ]]; then
-   OUT_DIR="${2}"
-   shift
-  fi
-  ;;
-  --outdir=?*)
-  OUT_DIR="${1#*=}" # Delete everything up to "=" and assign the remainder.
-  ;;
-  --outdir=) # Handle the empty case
-  printf "ERROR: --outdir requires a non-empty option argument.\n"  >&2
-  exit 1
-  ;;
-#############
-  -t|--nslots)
-   if [[ -n "${2}" ]]; then
-     NSLOTS="${2}"
-     shift
-   fi
-  ;;
-  --nslots=?*)
-  NSLOTS="${1#*=}" # Delete everything up to "=" and assign the remainder.
-  ;;
-  --nslots=) # Handle the empty case
-  printf 'Using default environment.\n' >&2
-  ;;
 ############
-    --)              # End of all options.
-    shift
-    break
-    ;;
-    -?*)
-    printf 'WARN: Unknown option (ignored): %s\n' "$1" >&2
-    ;;
-    *) # Default case: If no more options then break out of the loop.
-    break
-    esac
-    shift
+  --)              # End of all options.
+  shift
+  break
+  ;;
+  -?*)
+  printf 'WARN: Unknown option (ignored): %s\n' "$1" >&2
+  ;;
+  *) # Default case: If no more options then break out of the loop.
+  break
+  esac
+  shift
 done
 
-REF_ALIGN="${REF_PKG_DIR}/${DOMAIN}.refpkg/${DOMAIN}_rep.align"
-REF_PKG="${REF_PKG_DIR}/${DOMAIN}.refpkg"
+###############################################################################
+# 3. Load environment
+###############################################################################
 
-OUT_DIR="${OUT_DIR}/${DOMAIN}_tree_data"
+source "${ENV}"
+
+REF_ALIGN="${REF_PKG_DIR}/${DOMAIN}.refpkg/${DOMAIN}_core.align"
+REF_PKG="${REF_PKG_DIR}/${DOMAIN}.refpkg"
+OUT_DIR="${THIS_JOB_TMP_DIR}/${DOMAIN}_tree_data"
 
 mkdir "${OUT_DIR}"
 
 ###############################################################################
-# 3. Clean fasta file
+# 4. Clean fasta file
 ###############################################################################
 
 tr "[ -%,;\(\):=\.\\\*[]\"\']" "_" < "${INPUT}" > "${OUT_DIR}/query_clean.fasta"
 
 ###############################################################################
-# 4. Add sequences to profile
+# 5. Add sequences to profile
 ###############################################################################
 
 unset MAFFT_BINARIES
@@ -107,7 +89,7 @@ unset MAFFT_BINARIES
 "${REF_ALIGN}" > "${OUT_DIR}/ref_added_query.align.fasta"
 
 ###############################################################################
-# 5. Place sequences onto tree
+# 6. Place sequences onto tree
 ###############################################################################
 
 "${pplacer}" \
@@ -119,7 +101,7 @@ unset MAFFT_BINARIES
   "${OUT_DIR}/ref_added_query.align.fasta"
 
 ###############################################################################
-# 6. Visualize tree
+# 7. Visualize tree
 ###############################################################################
 
 "${guppy}" fat \
@@ -137,7 +119,7 @@ unset MAFFT_BINARIES
   "${OUT_DIR}/${DOMAIN}_query.jplace"
 
 ###############################################################################
-# 7. Compute stats
+# 8. Compute stats
 ###############################################################################  
 
 "${guppy}" to_csv \
@@ -147,7 +129,7 @@ unset MAFFT_BINARIES
   "${OUT_DIR}/${DOMAIN}_query.jplace"
 
 ###############################################################################
-# 8. Compute edpl
+# 9. Compute edpl
 ###############################################################################
   
   "${guppy}" edpl \
@@ -157,7 +139,7 @@ unset MAFFT_BINARIES
   "${OUT_DIR}/${DOMAIN}_query.jplace"
   
 ###############################################################################
-# 9. Left join tables: info and edpl
+# 10. Left join tables: info and edpl
 ###############################################################################
 
 awk 'BEGIN {FS=","; OFS="," } { 
@@ -183,11 +165,9 @@ awk 'BEGIN {FS=","; OFS="," } {
 > "${OUT_DIR}/${DOMAIN}_tmp.csv"
 
 ###############################################################################
-# 10. Clean
+# 11. Clean
 ###############################################################################
 
 mv "${OUT_DIR}/${DOMAIN}_tmp.csv" "${OUT_DIR}/${DOMAIN}_query_info.csv"
 rm "${OUT_DIR}/${DOMAIN}_query_edpl.csv" 
 rm "${OUT_DIR}/query_clean.fasta"
-
-  

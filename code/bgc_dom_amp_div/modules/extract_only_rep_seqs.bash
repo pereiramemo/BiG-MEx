@@ -14,20 +14,37 @@ source /bioinfo/software/conf
 
 while :; do
   case "${1}" in
+#############  
+  --amp_orfs)
+  if [[ -n "${2}" ]]; then
+   AMP_ORFS="${2}"
+   shift
+  fi
+  ;;
+  --amp_orfs=?*)
+  AMP_ORFS="${1#*=}" # Delete everything up to "=" and assign the remainder.
+  ;;
+  --amp_orfs=) # Handle the empty case
+  printf "ERROR: --amp_orfs requires a non-empty option argument.\n"  >&2
+  exit 1
+  ;;  
 #############
-  --env)
+  --env) # Takes an option argument, ensuring it has been specified.
   if [[ -n "${2}" ]]; then
     ENV="${2}"
     shift
+  else
+    printf 'ERROR: "--env" requires a non-empty option argument.\n' >&2
+    exit 1
   fi
   ;;
   --env=?*)
-  ENV="${1#*=}" # Delete everything up to "=" and assign the remainder.
+  ENV=${1#*=} # Delete everything up to "=" and assign the remainder.
   ;;
-  --env=) # Handle the empty case
-  printf "ERROR: --env requires a non-empty option argument.\n"  >&2
+  --env=)   # Handle the case of an empty --file=
+  printf 'ERROR: "--env" requires a non-empty option argument.\n' >&2
   exit 1
-  ;;  
+  ;;
 #############
   --prefix) # Takes an option argument, ensuring it has been specified.
   if [[ -n "${2}" ]]; then
@@ -44,7 +61,7 @@ while :; do
   --prefix=)   # Handle the case of an empty --file=
   printf 'ERROR: "--prefix" requires a non-empty option argument.\n' >&2
   exit 1
-  ;;
+;;
 #############
   --tmp_prefix) # Takes an option argument, ensuring it has been specified.
   if [[ -n "${2}" ]]; then
@@ -61,24 +78,7 @@ while :; do
   --tmp_prefix=)   # Handle the case of an empty --file=
   printf 'ERROR: "--tmp_prefix" requires a non-empty option argument.\n' >&2
   exit 1
-  ;; 
-#############
-  --tmp_folder) # Takes an option argument, ensuring it has been specified.
-  if [[ -n "${2}" ]]; then
-    TMP_FOLDER="${2}"
-    shift
-  else
-    printf 'ERROR: "--tmp_folder" requires a non-empty option argument.\n' >&2
-    exit 1
-  fi
-  ;;
-  --tmp_prefix=?*)
-  TMP_FOLDER=${1#*=} # Delete everything up to "=" and assign the remainder.
-  ;;
-  --tmp_folder=)     # Handle the case of an empty --file=
-  printf 'ERROR: "--tmp_folder" requires a non-empty option argument.\n' >&2
-  exit 1
-  ;; 
+  ;;        
 #############
   --)              # End of all options.
   shift
@@ -94,29 +94,46 @@ while :; do
 done
 
 ###############################################################################
-# 3. Load env
+# 3. Load environment
 ###############################################################################
 
 source "${ENV}"
 
 ###############################################################################
-# 4. Cluster seqs
+# 4. Collapse table
 ###############################################################################
 
-if [[ -d "${TMP_FOLDER}" ]]; then
-  rm -r "${TMP_FOLDER}"
-fi  
-    
-"${mmseqs}" createdb "${TMP_NAME}_all.faa" "${TMP_NAME}_db"
-mkdir "${TMP_FOLDER}"
+awk 'BEGIN {OFS="\t"}; {
 
-"${mmseqs}" cluster "${TMP_NAME}_db" "${TMP_NAME}_all_clu" \
-"${TMP_FOLDER}" \
---min-seq-id "${ID}" \
---remove-tmp-files \
--c 0.8 \
--s 7.5 \
---threads "${NSLOTS}"
+  cluster = $1;
+  id = $2;
+  
+  array_cluster2abund[cluster] = array_cluster2abund[cluster] + $3;
+  
+  if ( array_cluster2id[cluster] == ""  ) {
+    array_cluster2id[cluster] = id;
+  }
+  
+} END {
+  for (c in array_cluster2abund) {
+    print  c,array_cluster2id[c],array_cluster2abund[c]
+  }
+}' "${NAME}_cluster2abund.tsv" > "${TMP_NAME}_onlyrep_cluster2abund.tsv"
 
-"${mmseqs}" createtsv "${TMP_NAME}_db" "${TMP_NAME}_db" \
-"${TMP_NAME}_all_clu" "${TMP_NAME}_all_clu".tsv 
+###############################################################################
+# 5. Extract headers
+###############################################################################
+
+cut -f2 "${TMP_NAME}_onlyrep_cluster2abund.tsv" | \
+sed "s/_repseq$//" > "${TMP_NAME}.onlyrep_headers"
+
+###############################################################################
+# 6. Extract seqs
+###############################################################################
+
+"${filterbyname}" \
+in="${AMP_ORFS}" \
+out="${TMP_NAME}_onlyrep.faa" \
+names="${TMP_NAME}.onlyrep_headers" \
+include=t \
+overwrite=t

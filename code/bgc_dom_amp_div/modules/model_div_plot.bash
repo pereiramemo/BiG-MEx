@@ -17,49 +17,21 @@ source /bioinfo/software/conf
 while :; do
   case "${1}" in
 #############
-  -a|--abund_table)
+  --env)
   if [[ -n "${2}" ]]; then
-   ABUND_TABLE="${2}"
+   ENV="${2}"
    shift
   fi
   ;;
-  --abund_table=?*)
-  ABUND_TABLE="${1#*=}" # Delete everything up to "=" and assign the remainder.
+  --env=?*)
+  ENV="${1#*=}" # Delete everything up to "=" and assign the remainder.
   ;;
-  --abund_table=) # Handle the empty case
-  printf "ERROR: --abund_table requires a non-empty option argument.\n"  >&2
+  --env=) # Handle the empty case
+  printf "ERROR: --env requires a non-empty option argument.\n"  >&2
   exit 1
   ;;
 #############
-  -fs|--font_size)
-   if [[ -n "${2}" ]]; then
-     FONT_SIZE="${2}"
-     shift
-   fi
-  ;;
-  --font_size=?*)
-  FONT_SIZE="${1#*=}" # Delete everything up to "=" and assign the 
-                      # remainder.
-  ;;
-  --font_size=) # Handle the empty case
-  printf 'Using default environment.\n' >&2
-  ;;  
-#############
-  -o|--outdir)
-   if [[ -n "${2}" ]]; then
-     OUTDIR_EXPORT="${2}"
-     shift
-   fi
-  ;;
-  --outdir=?*)
-  OUTDIR_EXPORT="${1#*=}" # Delete everything up to "=" and assign the 
-                          # remainder.
-  ;;
-  --outdir=) # Handle the empty case
-  printf 'Using default environment.\n' >&2
-  ;;
-#############
-  -pc|--plot_model_violin)
+  --plot_model_violin)
    if [[ -n "${2}" ]]; then
      PLOT_MODEL_VIOLIN="${2}"
      shift
@@ -73,100 +45,48 @@ while :; do
   printf 'Using default environment.\n' >&2
   ;;
 #############
-  -pr|--prefix)
+  --prefix)
    if [[ -n "${2}" ]]; then
-     PREFIX="${2}"
+     NAME="${2}"
      shift
    fi
   ;;
   --prefix=?*)
-  PREFIX="${1#*=}" # Delete everything up to "=" and assign the 
-                   # remainder.
+  NAME="${1#*=}" # Delete everything up to "=" and assign the remainder.
   ;;
   --prefix=) # Handle the empty case
   printf 'Using default environment.\n' >&2
-  ;;   
+  ;; 
 #############
-  -pw|--plot_width)
-   if [[ -n "${2}" ]]; then
-     PLOT_WIDTH="${2}"
-     shift
-   fi
+  --)                # End of all options.
+  shift
+  break
   ;;
-  --plot_width=?*)
-  PLOT_WIDTH="${1#*=}" # Delete everything up to "=" and assign the 
-                       # remainder.
+  -?*)
+  printf 'WARN: Unknown option (ignored): %s\n' "$1" >&2
   ;;
-  --plot_width=) # Handle the empty case
-  printf 'Using default environment.\n' >&2
-  ;;  
-#############
-  -ph|--plot_height)
-   if [[ -n "${2}" ]]; then
-     PLOT_HEIGHT="${2}"
-     shift
-   fi
-  ;;
-  --plot_height=?*)
-  PLOT_HEIGHT="${1#*=}" # Delete everything up to "=" and assign the 
-                        # remainder.
-  ;;
-  --plot_height=) # Handle the empty case
-  printf 'Using default environment.\n' >&2
-  ;;
-#############
-  -n|--num_iter)
-   if [[ -n "${2}" ]]; then
-     NUM_ITER="${2}"
-     shift
-   fi
-  ;;
-  --num_iter=?*)
-  NUM_ITER="${1#*=}" # Delete everything up to "=" and assign the 
-                     # remainder.
-  ;;
-  --num_iter=) # Handle the empty case
-  printf 'Using default environment.\n' >&2
-  ;;
- #############
-  -s|--sample_increment)
-   if [[ -n "${2}" ]]; then
-     SAMPLE_INCREMENT="${2}"
-     shift
-   fi
-  ;;
-  --sample_increment=?*)
-  SAMPLE_INCREMENT="${1#*=}" # Delete everything up to "=" and assign the 
-                             # remainder.
-  ;;
-  --sample_increment=) # Handle the empty case
-  printf 'Using default environment.\n' >&2
-  ;;   
-#############
-    --)                # End of all options.
-    shift
-    break
-    ;;
-    -?*)
-    printf 'WARN: Unknown option (ignored): %s\n' "$1" >&2
-    ;;
-    *) # Default case: If no more options then break out of the loop.
-    break
-    esac
-    shift
+  *) # Default case: If no more options then break out of the loop.
+  break
+  esac
+  shift
 done
 
 ###############################################################################
-# 3. Define output
+# 3. Load environment
 ###############################################################################
 
-THIS_JOB_TMP_DIR="${OUTDIR_EXPORT}"
-THIS_OUTPUT_TMP_MODEL_TSV="${THIS_JOB_TMP_DIR}/${PREFIX}_model_div_est.tsv"
-THIS_OUTPUT_TMP_SUMM_TSV="${THIS_JOB_TMP_DIR}/${PREFIX}_summary_model_div_est.tsv"
-THIS_OUTPUT_TMP_IMAGE="${THIS_JOB_TMP_DIR}/${PREFIX}_violin_div_est.pdf"
+source "${ENV}"
 
 ###############################################################################
-# 4. Diversity estimates
+# 4. Define output
+###############################################################################
+
+THIS_OUTPUT_TMP_MODEL_TSV="${NAME}_model_div_est.tsv"
+THIS_OUTPUT_TMP_SUMM_TSV="${NAME}_summary_model_div_est.tsv"
+THIS_OUTPUT_TMP_IMAGE="${NAME}_violin_div_est.pdf"
+
+###############################################################################
+# 5. Diversity estimates
 ###############################################################################
 
 "${r_interpreter}" --vanilla --slave <<RSCRIPT
@@ -180,7 +100,7 @@ THIS_OUTPUT_TMP_IMAGE="${THIS_JOB_TMP_DIR}/${PREFIX}_violin_div_est.pdf"
   options(warn=0)
   
   ### load data
-  CLUSTER <- read.table(file = "${ABUND_TABLE}",
+  CLUSTER <- read.table(file = "${NAME}_cluster2abund.tsv",
              sep = "\t",
              header = F)
   colnames(CLUSTER) <- c("clust_id","seq_id","abund")
@@ -208,22 +128,22 @@ THIS_OUTPUT_TMP_IMAGE="${THIS_JOB_TMP_DIR}/${PREFIX}_violin_div_est.pdf"
   ODU_TABLE_div_est <- model_div(x = ODU_TABLE,
                                  n_iter = N)
                                  
-  ODU_TABLE_div_est\$domain <- "${PREFIX}"                                  
+  ODU_TABLE_div_est\$domain <- "${DOMAIN}"                                  
                                                             
   ### format diversity table for rarefying plot
   if ( "${PLOT_MODEL_VIOLIN}" %in% c("t","T")) {
   
     p <- ggplot(ODU_TABLE_div_est, aes(x = domain, y = diversity)) +
-     geom_violin( size = 1, alpha = 0.5, fill = "darkred") +
-     stat_summary(fun.y = median ,geom='point', size = 1) + 
-     xlab("") +
-     ylab("Shannon index") +
-     theme_light() +
-     theme(axis.text.y = element_text(size = f1, color = "black"), 
-           axis.text.x = element_text(size = f1, color = "black"),
-           axis.title.x = element_text(size = f2, color = "black"),
-           axis.title.y = element_text(size = f2, color = "black",
-                                       margin = unit(c(0, 5, 0, 0),"mm"))) 
+    geom_violin( size = 1, alpha = 0.5, fill = "darkred") +
+    stat_summary(fun.y = median ,geom='point', size = 1) + 
+    xlab("") +
+    ylab("Shannon index") +
+    theme_light() +
+    theme(axis.text.y = element_text(size = f1, color = "black"), 
+          axis.text.x = element_text(size = f1, color = "black"),
+          axis.title.x = element_text(size = f2, color = "black"),
+          axis.title.y = element_text(size = f2, color = "black",
+                                      margin = unit(c(0, 5, 0, 0),"mm"))) 
 
     pdf(file = "${THIS_OUTPUT_TMP_IMAGE}", width = w, height = h)
     print(p)		          

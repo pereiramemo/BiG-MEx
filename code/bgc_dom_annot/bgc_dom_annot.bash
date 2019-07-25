@@ -10,7 +10,7 @@ set -o pipefail
 source /bioinfo/software/conf
 
 ###############################################################################
-# 2. Set parameters
+# 2. Define help
 ###############################################################################
 
 show_usage(){
@@ -35,12 +35,12 @@ EOF
 
 while :; do
   case "${1}" in
-
-    -h|-\?|--help) # Call a "show_usage" function to display a synopsis, then
+#############
+  -h|-\?|--help) # Call a "show_usage" function to display a synopsis, then
                    # exit.
-    show_usage
-    exit 1;
-    ;;
+  show_usage
+  exit 1;
+  ;;
 #############
   -i|--intype)
   if [[ -n "${2}" ]]; then
@@ -187,21 +187,14 @@ if [[ -z "${INTYPE}" ]]; then
   exit 1
 fi
 
-if [[ "${VERBOSE}" == "t" ]]; then
-  function handleoutput {
-    cat /dev/stdin | \
-    while read STDIN; do 
-      echo "${STDIN}"
-    done  
-  }
-else
-  function handleoutput {
-  cat /dev/stdin >/dev/null
-}
-fi
+###############################################################################
+# 5. Load handleoutput
+###############################################################################
+
+source /bioinfo/software/handleoutput 
 
 ###############################################################################
-# 5. Check output directories
+# 6. Check output directories
 ###############################################################################
 
 if [[ -d "${OUTDIR_LOCAL}/${OUTDIR_EXPORT}" ]]; then
@@ -212,7 +205,7 @@ if [[ -d "${OUTDIR_LOCAL}/${OUTDIR_EXPORT}" ]]; then
 fi  
 
 ###############################################################################
-# 6. Create output directories
+# 7. Create output directories
 ###############################################################################
 
 THIS_JOB_TMP_DIR="${SCRATCH}/${OUTDIR_EXPORT}"
@@ -222,17 +215,18 @@ if [[ ! -d "${THIS_JOB_TMP_DIR}" ]]; then
 fi
 
 ###############################################################################
-# 7. Identify BGC reads
+# 8. Identify BGC reads
 ###############################################################################
 
-UPROC_PE_OUT="${THIS_JOB_TMP_DIR}"/"pe_bgc_dom.gz"
-UPROC_SE_OUT="${THIS_JOB_TMP_DIR}"/"se_bgc_dom.gz"
+UPROC_PE_OUT="${THIS_JOB_TMP_DIR}/pe_bgc_dom.gz"
+UPROC_SE_OUT="${THIS_JOB_TMP_DIR}/se_bgc_dom.gz"
 
 if [[ "${R2}" != "NULL" ]] && [[ -n "${R2}" ]]; then
 
    if [[ "${INTYPE}" == "dna" ]]; then
    
-     echo "running R1 and R2 domain annotation with uproc-dna ..." 2>&1 | handleoutput
+     echo "running R1 and R2 domain annotation with uproc-dna ..." 2>&1 | \
+     handleoutput
 
     "${uproc_dna}" \
     --pthresh 3 \
@@ -241,12 +235,18 @@ if [[ "${R2}" != "NULL" ]] && [[ -n "${R2}" ]]; then
     --preds \
     --threads "${NSLOTS}" \
     "${DBDIR}" "${MODELDIR}" "${R}" "${R2}"
+    
+     if [[ "$?" -ne "0" ]]; then
+       echo "uproc pair end (dna) annotation failed" 
+       exit 1
+     fi
    
    fi
 
    if [[ "${INTYPE}" == "prot" ]]; then
 
-     echo "running R1 and R2 domain annotation with uproc-prot ..." 2>&1 | handleoutput
+     echo "running R1 and R2 domain annotation with uproc-prot ..." 2>&1 | \
+     handleoutput
    
      "${uproc_prot}" \
       --pthresh 3 \
@@ -254,21 +254,22 @@ if [[ "${R2}" != "NULL" ]] && [[ -n "${R2}" ]]; then
       --preds \
       --threads "${NSLOTS}" \
        "${DBDIR}" "${MODELDIR}" "${R}" "${R2}" 
+       
+     if [[ "$?" -ne "0" ]]; then
+       echo "uproc pair end (prot) annotation failed" 
+       exit 1
+     fi
 
    fi
 
-fi
-
-if [[ "$?" -ne "0" ]]; then
-  echo "uproc pair end annotation failed" 
-  exit 1
 fi
 
 if [[ -f "${SR}" ]]; then
 
   if [[ "${INTYPE}" == "dna" ]]; then
 
-     echo "running SR domain annotation with uproc-dna ..." 2>&1 | handleoutput
+     echo "running SR domain annotation with uproc-dna ..." 2>&1 | \
+     handleoutput
   
     "${uproc_dna}" \
     --pthresh 3 \
@@ -277,11 +278,18 @@ if [[ -f "${SR}" ]]; then
     --preds \
     --threads "${NSLOTS}" \
     "${DBDIR}" "${MODELDIR}" "${SR}"
+    
+    if [[ "$?" -ne "0" ]]; then
+      echo "uproc single end (dna) annotation failed" 
+      exit 1
+    fi
+
   fi
 
   if [[ "${INTYPE}" == "prot" ]]; then
   
-     echo "running SR domain annotation with uproc-prot ..."  2>&1 | handleoutput
+     echo "running SR domain annotation with uproc-prot ..."  2>&1 | \
+     handleoutput
 
     "${uproc_prot}" \
     --pthresh 3 \
@@ -289,15 +297,15 @@ if [[ -f "${SR}" ]]; then
     --preds \
     --threads "${NSLOTS}" \
     "${DBDIR}" "${MODELDIR}" "${SR}"
+    
+    if [[ "$?" -ne "0" ]]; then
+      echo "uproc single end (prot) annotation failed" 
+      exit 1
+    fi
+    
   fi
 
 fi
-
-if [[ "$?" -ne "0" ]]; then
-  echo "uproc single end annotation failed" 
-  exit 1
-fi
-
 
 if [[ -f "${UPROC_PE_OUT}" ]] && [[ -f "${UPROC_SE_OUT}" ]]; then
 
@@ -307,12 +315,12 @@ if [[ -f "${UPROC_PE_OUT}" ]] && [[ -f "${UPROC_SE_OUT}" ]]; then
 fi
 
 ###############################################################################
-# 8. Make abundance table
+# 9. Make abundance table
 ###############################################################################
 
 echo "parsing domain annotation ..." 2>&1 | handleoutput
 
-ALL_BGC=$(find  "${THIS_JOB_TMP_DIR}"/  -name "*bgc_dom.gz" )
+ALL_BGC=$(find  "${THIS_JOB_TMP_DIR}"/  -name "*bgc_dom.gz")
 
 if [[ "${INTYPE}" == "dna" ]]; then
 
@@ -320,11 +328,11 @@ if [[ "${INTYPE}" == "dna" ]]; then
   awk -v  s="${SAMPLE}" 'BEGIN { OFS="\t" } 
   { gsub("-",".",$2); print s,$2,$1 }' > "${THIS_JOB_TMP_DIR}"/counts.tbl
 
-fi
+  if [[ "$?" -ne "0" ]]; then
+    echo "make counts.tbl dna failed"
+    exit 1
+  fi
 
-if [[ "$?" -ne "0" ]]; then
-  echo "make counts.tbl dna failed"
-  exit 1
 fi
 
 if [[ "${INTYPE}" == "prot" ]]; then
@@ -333,24 +341,23 @@ if [[ "${INTYPE}" == "prot" ]]; then
   awk -v  s="${SAMPLE}" 'BEGIN { OFS="\t" } 
   { gsub("-",".",$2); print s,$2,$1; }' > "${THIS_JOB_TMP_DIR}"/counts.tbl
 
+  if [[ "$?" -ne "0" ]]; then
+    echo "make counts.tbl prot failed"
+    exit 1
+  fi
+  
 fi
-
-if [[ "$?" -ne "0" ]]; then
-  echo "make counts.tbl prot failed"
-  exit 1
-fi
-
 
 awk -v s="${SAMPLE}" 'BEGIN { OFS="\t" } {
     if (NR==FNR) {
       line[$2]=$3;
       next;
     }
-    if( $2 in line ) {
+    if ($2 in line) {
       print s,$1,$2,line[$2];
     }
-  }' "${THIS_JOB_TMP_DIR}"/counts.tbl "${CLASS2DOMAINS}" > \
-"${THIS_JOB_TMP_DIR}"/class2domains2abund.tbl
+  }' "${THIS_JOB_TMP_DIR}/counts.tbl" "${CLASS2DOMAINS}" > \
+     "${THIS_JOB_TMP_DIR}/class2domains2abund.tbl"
 
 if [[ "$?" -ne "0" ]]; then
   echo "make abundance table awk script failed"
@@ -358,7 +365,7 @@ if [[ "$?" -ne "0" ]]; then
 fi
 
 ###############################################################################
-# 9. Move output for export
+# 10. Move output for export
 ###############################################################################
 
 rsync -a --delete "${THIS_JOB_TMP_DIR}" "${OUTDIR_LOCAL}"

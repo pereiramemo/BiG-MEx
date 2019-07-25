@@ -7,33 +7,49 @@ set -o pipefail
 ###############################################################################
 
 source /bioinfo/software/conf
-# source /home/memo/workspace/BiG-MEx/bgc_dom_merge_div/resources/conf_local
 
 ###############################################################################
-# 2. Set parameters
+# 2. Parse parameters
 ###############################################################################
 
 while :; do
   case "${1}" in
 #############
-  --env)
+  --domain)
   if [[ -n "${2}" ]]; then
-    ENV="${2}"
-    shift
+   DOMAIN="${2}"
+   shift
   fi
   ;;
-  --env=?*)
-  ENV="${1#*=}" # Delete everything up to "=" and assign the remainder.
+  --domain=?*)
+  DOMAIN="${1#*=}" # Delete everything up to "=" and assign the remainder.
   ;;
-  --env=) # Handle the empty case
-  printf "ERROR: --env requires a non-empty option argument.\n"  >&2
+  --domain=) # Handle the empty case
+  printf "ERROR: --domain requires a non-empty option argument.\n"  >&2
   exit 1
   ;;
 #############
+  --env) # Takes an option argument, ensuring it has been specified.
+  if [[ -n "${2}" ]]; then
+    ENV="${2}"
+    shift
+  else
+    printf 'ERROR: "--env" requires a non-empty option argument.\n' >&2
+    exit 1
+  fi
+  ;;
+  --env=?*)
+  ENV=${1#*=} # Delete everything up to "=" and assign the remainder.
+  ;;
+  --env=)   # Handle the case of an empty --file=
+  printf 'ERROR: "--env" requires a non-empty option argument.\n' >&2
+  exit 1
+  ;;  
+#############
   --input)
   if [[ -n "${2}" ]]; then
-    INPUT="${2}"
-    shift
+   INPUT="${2}"
+   shift
   fi
   ;;
   --input=?*)
@@ -58,14 +74,10 @@ while :; do
 done
 
 ###############################################################################
-# 3. Load env
+# 3. Load environment
 ###############################################################################
 
 source "${ENV}"
-
-###############################################################################
-# 4. Define input and output variables
-###############################################################################
 
 REF_ALIGN="${REF_PKG_DIR}/${DOMAIN}.refpkg/${DOMAIN}_core.align"
 REF_PKG="${REF_PKG_DIR}/${DOMAIN}.refpkg"
@@ -74,13 +86,13 @@ OUT_DIR="${THIS_JOB_TMP_DIR}/${DOMAIN}_tree_data"
 mkdir "${OUT_DIR}"
 
 ###############################################################################
-# 5. Clean fasta file
+# 4. Clean fasta file
 ###############################################################################
 
 tr "[ -%,;\(\):=\.\\\*[]\"\']" "_" < "${INPUT}" > "${OUT_DIR}/query_clean.fasta"
 
 ###############################################################################
-# 6. Add sequences to profile
+# 5. Add sequences to profile
 ###############################################################################
 
 unset MAFFT_BINARIES
@@ -90,12 +102,8 @@ unset MAFFT_BINARIES
 --reorder \
 "${REF_ALIGN}" > "${OUT_DIR}/ref_added_query.align.fasta"
 
-# "${famsa}" \
-# -t "${NSLOTS}" \
-# "${REF_ALIGN}" "${OUT_DIR}/ref_added_query.align.fasta"
-
 ###############################################################################
-# 7. Place sequences onto tree
+# 6. Place sequences onto tree
 ###############################################################################
 
 "${pplacer}" \
@@ -104,10 +112,10 @@ unset MAFFT_BINARIES
 --keep-at-most 10 \
 --discard-nonoverlapped \
 -c "${REF_PKG}" \
-"${OUT_DIR}/ref_added_query.align.fasta"
+   "${OUT_DIR}/ref_added_query.align.fasta"
 
 ###############################################################################
-# 8. Visualize tree
+# 7. Visualize tree
 ###############################################################################
 
 "${guppy}" fat \
@@ -115,7 +123,7 @@ unset MAFFT_BINARIES
 --point-mass \
 --pp \
 -o "${OUT_DIR}/${DOMAIN}_query.phyloxml" \
-   "${OUT_DIR}/${DOMAIN}_query.jplace"
+"${OUT_DIR}/${DOMAIN}_query.jplace"
 
 "${guppy}" tog \
 --node-numbers \
@@ -125,7 +133,7 @@ unset MAFFT_BINARIES
 "${OUT_DIR}/${DOMAIN}_query.jplace"
 
 ###############################################################################
-# 9. Compute stats
+# 8. Compute stats
 ###############################################################################  
 
 "${guppy}" to_csv \
@@ -135,7 +143,7 @@ unset MAFFT_BINARIES
 "${OUT_DIR}/${DOMAIN}_query.jplace"
 
 ###############################################################################
-# 10. Compute edpl
+# 9. Compute edpl
 ###############################################################################
   
 "${guppy}" edpl \
@@ -143,9 +151,9 @@ unset MAFFT_BINARIES
 --pp \
 -o "${OUT_DIR}/${DOMAIN}_query_edpl.csv" \
 "${OUT_DIR}/${DOMAIN}_query.jplace"
-
+  
 ###############################################################################
-# 11. Left join tables: info and edpl
+# 10. Left join tables: info and edpl
 ###############################################################################
 
 awk 'BEGIN {FS=","; OFS="," } { 
@@ -171,10 +179,9 @@ awk 'BEGIN {FS=","; OFS="," } {
 > "${OUT_DIR}/${DOMAIN}_tmp.csv"
 
 ###############################################################################
-# 12. Clean
+# 11. Clean
 ###############################################################################
 
 mv "${OUT_DIR}/${DOMAIN}_tmp.csv" "${OUT_DIR}/${DOMAIN}_query_info.csv"
-rm "${OUT_DIR}/${DOMAIN}_query_edpl.csv"
-
-
+rm "${OUT_DIR}/${DOMAIN}_query_edpl.csv" 
+rm "${OUT_DIR}/query_clean.fasta"

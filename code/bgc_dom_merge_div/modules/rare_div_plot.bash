@@ -17,53 +17,25 @@ source /bioinfo/software/conf
 while :; do
   case "${1}" in
 #############
-  -a|--abund_table)
+  --env)
   if [[ -n "${2}" ]]; then
-   ABUND_TABLE="${2}"
-   shift
+    ENV="${2}"
+    shift
   fi
   ;;
-  --abund_table=?*)
-  ABUND_TABLE="${1#*=}" # Delete everything up to "=" and assign the remainder.
+  --env=?*)
+  ENV="${1#*=}" # Delete everything up to "=" and assign the remainder.
   ;;
-  --abund_table=) # Handle the empty case
-  printf "ERROR: --abund_table requires a non-empty option argument.\n"  >&2
+  --env=) # Handle the empty case
+  printf "ERROR: --env requires a non-empty option argument.\n"  >&2
   exit 1
   ;;
 #############
-  -fs|--font_size)
-   if [[ -n "${2}" ]]; then
-     FONT_SIZE="${2}"
-     shift
-   fi
-  ;;
-  --font_size=?*)
-  FONT_SIZE="${1#*=}" # Delete everything up to "=" and assign the 
-                      # remainder.
-  ;;
-  --font_size=) # Handle the empty case
-  printf 'Using default environment.\n' >&2
-  ;;  
-#############
-  -o|--outdir)
-   if [[ -n "${2}" ]]; then
-     OUTDIR_EXPORT="${2}"
-     shift
-   fi
-  ;;
-  --outdir=?*)
-  OUTDIR_EXPORT="${1#*=}" # Delete everything up to "=" and assign the 
-                          # remainder.
-  ;;
-  --outdir=) # Handle the empty case
-  printf 'Using default environment.\n' >&2
-  ;;
-#############
-  -pc|--plot_rare_curve)
-   if [[ -n "${2}" ]]; then
-     PLOT_RARE_CURVE="${2}"
-     shift
-   fi
+  --plot_rare_curve)
+  if [[ -n "${2}" ]]; then
+    PLOT_RARE_CURVE="${2}"
+    shift
+  fi
   ;;
   --plot_rare_curve=?*)
   PLOT_RARE_CURVE="${1#*=}" # Delete everything up to "=" and assign the 
@@ -72,76 +44,6 @@ while :; do
   --plot_rare_curve=) # Handle the empty case
   printf 'Using default environment.\n' >&2
   ;;
-#############
-  -pr|--prefix)
-   if [[ -n "${2}" ]]; then
-     PREFIX="${2}"
-     shift
-   fi
-  ;;
-  --prefix=?*)
-  PREFIX="${1#*=}" # Delete everything up to "=" and assign the 
-                   # remainder.
-  ;;
-  --prefix=) # Handle the empty case
-  printf 'Using default environment.\n' >&2
-  ;;   
-#############
-  -pw|--plot_width)
-   if [[ -n "${2}" ]]; then
-     PLOT_WIDTH="${2}"
-     shift
-   fi
-  ;;
-  --plot_width=?*)
-  PLOT_WIDTH="${1#*=}" # Delete everything up to "=" and assign the 
-                       # remainder.
-  ;;
-  --plot_width=) # Handle the empty case
-  printf 'Using default environment.\n' >&2
-  ;;  
-#############
-  -ph|--plot_height)
-   if [[ -n "${2}" ]]; then
-     PLOT_HEIGHT="${2}"
-     shift
-   fi
-  ;;
-  --plot_height=?*)
-  PLOT_HEIGHT="${1#*=}" # Delete everything up to "=" and assign the 
-                        # remainder.
-  ;;
-  --plot_height=) # Handle the empty case
-  printf 'Using default environment.\n' >&2
-  ;;
-#############
-  -n|--num_iter)
-   if [[ -n "${2}" ]]; then
-     NUM_ITER="${2}"
-     shift
-   fi
-  ;;
-  --num_iter=?*)
-  NUM_ITER="${1#*=}" # Delete everything up to "=" and assign the 
-                     # remainder.
-  ;;
-  --num_iter=) # Handle the empty case
-  printf 'Using default environment.\n' >&2
-  ;;
- #############
-  -s|--sample_increment)
-   if [[ -n "${2}" ]]; then
-     SAMPLE_INCREMENT="${2}"
-     shift
-   fi
-  ;;
-  --sample_increment=?*)
-  SAMPLE_INCREMENT="${1#*=}" # Delete everything up to "=" and assign the 
-                             # remainder.
-  ;;
-  --sample_increment=) # Handle the empty case
-  printf 'Using default environment.\n' >&2
-  ;;   
 #############
     --)              # End of all options.
     shift
@@ -157,16 +59,22 @@ while :; do
 done
 
 ###############################################################################
-# 3. Define output
+# 3. Load env
 ###############################################################################
 
-THIS_JOB_TMP_DIR="${OUTDIR_EXPORT}"
-THIS_OUTPUT_TMP_RARE_TSV="${THIS_JOB_TMP_DIR}/${PREFIX}_rare_div_est.tsv"
-THIS_OUTPUT_TMP_SUMM_TSV="${THIS_JOB_TMP_DIR}/${PREFIX}_summary_rare_div_est.tsv"
-THIS_OUTPUT_TMP_IMAGE="${THIS_JOB_TMP_DIR}/${PREFIX}_rare_div_est.pdf"
+source "${ENV}"
 
 ###############################################################################
-# 4. Diversity estimates
+# 4. Define output
+###############################################################################
+
+THIS_OUTPUT_TMP_RARE_TSV="${THIS_JOB_TMP_DIR}/${DOMAIN}_rare_div_est.tsv"
+THIS_OUTPUT_TMP_SUMM_TSV="${THIS_JOB_TMP_DIR}/\
+${DOMAIN}_summary_rare_div_est.tsv"
+THIS_OUTPUT_TMP_IMAGE="${THIS_JOB_TMP_DIR}/${DOMAIN}_rare_div_est.pdf"
+
+###############################################################################
+# 5. Diversity estimates
 ###############################################################################
 
 "${r_interpreter}" --vanilla --slave <<RSCRIPT
@@ -180,8 +88,8 @@ THIS_OUTPUT_TMP_IMAGE="${THIS_JOB_TMP_DIR}/${PREFIX}_rare_div_est.pdf"
   options(warn=0)
 
   ### load data
-  CLUSTER <- read.table(file = "${ABUND_TABLE}",
-			sep = "\t", header = F)
+  CLUSTER <- read.table(file = "${NAME}_cluster2abund.tsv",
+			 sep = "\t", header = F)
   colnames(CLUSTER) <- c("clust_id","sample_id","seq_id","abund")
   ### 
 
@@ -190,7 +98,7 @@ THIS_OUTPUT_TMP_IMAGE="${THIS_JOB_TMP_DIR}/${PREFIX}_rare_div_est.pdf"
                group_by(clust_id, sample_id) %>%
                summarize(clust_abund = sum(abund)) %>%
                spread(key = clust_id, value = clust_abund) %>% 
-	       remove_rownames(.) %>% 
+	           remove_rownames(.) %>% 
                as.data.frame(.) %>%
                tibble::remove_rownames(.) %>%
                tibble::column_to_rownames("sample_id") %>%
@@ -211,7 +119,7 @@ THIS_OUTPUT_TMP_IMAGE="${THIS_JOB_TMP_DIR}/${PREFIX}_rare_div_est.pdf"
 
   if ( s > min(rowSums(ODU_TABLE)) ) {
        s <- min(rowSums(ODU_TABLE))
-       text <- paste("increment size reset to", s, sep = " " )
+       text <- paste("increment size reset to", s, sep = " ")
        print(text)
   }
 

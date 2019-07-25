@@ -1,6 +1,5 @@
-#!/bin/bash -l
+#!/bin/bash
 
-# set -x
 set -o pipefail
 
 ###############################################################################
@@ -16,19 +15,56 @@ source /bioinfo/software/conf
 while :; do
   case "${1}" in
 #############
-  --env)
+  --env) # Takes an option argument, ensuring it has been specified.
   if [[ -n "${2}" ]]; then
     ENV="${2}"
     shift
+  else
+    printf 'ERROR: "--env" requires a non-empty option argument.\n' >&2
+    exit 1
   fi
   ;;
   --env=?*)
-  ENV="${1#*=}" # Delete everything up to "=" and assign the remainder.
+  ENV=${1#*=} # Delete everything up to "=" and assign the remainder.
   ;;
-  --env=) # Handle the empty case
-  printf "ERROR: --env requires a non-empty option argument.\n"  >&2
+  --env=)   # Handle the case of an empty --file=
+  printf 'ERROR: "--env" requires a non-empty option argument.\n' >&2
   exit 1
   ;;
+#############
+  --prefix) # Takes an option argument, ensuring it has been specified.
+  if [[ -n "${2}" ]]; then
+    NAME="${2}"
+    shift
+  else
+    printf 'ERROR: "--prefix" requires a non-empty option argument.\n' >&2
+    exit 1
+  fi
+  ;;
+  --prefix=?*)
+  NAME=${1#*=} # Delete everything up to "=" and assign the remainder.
+  ;;
+  --prefix=)   # Handle the case of an empty --file=
+  printf 'ERROR: "--prefix" requires a non-empty option argument.\n' >&2
+  exit 1
+;;
+#############
+  --tmp_prefix) # Takes an option argument, ensuring it has been specified.
+  if [[ -n "${2}" ]]; then
+    TMP_NAME="${2}"
+    shift
+  else
+    printf 'ERROR: "--tmp_prefix" requires a non-empty option argument.\n' >&2
+    exit 1
+  fi
+  ;;
+  --tmp_prefix=?*)
+  TMP_NAME=${1#*=} # Delete everything up to "=" and assign the remainder.
+  ;;
+  --tmp_prefix=)   # Handle the case of an empty --file=
+  printf 'ERROR: "--tmp_prefix" requires a non-empty option argument.\n' >&2
+  exit 1
+  ;;        
 #############
   --)              # End of all options.
   shift
@@ -44,7 +80,7 @@ while :; do
 done
 
 ###############################################################################
-# 3. Load env
+# 3. Load environment
 ###############################################################################
 
 source "${ENV}"
@@ -57,31 +93,33 @@ awk 'BEGIN {OFS="\t"}; {
 
   cluster = $1;
   id = $2;
+  
   array_cluster2abund[cluster] = array_cluster2abund[cluster] + $3;
   
   if ( array_cluster2id[cluster] == ""  ) {
     array_cluster2id[cluster] = id;
-    sample_array[cluster] = $4
   }
   
 } END {
   for (c in array_cluster2abund) {
-    printf "%s\t%s\t%s\t%s\n",  \
-    c,array_cluster2id[c],array_cluster2abund[c],sample_array[c]
+    print  c,array_cluster2id[c],array_cluster2abund[c]
   }
-}' "${TMP_NAME}_concat_cluster2abund.tsv" > \
-   "${TMP_NAME}_onlyrep_cluster2abund.tsv"
+}' "${NAME}_cluster2abund.tsv" > "${TMP_NAME}_onlyrep_cluster2abund.tsv"
 
 ###############################################################################
-# 5. Extract repseqs
+# 5. Extract headers
 ###############################################################################
 
 cut -f2 "${TMP_NAME}_onlyrep_cluster2abund.tsv" | \
 sed "s/_repseq$//" > "${TMP_NAME}.onlyrep_headers"
 
+###############################################################################
+# 6. Extract seqs
+###############################################################################
+
 "${filterbyname}" \
-in="${TMP_NAME}_all.faa" \
-out="${TMP_NAME}_onlyrep_subseqs.faa" \
+in="${NAME}_dom_seqs.faa" \
+out="${TMP_NAME}_onlyrep_dom_seqs.faa" \
 names="${TMP_NAME}.onlyrep_headers" \
 include=t \
 overwrite=t

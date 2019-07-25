@@ -11,16 +11,16 @@ set -o pipefail
 source /bioinfo/software/conf
 
 ###############################################################################
-# 2. Set parameters
+# 2. Parse parameters
 ###############################################################################
 
 while :; do
   case "${1}" in
 #############
-  -i|--input)
+  --input)
   if [[ -n "${2}" ]]; then
-   INPUT="${2}"
-   shift
+    INPUT="${2}"
+    shift
   fi
   ;;
   --input=?*)
@@ -31,10 +31,10 @@ while :; do
   exit 1
   ;;
 #############
-  -d|--output_dir)
+  --output_dir)
   if [[ -n "${2}" ]]; then
-   OUTPUT_DIR="${2}"
-   shift
+    OUTPUT_DIR="${2}"
+    shift
   fi
   ;;
   --output_dir=?*)
@@ -45,29 +45,28 @@ while :; do
   exit 1
   ;;
 #############
-  -o|--output_prefix)
-   if [[ -n "${2}" ]]; then
-     PREFIX="${2}"
-     shift
-   fi
+  --output_prefix)
+  if [[ -n "${2}" ]]; then
+    PREFIX="${2}"
+    shift
+  fi
   ;;
   --output_prefix=?*)
-  PREFIX="${1#*=}" # Delete everything up to "=" and assign the 
-                   # remainder.
+  PREFIX="${1#*=}" # Delete everything up to "=" and assign the remainder.
   ;;
   --output_prefix=) # Handle the empty case
   printf 'Using default environment.\n' >&2
   ;;
 #############
-  -p|--plot)
-     PLOT="1"
+  --plot)
+  PLOT="1"
   ;;
 #############
- -sn|--subsample_number)
-   if [[ -n "${2}" ]]; then
-     SUBSAMPLE_NUMBER="${2}"
-     shift
-   fi
+ --subsample_number)
+  if [[ -n "${2}" ]]; then
+    SUBSAMPLE_NUMBER="${2}"
+    shift
+  fi
   ;;
   --subsample_number=?*)
   SUBSAMPLE_NUMBER="${1#*=}" # Delete everything up to "=" and assign the 
@@ -78,11 +77,11 @@ while :; do
   exit 1
   ;;
 #############
- -sz|--subsample_size)
-   if [[ -n "${2}" ]]; then
-     SUBSAMPLE_SIZE="${2}"
-     shift
-   fi
+  --subsample_size)
+  if [[ -n "${2}" ]]; then
+    SUBSAMPLE_SIZE="${2}"
+    shift
+  fi
   ;;
   --subsample_size=?*)
   SUBSAMPLE_SIZE="${1#*=}" # Delete everything up to "=" and assign the 
@@ -93,21 +92,21 @@ while :; do
   exit 1
   ;;  
 ############
-    --)              # End of all options.
-    shift
-    break
-    ;;
-    -?*)
-    printf 'WARN: Unknown option (ignored): %s\n' "$1" >&2
-    ;;
-    *) # Default case: If no more options then break out of the loop.
-    break
-    esac
-    shift
+  --)              # End of all options.
+  shift
+  break
+  ;;
+  -?*)
+  printf 'WARN: Unknown option (ignored): %s\n' "$1" >&2
+  ;;
+  *) # Default case: If no more options then break out of the loop.
+  break
+  esac
+  shift
 done
 
 ###############################################################################
-# 3. Define variables
+# 3. Define output vars
 ###############################################################################
 
 OUT_TSV="${OUTPUT_DIR}"/"${PREFIX}.tsv"

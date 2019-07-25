@@ -16,63 +16,41 @@ source /bioinfo/software/conf
 while :; do
   case "${1}" in
 #############
-  -cl|--cluster_tsv)
+  --env)
   if [[ -n "${2}" ]]; then
-   CLUSTER_TSV="${2}"
+   ENV="${2}"
    shift
   fi
   ;;
-  --cluster_tsv=?*)
-  CLUSTER_TSV="${1#*=}" # Delete everything up to "=" and assign the remainder.
+  --env=?*)
+  ENV="${1#*=}" # Delete everything up to "=" and assign the remainder.
   ;;
-  --cluster_tsv=) # Handle the empty case
-  printf "ERROR: --cluster_tsv requires a non-empty option argument.\n"  >&2
+  --env=) # Handle the empty case
+  printf "ERROR: --env requires a non-empty option argument.\n"  >&2
   exit 1
   ;;
 #############
-  -co|--coverage_tsv)
-  if [[ -n "${2}" ]]; then
-   COVERAGE_TSV="${2}"
-   shift
-  fi
+  --)              # End of all options.
+  shift
+  break
   ;;
-  --coverage_tsv=?*)
-  COVERAGE_TSV="${1#*=}" # Delete everything up to "=" and assign the remainder.
+  -?*)
+  printf 'WARN: Unknown option (ignored): %s\n' "$1" >&2
   ;;
-  --coverage_tsv=) # Handle the empty case
-  printf "ERROR: --coverage_tsv requires a non-empty option argument.\n"  >&2
-  exit 1
-  ;;
-#############
-  -o|--output)
-  if [[ -n "${2}" ]]; then
-   OUTPUT="${2}"
-   shift
-  fi
-  ;;
-  --output=?*)
-  OUTPUT="${1#*=}" # Delete everything up to "=" and assign the remainder.
-  ;;
-  --output=) # Handle the empty case
-  printf "ERROR: --output requires a non-empty option argument.\n"  >&2
-  exit 1
-  ;;
-#############
-    --)              # End of all options.
-    shift
-    break
-    ;;
-    -?*)
-    printf 'WARN: Unknown option (ignored): %s\n' "$1" >&2
-    ;;
-    *) # Default case: If no more options then break out of the loop.
-    break
-    esac
-    shift
+  *) # Default case: If no more options then break out of the loop.
+  break
+  esac
+  shift
 done
 
 ###############################################################################
-# 3. Map coverage
+# 3. Load env
+###############################################################################
+
+source "${ENV}"
+
+###############################################################################
+# 4. Map coverage
 ###############################################################################
 
 awk 'BEGIN {OFS="\t"} { 
@@ -111,7 +89,8 @@ awk 'BEGIN {OFS="\t"} {
     printf "%s\t%s\t%s\n", \
     array_id2cluster[id_aa],id_aa2,array_id2abund[id_aa];
   }
-}' "${COVERAGE_TSV}" "${CLUSTER_TSV}" > "${OUTPUT}"
+}' "${TMP_NAME}_all-coverage.table" "${TMP_NAME}_all_clu.tsv" > \
+   "${NAME}_cluster2abund.tsv"
 
    
    

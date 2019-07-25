@@ -10,7 +10,7 @@ set -o pipefail
 source /bioinfo/software/conf
 
 ###############################################################################
-# 2. Set parameters
+# 2. Define help
 ###############################################################################
 
 show_usage(){
@@ -32,12 +32,12 @@ EOF
 
 while :; do
   case "${1}" in
-
-    -h|-\?|--help) # Call a "show_usage" function to display a synopsis, then
+#############
+  -h|-\?|--help) # Call a "show_usage" function to display a synopsis, then
                    # exit.
-    show_usage
-    exit 1;
-    ;;
+  show_usage
+  exit 1;
+  ;;
 #############
   -b|--bgc_models)
   if [[ -n "${2}" ]]; then
@@ -138,24 +138,13 @@ while :; do
 done
 
 ###############################################################################
-# 4. Define variables
+# 3. Load handleoutput
 ###############################################################################
 
-if [[ "${VERBOSE}" == "t" ]]; then
-  function handleoutput {
-    cat /dev/stdin | \
-    while read STDIN; do 
-      echo "${STDIN}"
-    done  
-  }
-else
-  function handleoutput {
-  cat /dev/stdin >/dev/null
-}
-fi
+source /bioinfo/software/handleoutput 
 
 ###############################################################################
-# 5. Check output directories
+# 4. Check output directories
 ###############################################################################
 
 if [[ -d "${OUTDIR_LOCAL}/${OUTDIR_EXPORT}" ]]; then
@@ -166,7 +155,7 @@ if [[ -d "${OUTDIR_LOCAL}/${OUTDIR_EXPORT}" ]]; then
 fi  
 
 ###############################################################################
-# 6. Create output directories
+# 5. Create output directories
 ###############################################################################
 
 THIS_JOB_TMP_DIR="${SCRATCH}/${OUTDIR_EXPORT}"
@@ -179,29 +168,29 @@ THIS_OUTPUT_TMP_FILE="${THIS_JOB_TMP_DIR}/bgc_class_pred.tsv"
 THIS_OUTPUT_TMP_IMAGE="${THIS_JOB_TMP_DIR}/bgc_class_pred.pdf"
 
 ###############################################################################
-# 7. Predict BGC class abundance
+# 6. Predict BGC class abundance
 ###############################################################################
 (
 "${r_interpreter}" --vanilla --slave <<RSCRIPT
  
   options(warn=-1)
   library(bgcpred, quietly = TRUE, warn.conflicts = FALSE)
-  library(ggplot2, quietly = TRUE, warn.conflicts = FALSE)
+  library(tidyverse, quietly = TRUE, warn.conflicts = FALSE)
   options(warn=0)
   
-  COUNTS <- read.table(file="${INPUT_FILE}", sep = "\t", header = F)
+  COUNTS <- read_tsv(file="${INPUT_FILE}", col_names = F)
   colnames(COUNTS) <- c("sample","domain","abund")
   
   COUNTS_wide <- COUNTS %>% 
                  select( sample, domain, abund) %>% 
-		 spread(data = ., key = domain, value = abund, fill= 0)
+                 spread(data = ., key = domain, value = abund, fill= 0)
 
   COUNTS_wide <- COUNTS_wide %>% 
                  droplevels %>% 
-		 arrange(sample) %>%
-		 as.data.frame	%>%
-		 remove_rownames() %>%
-		 column_to_rownames(., var = "sample")
+                 arrange(sample) %>%
+                 as.data.frame %>%
+		         remove_rownames() %>%
+		         column_to_rownames(., var = "sample")
  
   if ( "${BGC_MODELS}" != "" ) {
     bgc_models_current <- get(load("${BGC_MODELS}"))
@@ -258,7 +247,7 @@ if [[ "${EXIT_CODE}" != 0 ]]; then
 fi
 
 ###############################################################################
-# 8. Move output for export
+# 7. Move output for export
 ###############################################################################
 
 rsync -a --delete "${THIS_JOB_TMP_DIR}" "${OUTDIR_LOCAL}"

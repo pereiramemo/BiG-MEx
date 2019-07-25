@@ -11,7 +11,7 @@ set -o pipefail
 source /bioinfo/software/conf
 
 ###############################################################################
-# 2. Parse parameters 
+# 2. Parse parameters
 ###############################################################################
 
 while :; do
@@ -19,8 +19,8 @@ while :; do
 #############
   --env)
   if [[ -n "${2}" ]]; then
-    ENV="${2}"
-    shift
+   ENV="${2}"
+   shift
   fi
   ;;
   --env=?*)
@@ -29,23 +29,50 @@ while :; do
   --env=) # Handle the empty case
   printf "ERROR: --env requires a non-empty option argument.\n"  >&2
   exit 1
-  ;;
+  ;;  
 #############
-  --plot_model_points)
+  --domain)
   if [[ -n "${2}" ]]; then
-    PLOT_MODEL_POINTS="${2}"
-    shift
+   DOMAIN="${2}"
+   shift
   fi
   ;;
-  --plot_model_points=?*)
-  PLOT_MODEL_POINTS="${1#*=}" # Delete everything up to "=" and assign the 
+  --domain=?*)
+  DOMAIN="${1#*=}" # Delete everything up to "=" and assign the remainder.
+  ;;
+  --domain=) # Handle the empty case
+  printf "ERROR: --domain requires a non-empty option argument.\n"  >&2
+  exit 1
+  ;;
+#############
+  --plot_model_violin)
+   if [[ -n "${2}" ]]; then
+     PLOT_MODEL_VIOLIN="${2}"
+     shift
+   fi
+  ;;
+  --plot_model_violin=?*)
+  PLOT_MODEL_VIOLIN="${1#*=}" # Delete everything up to "=" and assign the 
                               # remainder.
   ;;
-  --plot_model_points=) # Handle the empty case
+  --plot_model_violin=) # Handle the empty case
   printf 'Using default environment.\n' >&2
   ;;
 #############
-  --)              # End of all options.
+  --prefix)
+   if [[ -n "${2}" ]]; then
+     NAME="${2}"
+     shift
+   fi
+  ;;
+  --prefix=?*)
+  NAME="${1#*=}" # Delete everything up to "=" and assign the remainder.
+  ;;
+  --prefix=) # Handle the empty case
+  printf 'Using default environment.\n' >&2
+  ;; 
+#############
+  --)                # End of all options.
   shift
   break
   ;;
@@ -59,22 +86,21 @@ while :; do
 done
 
 ###############################################################################
-# 3. Load env
+# 3. Load environment
 ###############################################################################
 
 source "${ENV}"
 
 ###############################################################################
-# 5. Define output
+# 4. Define output
 ###############################################################################
 
-THIS_OUTPUT_TMP_MODEL_TSV="${THIS_JOB_TMP_DIR}/${DOMAIN}_model_div_est.tsv"
-THIS_OUTPUT_TMP_SUMM_TSV="${THIS_JOB_TMP_DIR}/\
-${DOMAIN}_summary_model_div_est.tsv"
-THIS_OUTPUT_TMP_IMAGE="${THIS_JOB_TMP_DIR}/${DOMAIN}_model_div_est.pdf"
+THIS_OUTPUT_TMP_MODEL_TSV="${NAME}_model_div_est.tsv"
+THIS_OUTPUT_TMP_SUMM_TSV="${NAME}_summary_model_div_est.tsv"
+THIS_OUTPUT_TMP_IMAGE="${NAME}_violin_div_est.pdf"
 
 ###############################################################################
-# 6. Diversity estimates
+# 5. Diversity estimates
 ###############################################################################
 
 "${r_interpreter}" --vanilla --slave <<RSCRIPT
@@ -89,20 +115,17 @@ THIS_OUTPUT_TMP_IMAGE="${THIS_JOB_TMP_DIR}/${DOMAIN}_model_div_est.pdf"
   
   ### load data
   CLUSTER <- read.table(file = "${NAME}_cluster2abund.tsv",
-			sep = "\t", header = F)
-  colnames(CLUSTER) <- c("clust_id","sample_id","seq_id","abund")
+             sep = "\t",
+             header = F)
+  colnames(CLUSTER) <- c("clust_id","seq_id","abund")
   ### 
 
   ### format table
   ODU_TABLE <- CLUSTER %>% 
-               group_by(clust_id, sample_id) %>%
+               group_by(clust_id) %>%
                summarize(clust_abund = sum(abund)) %>%
                spread(key = clust_id, value = clust_abund) %>% 
-	       remove_rownames(.) %>% 
-               as.data.frame(.) %>%
-               tibble::remove_rownames(.) %>%
-               tibble::column_to_rownames("sample_id") %>%
-               round(., digits = 0)
+               as.data.frame(.) 
              
   ODU_TABLE[is.na(ODU_TABLE)] <- 0
   ###
@@ -113,35 +136,28 @@ THIS_OUTPUT_TMP_IMAGE="${THIS_JOB_TMP_DIR}/${DOMAIN}_model_div_est.pdf"
   h <- "${PLOT_HEIGHT}" %>% as.numeric()
   f1 <- "${FONT_SIZE}" %>% as.numeric()
   f2 <- f1 +2 
- 
+  
   source("${SOFTWARE_DIR}/model_div.R")
 
   ODU_TABLE_div_est <- model_div(x = ODU_TABLE,
                                  n_iter = N)
+                                 
+  ODU_TABLE_div_est\$domain <- "${DOMAIN}"                                  
                                                             
-  ODU_TABLE_div_est_summary <- ODU_TABLE_div_est %>%
-                               group_by(sample_id) %>%
-                               summarize(mean = mean(diversity), sd = sd(diversity)) %>% 
-                               ungroup()
-                              
   ### format diversity table for rarefying plot
-  if ( "${PLOT_MODEL_POINTS}" %in% c("t","T")) {
+  if ( "${PLOT_MODEL_VIOLIN}" %in% c("t","T")) {
   
-    p <- ggplot(ODU_TABLE_div_est_summary, aes(x = sample_id, y = mean, color = sample_id)) +
-                geom_point(size = 2, alpha = 0.9) +
-                geom_errorbar( aes(ymin=mean-sd, ymax=mean+sd), alpha = 0.6, size = 1.5, width = 0) +
-                xlab("Sample") +
-                ylab("Shannon index") +
-                theme_light() +
-                ylim(0, max(ODU_TABLE_div_est_summary\$mean + ODU_TABLE_div_est_summary\$sd )) +
-                scale_color_hue(c = 70, l = 40,h.start = 200,direction = -1, guide = F) +
-                theme(axis.text.y = element_text(size = f1, color = "black"), 
-                      axis.text.x = element_text(size = f1, color = "black",
-                                                 angle = 45, hjust = 1),
-                      axis.title.x = element_text(size = f2, color = "black"),
-                      axis.title.y = element_text(size = f2, color = "black",
-                                                  margin = unit(c(0, 5, 0, 0),"mm"))) 
-
+    p <- ggplot(ODU_TABLE_div_est, aes(x = domain, y = diversity)) +
+     geom_violin( size = 1, alpha = 0.5, fill = "darkred") +
+     stat_summary(fun.y = median ,geom='point', size = 1) + 
+     xlab("") +
+     ylab("Shannon index") +
+     theme_light() +
+     theme(axis.text.y = element_text(size = f1, color = "black"), 
+           axis.text.x = element_text(size = f1, color = "black"),
+           axis.title.x = element_text(size = f2, color = "black"),
+           axis.title.y = element_text(size = f2, color = "black",
+                                       margin = unit(c(0, 5, 0, 0),"mm"))) 
 
     pdf(file = "${THIS_OUTPUT_TMP_IMAGE}", width = w, height = h)
     print(p)		          
@@ -155,6 +171,31 @@ THIS_OUTPUT_TMP_IMAGE="${THIS_JOB_TMP_DIR}/${DOMAIN}_model_div_est.pdf"
               sep = "\t", quote = F, 
               row.names = F, col.names = T)
 
+
+             
+
+  ODU_TABLE_div_est_means_df <- ODU_TABLE_div_est %>%
+                                summarize(mean = mean(diversity), sd = sd(diversity) ) %>%
+                                as.data.frame() %>% 
+                                round(.,digits = 3) %>%
+                                gather(key = "index", value = "value")
+
+  ODU_TABLE_div_est_direct_df <- diversity(x = ODU_TABLE,
+                                           index = "shannon", 
+                                           MARGIN = 1, 
+                                           base = exp(1)) %>% 
+                                           t() %>%
+                                           as.data.frame() %>%
+                                           round(.,digits = 3) %>%
+                                           gather(key = "index", value = "value")
+  
+
+  ODU_TABLE_div_est_direct_df[1,1] <- "diversity"
+
+
+  ODU_TABLE_div_est_summary <- rbind(ODU_TABLE_div_est_direct_df,
+                                     ODU_TABLE_div_est_means_df)              
+              
   write.table(file = "${THIS_OUTPUT_TMP_SUMM_TSV}",
               x = ODU_TABLE_div_est_summary,
               sep = "\t",

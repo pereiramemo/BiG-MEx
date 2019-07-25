@@ -13,19 +13,39 @@ source /bioinfo/software/conf
 ###############################################################################
 
 while :; do
-  case "${1}" in
+  case "${1}" in 
 #############
-  --env)
+  --amp_orfs) # Takes an option argument, ensuring it has been specified.
+  if [[ -n "${2}" ]]; then
+    AMP_ORFS="${2}"
+    shift
+  else
+    printf 'ERROR: "--amp_orfs" requires a non-empty option argument.\n' >&2
+    exit 1
+  fi
+  ;;
+  --amp_orfs=?*)
+  AMP_ORFS=${1#*=} # Delete everything up to "=" and assign the remainder.
+  ;;
+  --amp_orfs=)   # Handle the case of an empty --file=
+  printf 'ERROR: "--amp_orfs" requires a non-empty option argument.\n' >&2
+  exit 1
+  ;;   
+#############
+  --env) # Takes an option argument, ensuring it has been specified.
   if [[ -n "${2}" ]]; then
     ENV="${2}"
     shift
+  else
+    printf 'ERROR: "--env" requires a non-empty option argument.\n' >&2
+    exit 1
   fi
   ;;
   --env=?*)
-  ENV="${1#*=}" # Delete everything up to "=" and assign the remainder.
+  ENV=${1#*=} # Delete everything up to "=" and assign the remainder.
   ;;
-  --env=) # Handle the empty case
-  printf "ERROR: --env requires a non-empty option argument.\n"  >&2
+  --env=)   # Handle the case of an empty --file=
+  printf 'ERROR: "--env" requires a non-empty option argument.\n' >&2
   exit 1
   ;;  
 #############
@@ -73,14 +93,15 @@ while :; do
   fi
   ;;
   --tmp_prefix=?*)
-  TMP_FOLDER=${1#*=} # Delete everything up to "=" and assign the remainder.
+  TMP_FOLDER=${1#*=} # Delete everything up to "=" and assign the
+                     # remainder.
   ;;
   --tmp_folder=)     # Handle the case of an empty --file=
   printf 'ERROR: "--tmp_folder" requires a non-empty option argument.\n' >&2
   exit 1
-  ;; 
+  ;;
 #############
-  --)              # End of all options.
+  --)            # End of all options.
   shift
   break
   ;;
@@ -107,10 +128,10 @@ if [[ -d "${TMP_FOLDER}" ]]; then
   rm -r "${TMP_FOLDER}"
 fi  
     
-"${mmseqs}" createdb "${TMP_NAME}_all.faa" "${TMP_NAME}_db"
-mkdir "${TMP_FOLDER}"
+"${mmseqs}" createdb "${AMP_ORFS}" "${TMP_NAME}_db"
+mkdir "${TMP_FOLDER}" 
 
-"${mmseqs}" cluster "${TMP_NAME}_db" "${TMP_NAME}_all_clu" \
+"${mmseqs}" cluster "${TMP_NAME}_db" "${TMP_NAME}_clu" \
 "${TMP_FOLDER}" \
 --min-seq-id "${ID}" \
 --remove-tmp-files \
@@ -119,4 +140,5 @@ mkdir "${TMP_FOLDER}"
 --threads "${NSLOTS}"
 
 "${mmseqs}" createtsv "${TMP_NAME}_db" "${TMP_NAME}_db" \
-"${TMP_NAME}_all_clu" "${TMP_NAME}_all_clu".tsv 
+"${TMP_NAME}_clu" "${TMP_NAME}_clu".tsv
+

@@ -10,9 +10,9 @@ set -o pipefail
 
 source /bioinfo/software/conf
 
-##############################################################################
+###############################################################################
 # 2. Parse parameters 
-##############################################################################
+###############################################################################
 
 while :; do
   case "${1}" in
@@ -31,21 +31,38 @@ while :; do
   exit 1
   ;;
 #############
-  --env)
+  --domain)
   if [[ -n "${2}" ]]; then
-    ENV="${2}"
-    shift
+   DOMAIN="${2}"
+   shift
   fi
   ;;
-  --env=?*)
-  ENV="${1#*=}" # Delete everything up to "=" and assign the remainder.
+  --domain=?*)
+  DOMAIN="${1#*=}" # Delete everything up to "=" and assign the remainder.
   ;;
-  --env=) # Handle the empty case
-  printf "ERROR: --env requires a non-empty option argument.\n"  >&2
+  --DOMAIN=) # Handle the empty case
+  printf "ERROR: --domain requires a non-empty option argument.\n"  >&2
   exit 1
   ;;
 #############
-  --)              # End of all options.
+  --env) # Takes an option argument, ensuring it has been specified.
+  if [[ -n "${2}" ]]; then
+    ENV="${2}"
+    shift
+  else
+    printf 'ERROR: "--env" requires a non-empty option argument.\n' >&2
+    exit 1
+  fi
+  ;;
+  --env=?*)
+  ENV=${1#*=} # Delete everything up to "=" and assign the remainder.
+  ;;
+  --env=)   # Handle the case of an empty --file=
+  printf 'ERROR: "--env" requires a non-empty option argument.\n' >&2
+  exit 1
+  ;;
+#############
+  --)               # End of all options.
   shift
   break
   ;;
@@ -59,20 +76,20 @@ while :; do
 done
 
 ###############################################################################
-# 3. Load env
+# 3. Load environment
 ###############################################################################
 
 source "${ENV}"
 
 ###############################################################################
-# 4. Define input and output variables
+# 4. Define input and output vars
 ###############################################################################
 
-THIS_JOB_TMP_DIR="${THIS_JOB_TMP_DIR}/${DOMAIN}_tree_data"
+THIS_JOB_TMP_DIR="${THIS_JOB_TMP_DIR}/${DOMAIN}_tree_data/"
+THIS_OUTPUT_TMP_IMAGE="${THIS_JOB_TMP_DIR}/"${DOMAIN}"_placements_tree.pdf"
 
 INFO_PPLACE="${THIS_JOB_TMP_DIR}/${DOMAIN}_query_info.csv"
-INPUT_TREE="${THIS_JOB_TMP_DIR}/${DOMAIN}_query.newick"
-THIS_OUTPUT_TMP_IMAGE="${THIS_JOB_TMP_DIR}/${DOMAIN}_placements_tree.pdf"
+TREE="${THIS_JOB_TMP_DIR}/${DOMAIN}_query.newick"
 
 ###############################################################################
 # 5. Clean abund2clust.tsv table
@@ -82,7 +99,7 @@ awk 'BEGIN {OFS="\t"} {
   gsub(/:|\./,"_",$2)
   gsub(/_repseq$/,"",$2)
   print $0;
-}' "${ABUND_TABLE}" > "${THIS_JOB_TMP_DIR}/abund2clust_clean.tsv"
+}'  "${ABUND_TABLE}" > "${THIS_JOB_TMP_DIR}/abund2clust_clean.tsv"
 
 ABUND_TABLE="${THIS_JOB_TMP_DIR}/abund2clust_clean.tsv"
 
@@ -98,9 +115,9 @@ ABUND_TABLE="${THIS_JOB_TMP_DIR}/abund2clust_clean.tsv"
   library(dplyr, quietly = TRUE, warn.conflicts = FALSE)
   options(warn=0)
   
-  NWK <- read.newick("${INPUT_TREE}")
+  NWK <- read.newick("${TREE}")
   ABUND_TABLE <- read.table("${ABUND_TABLE}", sep = "\t", header = F, row.names = 2)
-  colnames(ABUND_TABLE) <- c("cluser_id","abund","sample_id")
+  colnames(ABUND_TABLE) <- c("cluser_id","abund")
   INFO_PPLACE <- read.table("${INFO_PPLACE}", sep = ",", header = T)
 
   #### define meta_data
@@ -113,52 +130,53 @@ ABUND_TABLE="${THIS_JOB_TMP_DIR}/abund2clust_clean.tsv"
   node2ids <- data.frame(node = n, ids = all_ids, stringsAsFactors = F)
   EDGES <- data.frame(NWK\$edge)
   colnames(EDGES)=c("parent", "node")
-  nodes2parent2ids <- dplyr::inner_join(x = EDGES, y = node2ids, by = "node")
+  nodes2parent2ids <- dplyr::inner_join(x = EDGES,
+                                        y = node2ids,
+                                        by = "node")
                                         
   meta_data[nodes2parent2ids\$ids, "node"] <- nodes2parent2ids\$node
   meta_data[nodes2parent2ids\$ids, "parent"] <- nodes2parent2ids\$parent
-  
+
   ### define color
-  meta_data[placed_ids, "color" ] <- "darkred"
+  tippoint_color <- "indianred"
+  meta_data[placed_ids, "color" ] <- tippoint_color
   meta_data[ ! all_ids %in% placed_ids, "color" ] <- "gray40"
 
   ### define abund
-  abund <- ABUND_TABLE[placed_ids, "abund"]
+  abund <- ABUND_TABLE[placed_ids , "abund"]
   meta_data[placed_ids, "abund" ] <- abund
-  meta_data[! all_ids %in% placed_ids, "abund" ] <- NA
-  
-  ### define sample
-  samples <- ABUND_TABLE[placed_ids , "sample_id" ] %>% as.character()
-  meta_data[placed_ids, "samples"] <- samples
-  meta_data[! all_ids %in% placed_ids, "samples" ] <- NA
-  
+  meta_data[! all_ids %in% placed_ids, "abund" ] <-  NA
+
+
   ### plot
-  NWK\$tip.label <- sub(x = NWK\$tip.label, pattern = ".*_bf_", replacement = "", perl = F )
-  meta_data_redu <- meta_data[placed_ids,c("node","color","abund","samples")]
-  rownames(meta_data_redu) <- sub(x =  rownames(meta_data_redu), pattern = ".*_bf_", replacement = "", perl = F )
-  rownames(meta_data) <- sub(x =  rownames(meta_data), pattern = ".*_bf_", replacement = "", perl = F )
-  
+  meta_data_redu <- meta_data[placed_ids,c("node","color","abund")]
+
   #### make image
   w <- "${PLOT_TREE_WIDTH}" %>% as.numeric()
   h <- "${PLOT_TREE_HEIGHT}" %>% as.numeric()
-  f <- "${FONT_TREE_SIZE}" %>% as.numeric()
- 
-
-pdf("${THIS_OUTPUT_TMP_IMAGE}", height = h, width = w)
-
-  ggtree(NWK, layout='circular') %<+% meta_data_redu + 
+  f <- "${FONT_SIZE}" %>% as.numeric()
+  
+  pdf("${THIS_OUTPUT_TMP_IMAGE}", height = h, width = w)
+  ggtree(NWK, layout='circular')  %<+% meta_data_redu + 
          geom_tiplab(size = f, align = TRUE, 
-                  aes(angle = angle, color = samples),
-                  linesize = 0,
-                  linetype = "dotted") + 
-      geom_tippoint(aes(size = abund, color = samples ), 
-                    alpha = 0.7) +
-       scale_color_hue(c=70, l=40, h.start = 200, direction = -1, breaks=c(samples %>% unique %>% sort)) +
-       guides(size = guide_legend(title="Abundance", 
-                                  override.aes = list( alpha = 0.3, color = "black"))) +
-       guides(color = guide_legend(title="Sample")) +
-       theme(legend.position="right" )
+                     aes(angle = angle),
+                     linesize = 0, 
+                     color = meta_data\$color,
+                     linetype = "dotted") + 
+         geom_tippoint(aes(size = abund, color = color ),
+                       color = tippoint_color,   
+                       alpha = 0.8) +
+                       guides(color = FALSE) + 
+         guides(size = guide_legend(title="Abundance", 
+                                    override.aes = list( alpha = 0.8, color = tippoint_color))) +
+         theme(legend.position="right" )
 
-dev.off()
+  dev.off()
 
 RSCRIPT
+
+###############################################################################
+# 7. Clean
+###############################################################################
+
+rm "${THIS_JOB_TMP_DIR}/abund2clust_clean.tsv"

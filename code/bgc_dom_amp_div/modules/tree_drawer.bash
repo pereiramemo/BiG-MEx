@@ -11,39 +11,16 @@ set -o pipefail
 source /bioinfo/software/conf
 
 ###############################################################################
-# 2. Set parameters
-###############################################################################
-
-show_usage(){
-  cat <<EOF
-  Usage: ${0##*/} [-d|--domain CHAR] [-i|--seq_ids FILE] [-o|--outdir DIR] \
-[-h] [-t|--tree NWK]
-
--h, --help	print this help
--d, --domain	domain name
--i, --seq_ids	one column list of placed sequence ids
--o, --outdir	directory where to ouput pdf image
--t, --tree	newick tree produced with places sequences
-EOF
-}
-
-###############################################################################
-# 3. Parse parameters 
+# 2. Parse parameters 
 ###############################################################################
 
 while :; do
   case "${1}" in
-
-    -h|-\?|--help) # Call a "show_help" function to display a synopsis, then
-                   # exit.
-    show_usage
-    exit 1;
-    ;;
 #############
-  -a|--abund_table)
+  --abund_table)
   if [[ -n "${2}" ]]; then
-   ABUND_TABLE="${2}"
-   shift
+    ABUND_TABLE="${2}"
+    shift
   fi
   ;;
   --abund_table=?*)
@@ -54,123 +31,51 @@ while :; do
   exit 1
   ;;
 #############
-  -i|--info_pplace)
+  --env) # Takes an option argument, ensuring it has been specified.
   if [[ -n "${2}" ]]; then
-   INFO_PPLACE="${2}"
-   shift
-  fi
-  ;;
-  --info_pplace=?*)
-  INFO_PPLACE="${1#*=}" # Delete everything up to "=" and assign the remainder.
-  ;;
-  --info_pplace=) # Handle the empty case
-  printf "ERROR: --info_pplace requires a non-empty option argument.\n"  >&2
-  exit 1
-  ;;  
-#############
-  -d|--domain)
-  if [[ -n "${2}" ]]; then
-   DOMAIN="${2}"
-   shift
-  fi
-  ;;
-  --domain=?*)
-  DOMAIN="${1#*=}" # Delete everything up to "=" and assign the remainder.
-  ;;
-  --DOMAIN=) # Handle the empty case
-  printf "ERROR: --domain requires a non-empty option argument.\n"  >&2
-  exit 1
-  ;;   
-#############
-  -fs|--font_size)
-   if [[ -n "${2}" ]]; then
-     FONT_SIZE="${2}"
-     shift
-   fi
-  ;;
-  --font_size=?*)
-  FONT_SIZE="${1#*=}" # Delete everything up to "=" and assign the 
-                      # remainder.
-  ;;
-  --font_size=) # Handle the empty case
-  printf 'Using default environment.\n' >&2
-  ;;  
-#############
-  -o|--outdir)
-   if [[ -n "${2}" ]]; then
-     OUTDIR_EXPORT="${2}"
-     shift
-   fi
-  ;;
-  --outdir=?*)
-  OUTDIR_EXPORT="${1#*=}" # Delete everything up to "=" and assign the 
-                          # remainder.
-  ;;
-  --outdir=) # Handle the empty case
-  printf 'Using default environment.\n' >&2
-  ;;
-#############
-  -pw|--plot_width)
-   if [[ -n "${2}" ]]; then
-     PLOT_WIDTH="${2}"
-     shift
-   fi
-  ;;
-  --plot_width=?*)
-  PLOT_WIDTH="${1#*=}" # Delete everything up to "=" and assign the 
-                       # remainder.
-  ;;
-  --plot_width=) # Handle the empty case
-  printf 'Using default environment.\n' >&2
-  ;;  
-#############
-  -ph|--plot_height)
-   if [[ -n "${2}" ]]; then
-     PLOT_HEIGHT="${2}"
-     shift
-   fi
-  ;;
-  --plot_height=?*)
-  PLOT_HEIGHT="${1#*=}" # Delete everything up to "=" and assign the 
-                        # remainder.
-  ;;
-  --plot_height=) # Handle the empty case
-  printf 'Using default environment.\n' >&2
-  ;;
-#############  
-  -t|--tree)
-  if [[ -n "${2}" ]]; then
-   INPUT_TREE="${2}"
-   shift
-  fi
-  ;;
-  --tree=?*)
-  INPUT_TREE="${1#*=}" # Delete everything up to "=" and assign the remainder.
-  ;;
-  --tree=) # Handle the empty case
-  printf "ERROR: --tree requires a non-empty option argument.\n"  >&2
-  exit 1
-  ;;
-#############
-    --)               # End of all options.
+    ENV="${2}"
     shift
-    break
-    ;;
-    -?*)
-    printf 'WARN: Unknown option (ignored): %s\n' "$1" >&2
-    ;;
-    *) # Default case: If no more options then break out of the loop.
-    break
-    esac
-    shift
+  else
+    printf 'ERROR: "--env" requires a non-empty option argument.\n' >&2
+    exit 1
+  fi
+  ;;
+  --env=?*)
+  ENV=${1#*=} # Delete everything up to "=" and assign the remainder.
+  ;;
+  --env=)   # Handle the case of an empty --file=
+  printf 'ERROR: "--env" requires a non-empty option argument.\n' >&2
+  exit 1
+  ;;
+#############
+  --)               # End of all options.
+  shift
+  break
+  ;;
+  -?*)
+  printf 'WARN: Unknown option (ignored): %s\n' "$1" >&2
+  ;;
+  *) # Default case: If no more options then break out of the loop.
+  break
+  esac
+  shift
 done
 
 ###############################################################################
-# 4. Define output
+# 3. Load environment
 ###############################################################################
 
-THIS_JOB_TMP_DIR="${OUTDIR_EXPORT}"
+source "${ENV}"
+
+###############################################################################
+# 4. Define input and output vars
+###############################################################################
+
+THIS_JOB_TMP_DIR="${THIS_JOB_TMP_DIR}/${DOMAIN}_tree_data/"
 THIS_OUTPUT_TMP_IMAGE="${THIS_JOB_TMP_DIR}/"${DOMAIN}"_placements_tree.pdf"
+
+INFO_PPLACE="${THIS_JOB_TMP_DIR}/${DOMAIN}_query_info.csv"
+TREE="${THIS_JOB_TMP_DIR}/${DOMAIN}_query.newick"
 
 ###############################################################################
 # 5. Clean abund2clust.tsv table
@@ -180,7 +85,7 @@ awk 'BEGIN {OFS="\t"} {
   gsub(/:|\./,"_",$2)
   gsub(/_repseq$/,"",$2)
   print $0;
-}'  ${ABUND_TABLE} > "${THIS_JOB_TMP_DIR}/abund2clust_clean.tsv"
+}'  "${ABUND_TABLE}" > "${THIS_JOB_TMP_DIR}/abund2clust_clean.tsv"
 
 ABUND_TABLE="${THIS_JOB_TMP_DIR}/abund2clust_clean.tsv"
 
@@ -196,7 +101,7 @@ ABUND_TABLE="${THIS_JOB_TMP_DIR}/abund2clust_clean.tsv"
   library(dplyr, quietly = TRUE, warn.conflicts = FALSE)
   options(warn=0)
   
-  NWK <- read.newick("${INPUT_TREE}")
+  NWK <- read.newick("${TREE}")
   ABUND_TABLE <- read.table("${ABUND_TABLE}", sep = "\t", header = F, row.names = 2)
   colnames(ABUND_TABLE) <- c("cluser_id","abund")
   INFO_PPLACE <- read.table("${INFO_PPLACE}", sep = ",", header = T)
@@ -233,8 +138,8 @@ ABUND_TABLE="${THIS_JOB_TMP_DIR}/abund2clust_clean.tsv"
   meta_data_redu <- meta_data[placed_ids,c("node","color","abund")]
 
   #### make image
-  w <- "${PLOT_WIDTH}" %>% as.numeric()
-  h <- "${PLOT_HEIGHT}" %>% as.numeric()
+  w <- "${PLOT_TREE_WIDTH}" %>% as.numeric()
+  h <- "${PLOT_TREE_HEIGHT}" %>% as.numeric()
   f <- "${FONT_SIZE}" %>% as.numeric()
   
   pdf("${THIS_OUTPUT_TMP_IMAGE}", height = h, width = w)
