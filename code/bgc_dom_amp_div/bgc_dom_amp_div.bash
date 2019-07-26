@@ -33,7 +33,7 @@ show_usage(){
 --verbose t|f           run verbosely (default f)
 --overwrite t|f         overwrite current directory (default f)
 
-<R> is the read file (fasta or fastq) with the amplicon sequences
+<R> is the amplicon sequence file (fasta or fastq)
 <output directory> is the directory name to be used
 
 EOF

@@ -23,7 +23,7 @@ show_usage(){
 --verbose t|f       run verbosely (default f)
 --overwrite t|f     overwrite current directory (default f)
 
-<R1> <R2> <SR> are the read files (fasta or fastq) to annoate the BGC domains
+<R1> <R2> <SR> are the sequence files (fasta or fastq) to annoate the BGC domains
 <output directory> is the directory name to be used
 
 EOF
