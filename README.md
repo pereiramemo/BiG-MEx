@@ -8,11 +8,12 @@ BiG-MEx: a tool for the mining of Biosynthetic Gene Cluster (BGC) domains and cl
 Pereira-Flores, E., Buttigieg, P. L., Medema, M. H., Meinicke, P., Glöckner, F. O. and Fernandez-Guerra, A.. (2018+). _Mining metagenomes for natural product biosynthetic gene clusters: unlocking new potential with ultrafast techniques_. Under review.
 
 ## Installation
-BiG-MEx consists of four docker images: 
+BiG-MEx consists of five docker images: 
 1. epereira/bgc_dom_annot  
-2. epereira/bgc_dom_div  
-3. epereira/bgc_dom_merge_div  
-4. epereira/bgc_class_pred  
+2. epereira/bgc_dom_amp_div  
+3. epereira/bgc_dom_meta_div  
+4. epereira/bgc_dom_merge_div  
+5. epereira/bgc_class_pred  
 
 Before running BiG-MEx it is necessary to install [docker](https://www.docker.com/).
 
@@ -37,13 +38,16 @@ See help
 
 ### 2. bgc_dom_div
 
-bgc_dom_div has two different modes: sample and merge. The sample mode takes as an input metagenomic unassembled data and generates a targeted assembly of the domains. Subsequently, it clusters the assembled sequences, places these on pre-computed reference trees and computes the Shannon diversity index. The merge mode integrates the sample mode results to compute the diversity based on rarefied subsamples and integrates the phylogenetic placement.  
+The **bgc_dom_div** has three different modes: amplicon (amp), metagenome (meta), and merge. The first two modes have the objective of analyzing the BGC domain diversity in amplicon and metagenomic samples. The diversity analysis consists of estimating the operational domain unit (ODU) diversity, blasting the domain sequences against a reference database of annotated domains, and placing the domain sequences onto reference trees.
+The merge mode integrates the amplicon or metagenome diversity results of different samples to provide a comparative analysis.
 
 See help
 ```
-./run_bgc_dom_div.bash sample . . . --help
+./run_bgc_dom_div.bash amp . . --help
 
-./run_bgc_dom_div.bash merge . . --help
+./run_bgc_dom_div.bash meta . . . --help
+
+./run_bgc_dom_div.bash merge . .  --help
 ```
 
 ### 3. bgc_class_pred
