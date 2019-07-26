@@ -38,7 +38,7 @@ See help
 
 ### 2. bgc_dom_div
 
-The **bgc_dom_div** has three different modes: amplicon (amp), metagenome (meta), and merge. The first two modes have the objective of analyzing the BGC domain diversity in amplicon and metagenomic samples. The diversity analysis consists of estimating the operational domain unit (ODU) diversity, blasting the domain sequences against a reference database of annotated domains, and placing the domain sequences onto reference trees.
+The **bgc_dom_div** has three different modes: amplicon (amp), metagenome (meta), and merge. The first two modes have the objective of analyzing the BGC domain diversity in amplicon and metagenomic samples. The diversity analysis consists of estimating the operational domain unit (ODU) diversity, blasting the domain sequences against a reference database, and placing the domain sequences onto reference trees.
 The merge mode integrates the amplicon or metagenome diversity results of different samples to provide a comparative analysis.
 
 See help
