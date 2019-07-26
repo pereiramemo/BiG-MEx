@@ -1,5 +1,6 @@
 #!/bin/bash -l
 
+# set -x
 set -o pipefail
 
 ###############################################################################
@@ -16,15 +17,16 @@ show_usage(){
   cat <<EOF
   Usage: run_bgc_dom_annot.bash <R1> <R2> <SR> <output directory> <options>
   
-  [-h|--help] [-i|--intpye CHAR] [-s|--sample CHAR] [-t|--nslots INT]
-  [-s|--verbose t|f] [-w|--overwrite t|f]
+--help              print this help
+--intype CHAR       type of input data (i.e. prot or dna)
+--sample CHAR       sample name (default "metagenomeX")
+--nslots NUM        number of slots (default 2). UProC parameter
+--verbose t|f       run verbosely (default f)
+--overwrite t|f     overwrite current directory (default f)
 
--h, --help	print this help
--i, --intype	type of input data (i.e. prot or dna)
--s, --sample	sample name (default "metagenomeX")
--t, --nslots	number of slots (default 2). UProC parameter
--v, --verbose	t or f, run verbosely (default f)
--w, --overwrite t or f, overwrite current directory (default f)
+<R1> <R2> <SR> are the read files (fasta or fastq) to annoate the BGC domains
+<output directory> is the directory name to be used
+
 EOF
 }
 
@@ -35,16 +37,16 @@ EOF
 while :; do
   case "${1}" in
 #############
-  -h|-\?|--help) # Call a "show_usage" function to display a synopsis, then
+  --help) # Call a "show_usage" function to display a synopsis, then
                    # exit.
   show_usage
   exit 1;
   ;;
 #############
-  -i|--intype)
+  --intype)
   if [[ -n "${2}" ]]; then
-   INTYPE="${2}"
-   shift
+    INTYPE="${2}"
+    shift
   fi
   ;;
   --intype=?*)
@@ -55,11 +57,11 @@ while :; do
   exit 1
   ;;
 #############
-  -o|--outdir)
-   if [[ -n "${2}" ]]; then
-     OUTDIR_EXPORT="${2}"
-     shift
-   fi
+  --outdir)
+  if [[ -n "${2}" ]]; then
+    OUTDIR_EXPORT="${2}"
+    shift
+  fi
   ;;
   --outdir=?*)
   OUTDIR_EXPORT="${1#*=}" # Delete everything up to "=" and assign the
@@ -69,11 +71,11 @@ while :; do
   printf 'Using default environment.\n' >&2
   ;;
 #############
- -R| --reads)
-   if [[ -n "${2}" ]]; then
-     R="${2}"
-     shift
-   fi
+  --reads)
+  if [[ -n "${2}" ]]; then
+    R="${2}"
+    shift
+  fi
   ;;
   --reads=?*)
   R="${1#*=}" # Delete everything up to "=" and assign the remainder.
@@ -83,11 +85,11 @@ while :; do
   exit 1
   ;;
 #############
- -R2|--reads2)
-   if [[ -n "${2}" ]]; then
-     R2="${2}"
-     shift
-   fi
+  --reads2)
+  if [[ -n "${2}" ]]; then
+    R2="${2}"
+    shift
+  fi
   ;;
   --reads2=?*)
   R2="${1#*=}" # Delete everything up to "=" and assign the remainder.
@@ -97,11 +99,11 @@ while :; do
   exit 1
   ;;
 #############
- -SR|--single_reads)
-   if [[ -n "${2}" ]]; then
-     SR="${2}"
-     shift
-   fi
+  --single_reads)
+  if [[ -n "${2}" ]]; then
+    SR="${2}"
+    shift
+  fi
   ;;
   --single_reads=?*)
   SR="${1#*=}" # Delete everything up to "=" and assign the remainder.
@@ -111,11 +113,11 @@ while :; do
   exit 1
   ;;
 #############
-  -s|--sample)
-   if [[ -n "${2}" ]]; then
-     SAMPLE="${2}"
-     shift
-   fi
+  --sample)
+  if [[ -n "${2}" ]]; then
+    SAMPLE="${2}"
+    shift
+  fi
   ;;
   --sample=?*)
   SAMPLE="${1#*=}" # Delete everything up to "=" and assign the remainder.
@@ -124,11 +126,11 @@ while :; do
   printf 'Using default environment.\n' >&2
   ;;
 #############
-  -t|--nslots)
-   if [[ -n "${2}" ]]; then
-     NSLOTS="${2}"
-     shift
-   fi
+  --nslots)
+  if [[ -n "${2}" ]]; then
+    NSLOTS="${2}"
+    shift
+  fi
   ;;
   --nslots=?*)
   NSLOTS="${1#*=}" # Delete everything up to "=" and assign the remainder.
@@ -137,11 +139,11 @@ while :; do
   printf 'Using default environment.\n' >&2
   ;;
  #############
-  -v|--verbose)
-   if [[ -n "${2}" ]]; then
-     VERBOSE="${2}"
-     shift
-   fi
+  --verbose)
+  if [[ -n "${2}" ]]; then
+    VERBOSE="${2}"
+    shift
+  fi
   ;;
   --verbose=?*)
   VERBOSE="${1#*=}" # Delete everything up to "=" and assign the remainder.
@@ -150,11 +152,11 @@ while :; do
   printf 'Using default environment.\n' >&2
   ;;  
 #############
-  -w|--overwrite)
-   if [[ -n "${2}" ]]; then
-     OVERWRITE="${2}"
-     shift
-   fi
+  --overwrite)
+  if [[ -n "${2}" ]]; then
+    OVERWRITE="${2}"
+    shift
+  fi
   ;;
   --overwrite=?*)
   OVERWRITE="${1#*=}" # Delete everything up to "=" and assign the
@@ -164,17 +166,17 @@ while :; do
   printf 'Using default environment.\n' >&2
   ;;  
 ############
-    --)              # End of all options.
-    shift
-    break
-    ;;
-    -?*)
-    printf 'WARN: Unknown option (ignored): %s\n' "$1" >&2
-    ;;
-    *) # Default case: If no more options then break out of the loop.
-    break
-    esac
-    shift
+  --)              # End of all options.
+  shift
+  break
+  ;;
+  -?*)
+  printf 'WARN: Unknown option (ignored): %s\n' "$1" >&2
+  ;;
+  *) # Default case: If no more options then break out of the loop.
+  break
+  esac
+  shift
 done
 
 ###############################################################################
