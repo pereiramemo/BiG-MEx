@@ -96,7 +96,7 @@ awk 'BEGIN {OFS="\t"}; {
   
   array_cluster2abund[cluster] = array_cluster2abund[cluster] + $3;
   
-  if (id  ~ /_repseq$/) {
+  if (id ~ /_repseq$/) {
     array_cluster2id[cluster] = id;
   }
   

@@ -95,7 +95,7 @@ awk '{
   id_aa = $2
    
   # cluster count for each repseq
-  if (!array_cluster_count[id_repseq]) {
+  if (array_cluster_count[id_repseq] == "") {
     array_cluster_count[id_repseq] = n++ 
   }
   
