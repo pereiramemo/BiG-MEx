@@ -1,0 +1,28 @@
+## folders
+SOFTWARE_DIR="/bioinfo/software/"
+RESOURCES_DIR="/bioinfo/resources/"
+OUTDIR_LOCAL="/output/"
+SCRATCH="/scratch/"
+
+## files
+REF_PKG_DIR="${RESOURCES_DIR}/bgc_refpkgs/"
+
+## software 
+mmseqs="${SOFTWARE_DIR}"/MMseqs2/build/bin/mmseqs
+
+r_interpreter="/usr/bin/R" 
+
+filterbyname="${SOFTWARE_DIR}"/bbmap/filterbyname.sh
+
+pplacer="${SOFTWARE_DIR}"/pplacer/pplacer
+
+guppy="${SOFTWARE_DIR}"/pplacer/guppy
+
+mafft="${SOFTWARE_DIR}"/mafft/scripts/mafft
+
+## default parameters
+NSLOTS="2"
+OUTDIR_EXPORT="bgc_dom_div_merge_out"
+
+
+
