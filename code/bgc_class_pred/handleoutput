@@ -1,0 +1,12 @@
+if [[ "${VERBOSE}" == "t" ]]; then
+  function handleoutput {
+    cat /dev/stdin | \
+    while read STDIN; do 
+      echo "${STDIN}"
+    done  
+  }
+else
+  function handleoutput {
+    cat /dev/stdin >/dev/null
+  }
+fi
