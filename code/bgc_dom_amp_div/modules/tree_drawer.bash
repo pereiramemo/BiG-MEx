@@ -29,6 +29,20 @@ while :; do
   exit 1
   ;;
 #############
+  --domain)
+  if [[ -n "${2}" ]]; then
+   DOMAIN="${2}"
+   shift
+  fi
+  ;;
+  --domain=?*)
+  DOMAIN="${1#*=}" # Delete everything up to "=" and assign the remainder.
+  ;;
+  --DOMAIN=) # Handle the empty case
+  printf "ERROR: --domain requires a non-empty option argument.\n"  >&2
+  exit 1
+  ;;
+#############
   --env) # Takes an option argument, ensuring it has been specified.
   if [[ -n "${2}" ]]; then
     ENV="${2}"
@@ -85,6 +99,11 @@ awk 'BEGIN {OFS="\t"} {
   print $0;
 }'  "${ABUND_TABLE}" > "${THIS_JOB_TMP_DIR}/abund2clust_clean.tsv"
 
+if [[ "$?" -ne "0" ]]; then
+  echo "${DOMAIN}: awk command cleaning table failed"
+  exit 1
+fi
+
 ABUND_TABLE="${THIS_JOB_TMP_DIR}/abund2clust_clean.tsv"
 
 ###############################################################################
@@ -94,9 +113,8 @@ ABUND_TABLE="${THIS_JOB_TMP_DIR}/abund2clust_clean.tsv"
 "${r_interpreter}" --vanilla --slave <<RSCRIPT
 
   options(warn=-1)
-  library(ggplot2, quietly = TRUE, warn.conflicts = FALSE)
   library(ggtree, quietly = TRUE, warn.conflicts = FALSE)
-  library(dplyr, quietly = TRUE, warn.conflicts = FALSE)
+  library(tidyverse, quietly = TRUE, warn.conflicts = FALSE)
   options(warn=0)
   
   NWK <- read.newick("${TREE}")
@@ -159,8 +177,13 @@ ABUND_TABLE="${THIS_JOB_TMP_DIR}/abund2clust_clean.tsv"
 
 RSCRIPT
 
-#############################################################################
+if [[ "$?" -ne "0" ]]; then
+  echo "${DOMAIN}: tree plotting R-code (ggtree) failed"
+  exit 1
+fi
+
+###############################################################################
 # 7. Clean
-#############################################################################
+###############################################################################
 
 rm "${THIS_JOB_TMP_DIR}/abund2clust_clean.tsv"

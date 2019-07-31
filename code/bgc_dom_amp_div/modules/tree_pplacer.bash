@@ -15,6 +15,20 @@ source /bioinfo/software/conf
 while :; do
   case "${1}" in
 #############
+  --domain)
+  if [[ -n "${2}" ]]; then
+   DOMAIN="${2}"
+   shift
+  fi
+  ;;
+  --domain=?*)
+  DOMAIN="${1#*=}" # Delete everything up to "=" and assign the remainder.
+  ;;
+  --domain=) # Handle the empty case
+  printf "ERROR: --domain requires a non-empty option argument.\n"  >&2
+  exit 1
+  ;;
+#############
   --env) # Takes an option argument, ensuring it has been specified.
   if [[ -n "${2}" ]]; then
     ENV="${2}"
@@ -88,55 +102,85 @@ unset MAFFT_BINARIES
 --reorder \
 "${REF_ALIGN}" > "${OUT_DIR}/ref_added_query.align.fasta"
 
+if [[ "$?" -ne "0" ]]; then
+  echo "${DOMAIN}: mafft alignment failed"
+  exit 1
+fi
+
 ###############################################################################
 # 6. Place sequences onto tree
 ###############################################################################
 
 "${pplacer}" \
-  -o "${OUT_DIR}/${DOMAIN}_query.jplace" \
-  -p \
-  --keep-at-most 10 \
-  --discard-nonoverlapped \
-  -c "${REF_PKG}" \
-  "${OUT_DIR}/ref_added_query.align.fasta"
+-o "${OUT_DIR}/${DOMAIN}_query.jplace" \
+-p \
+--keep-at-most 10 \
+--discard-nonoverlapped \
+-c "${REF_PKG}" \
+   "${OUT_DIR}/ref_added_query.align.fasta"
+   
+if [[ "$?" -ne "0" ]]; then
+  echo "${DOMAIN}: pplacer failed"
+  exit 1
+fi
 
 ###############################################################################
 # 7. Visualize tree
 ###############################################################################
 
 "${guppy}" fat \
-  --node-numbers \
-  --point-mass \
-  --pp \
-  -o "${OUT_DIR}/${DOMAIN}_query.phyloxml" \
-  "${OUT_DIR}/${DOMAIN}_query.jplace"
+--node-numbers \
+--point-mass \
+--pp \
+-o "${OUT_DIR}/${DOMAIN}_query.phyloxml" \
+"${OUT_DIR}/${DOMAIN}_query.jplace"
+   
+if [[ "$?" -ne "0" ]]; then
+  echo "${DOMAIN}: guppy fat failed"
+  exit 1
+fi
 
 "${guppy}" tog \
-  --node-numbers \
-  --pp \
-  --out-dir "${OUT_DIR}" \
-  -o "${DOMAIN}_query.newick" \
-  "${OUT_DIR}/${DOMAIN}_query.jplace"
+--node-numbers \
+--pp \
+--out-dir "${OUT_DIR}" \
+-o "${DOMAIN}_query.newick" \
+"${OUT_DIR}/${DOMAIN}_query.jplace"
+
+if [[ "$?" -ne "0" ]]; then
+  echo "${DOMAIN}: guppy tog failed"
+  exit 1
+fi
 
 ###############################################################################
 # 8. Compute stats
 ###############################################################################  
 
 "${guppy}" to_csv \
-  --point-mass \
-  --pp \
-  -o "${OUT_DIR}/${DOMAIN}_query_info.csv" \
-  "${OUT_DIR}/${DOMAIN}_query.jplace"
+--point-mass \
+--pp \
+-o "${OUT_DIR}/${DOMAIN}_query_info.csv" \
+"${OUT_DIR}/${DOMAIN}_query.jplace"
+
+if [[ "$?" -ne "0" ]]; then
+  echo "${DOMAIN}: guppy to_csv failed"
+  exit 1
+fi
 
 ###############################################################################
 # 9. Compute edpl
 ###############################################################################
   
-  "${guppy}" edpl \
-  --csv \
-  --pp \
-  -o "${OUT_DIR}/${DOMAIN}_query_edpl.csv" \
-  "${OUT_DIR}/${DOMAIN}_query.jplace"
+"${guppy}" edpl \
+--csv \
+--pp \
+-o "${OUT_DIR}/${DOMAIN}_query_edpl.csv" \
+"${OUT_DIR}/${DOMAIN}_query.jplace"
+  
+if [[ "$?" -ne "0" ]]; then
+  echo "${DOMAIN}: guppy edpl failed"
+  exit 1
+fi  
   
 ###############################################################################
 # 10. Left join tables: info and edpl
@@ -144,12 +188,11 @@ unset MAFFT_BINARIES
 
 awk 'BEGIN {FS=","; OFS="," } { 
   if (NR==FNR) {
-
     array_edpl[$1]=$2;
     next;
   }
 
-  if ( FNR == 1) {
+  if (FNR == 1) {
   
     print $0,"edpl"
   
@@ -163,6 +206,11 @@ awk 'BEGIN {FS=","; OFS="," } {
   }
 }' "${OUT_DIR}/${DOMAIN}_query_edpl.csv" "${OUT_DIR}/${DOMAIN}_query_info.csv" \
 > "${OUT_DIR}/${DOMAIN}_tmp.csv"
+
+if [[ "$?" -ne "0" ]]; then
+  echo "${DOMAIN}: awk command crossing tables failed"
+  exit 1
+fi
 
 ###############################################################################
 # 11. Clean

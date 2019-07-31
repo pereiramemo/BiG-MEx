@@ -27,6 +27,20 @@ while :; do
   --env=) # Handle the empty case
   printf "ERROR: --env requires a non-empty option argument.\n"  >&2
   exit 1
+  ;;  
+#############
+  --domain)
+  if [[ -n "${2}" ]]; then
+   DOMAIN="${2}"
+   shift
+  fi
+  ;;
+  --domain=?*)
+  DOMAIN="${1#*=}" # Delete everything up to "=" and assign the remainder.
+  ;;
+  --domain=) # Handle the empty case
+  printf "ERROR: --domain requires a non-empty option argument.\n"  >&2
+  exit 1
   ;;
 #############
   --plot_model_violin)
@@ -91,16 +105,12 @@ THIS_OUTPUT_TMP_IMAGE="${NAME}_violin_div_est.pdf"
 
   options(warn=-1)
   library(vegan, quietly = TRUE, warn.conflicts = FALSE)
-  library(dplyr, quietly = TRUE, warn.conflicts = FALSE)
-  library(tidyr, quietly = TRUE, warn.conflicts = FALSE)
-  library(tibble, quietly = TRUE, warn.conflicts = FALSE)
-  library(ggplot2, quietly = TRUE, warn.conflicts = FALSE)
+  library(tidyverse, quietly = TRUE, warn.conflicts = FALSE)
+  # Note: tidiverse quietly not working now, but it will in future releases
   options(warn=0)
   
   ### load data
-  CLUSTER <- read.table(file = "${NAME}_cluster2abund.tsv",
-             sep = "\t",
-             header = F)
+  CLUSTER <- read_tsv(file = "${NAME}_cluster2abund.tsv", col_names = F)
   colnames(CLUSTER) <- c("clust_id","seq_id","abund")
   ### 
 
@@ -132,16 +142,16 @@ THIS_OUTPUT_TMP_IMAGE="${NAME}_violin_div_est.pdf"
   if ( "${PLOT_MODEL_VIOLIN}" %in% c("t","T")) {
   
     p <- ggplot(ODU_TABLE_div_est, aes(x = domain, y = diversity)) +
-    geom_violin( size = 1, alpha = 0.5, fill = "darkred") +
-    stat_summary(fun.y = median ,geom='point', size = 1) + 
-    xlab("") +
-    ylab("Shannon index") +
-    theme_light() +
-    theme(axis.text.y = element_text(size = f1, color = "black"), 
-          axis.text.x = element_text(size = f1, color = "black"),
-          axis.title.x = element_text(size = f2, color = "black"),
-          axis.title.y = element_text(size = f2, color = "black",
-                                      margin = unit(c(0, 5, 0, 0),"mm"))) 
+     geom_violin( size = 1, alpha = 0.5, fill = "darkred") +
+     stat_summary(fun.y = median ,geom='point', size = 1) + 
+     xlab("") +
+     ylab("Shannon index") +
+     theme_light() +
+     theme(axis.text.y = element_text(size = f1, color = "black"), 
+           axis.text.x = element_text(size = f1, color = "black"),
+           axis.title.x = element_text(size = f2, color = "black"),
+           axis.title.y = element_text(size = f2, color = "black",
+                                       margin = unit(c(0, 5, 0, 0),"mm"))) 
 
     pdf(file = "${THIS_OUTPUT_TMP_IMAGE}", width = w, height = h)
     print(p)		          

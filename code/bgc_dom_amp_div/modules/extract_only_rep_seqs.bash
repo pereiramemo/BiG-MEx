@@ -110,7 +110,7 @@ awk 'BEGIN {OFS="\t"}; {
   
   array_cluster2abund[cluster] = array_cluster2abund[cluster] + $3;
   
-  if ( array_cluster2id[cluster] == ""  ) {
+  if (id  ~ /_repseq$/) {
     array_cluster2id[cluster] = id;
   }
   
@@ -120,12 +120,22 @@ awk 'BEGIN {OFS="\t"}; {
   }
 }' "${NAME}_cluster2abund.tsv" > "${TMP_NAME}_onlyrep_cluster2abund.tsv"
 
+if [[ "$?" -ne "0" ]]; then
+  echo "${DOMAIN}: awk command extract repseq failed"
+  exit 1
+fi
+
 ###############################################################################
 # 5. Extract headers
 ###############################################################################
 
 cut -f2 "${TMP_NAME}_onlyrep_cluster2abund.tsv" | \
 sed "s/_repseq$//" > "${TMP_NAME}.onlyrep_headers"
+
+if [[ "$?" -ne "0" ]]; then
+  echo "${DOMAIN}: sed command remove repseq tag failed"
+  exit 1
+fi
 
 ###############################################################################
 # 6. Extract seqs
@@ -137,3 +147,9 @@ out="${TMP_NAME}_onlyrep.faa" \
 names="${TMP_NAME}.onlyrep_headers" \
 include=t \
 overwrite=t
+
+if [[ "$?" -ne "0" ]]; then
+  echo "${DOMAIN}: filterbyname extract repseq failed"
+  exit 1
+fi
+

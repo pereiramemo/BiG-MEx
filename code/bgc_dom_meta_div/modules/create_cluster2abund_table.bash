@@ -89,23 +89,37 @@ source "${ENV}"
 # 4. Create cluster to abundance table
 ###############################################################################
 
-awk 'BEGIN {OFS="\t"} {
+awk '{
 
-  if (cluster_id != $1) {
-    cluster_id = $1;
-    cluster = "cluster_"n++;
-    id_aa = $2
-    repseq = 1
-  } else {
-    id_aa = $2
-    repseq = 0 
+  id_repseq = $1
+  id_aa = $2
+   
+  # cluster count for each repseq
+  if (!array_cluster_count[id_repseq]) {
+    array_cluster_count[id_repseq] = n++ 
   }
   
-  if (repseq == 1 ) {
-    print cluster,id_aa"_repseq",1
+  array_id2cluster[id_aa] = array_cluster_count[id_repseq]
+  array_id_aa2repseq[id_aa] = id_repseq
+  
+} END { 
+
+  for (i in array_id2cluster) {
+  
+    cluster = "cluster_"array_id2cluster[i]
+    abund = 1
+    
+    # classify as repseq or not
+    if (array_id_aa2repseq[i] == i) {
+      printf "%s\t%s\t%s\n", cluster, i"_repseq", abund 
+    } else {
+      printf "%s\t%s\t%s\n", cluster, i, abund 
+    }
   }
-  if (repseq == 0 ) {
-    print cluster,id_aa,1
-  }
-}' "${TMP_NAME}_clu.tsv" > "${NAME}_cluster2abund".tsv
-      
+
+}' "${TMP_NAME}_clu.tsv" > "${NAME}_cluster2abund.tsv"
+
+if [[ $? -ne "0" ]]; then
+  echo "${NAME}_cluster2abund.tsv: awk command tables failed"
+  exit 1
+fi 

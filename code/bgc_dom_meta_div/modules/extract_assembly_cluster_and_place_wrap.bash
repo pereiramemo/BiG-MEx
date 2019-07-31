@@ -93,11 +93,11 @@ egrep -w "${DOMAIN}" "${INPUT_SUBSET}" | cut -f2 -d"," | sort | uniq > \
 
 NSEQ=$(wc -l "${NAME}.headers" | cut -f1 -d" ")
 
-if [[ "${NSEQ}" -lt 0 ]]; then
-  echo "${DOMAIN}: no sequences found"
-  continue
+if [[ "${NSEQ}" -eq "0" ]]; then
+  echo "Warning. ${DOMAIN}: no sequences found"
+  exit 0
 fi
-  
+
 ###############################################################################
 # 8. Check number of domains to analyze (rename if ndom == 1) and get seqs
 ###############################################################################
@@ -202,7 +202,7 @@ fi
 -thread="${NSLOTS}" 2>&1 | handleoutput
    
 if [[ "$?" -ne "0" ]]; then
-  echo "${DOMAIN}: fraggenescan ORFs identification failed"
+  echo "${DOMAIN}: fraggenescan failed"
   exit 1
 fi 
     
@@ -220,13 +220,18 @@ if [[ "$?" -ne "0" ]]; then
   exit 1
 fi
     
-L=$(egrep -n "Domain scores"  "${TMP_NAME}.hout"  | cut -f1 -d":")
-tail -n +"${L}"  "${TMP_NAME}.hout"  | egrep -v "\#" | \
-awk 'BEGIN {OFS="\t"} {print $1,$8-1,$9 }' > "${TMP_NAME}_aa.bed"
+# Note: --pfamtblout is a "succinct  tabular  (space-delimited)  file  
+# summarizing  the  per-target output, with one data line per homologous target 
+# model found".
 
 ###############################################################################
 # 12. Subset seq coordinates
 ###############################################################################
+
+L=$(egrep -n "Domain scores"  "${TMP_NAME}.hout"  | cut -f1 -d":")
+tail -n +"${L}"  "${TMP_NAME}.hout"  | egrep -v "\#" | \
+awk 'BEGIN {OFS="\t"} {print $1,$8-1,$9}' > "${TMP_NAME}_aa.bed"
+# Note: coordinates are formatted to be used with bedools: zero-based
 
 "${fastafrombed}" \
 -fi "${TMP_NAME}_orfs.faa" \
@@ -239,14 +244,14 @@ if [[ "$?" -ne "0" ]]; then
 fi
  
 ############################################################################### 
-# 13. Check number of subsequences found
+# 13. Check number of domain sequences found
 ###############################################################################
 
 NSEQ=$(egrep -c ">" "${NAME}_dom_seqs.faa")
 
 if [[ "${NSEQ}" -lt "5" ]]; then
-  echo "Not enough ${DOMAIN} sequences found: ${NSEQ}"
-  continue
+  echo "Warning. ${DOMAIN}: not enough sequences found. Only ${NSEQ} sequences."
+  exit 0
 fi
   
 ###############################################################################
@@ -261,7 +266,7 @@ fi
  
 if [[ "$?" -ne "0" ]]; then
   echo "${DOMAIN}: mmseqs_runner.bash failed"
-  continue
+  exit 1
 fi
      
 ###############################################################################
@@ -276,7 +281,7 @@ if [[ "${COVERAGE}" == "t" ]]; then
 	--prefix "${NAME}" 2>&1 | handleoutput
             
     if [[ "$?" -ne "0" ]]; then
-      echo "${DOMAIN}: coverage compute failed"
+      echo "${DOMAIN}: coverage_compute.bash failed"
 	  exit 1
     fi
      
@@ -304,7 +309,7 @@ fi
 --plot_model_violin t 2>&1  | handleoutput
     
 if [[ "$?" -ne "0" ]]; then
-  echo "${DOMAIN}: diversity model failed"
+  echo "${DOMAIN}: model_div_plot.bash failed"
   exit 1
 fi 
 
@@ -319,7 +324,7 @@ fi
   --prefix "${NAME}" 2>&1 | handleoutput
       
   if [[ "$?" -ne "0" ]]; then
-    echo "${DOMAIN}: blast failed"
+    echo "${DOMAIN}: blast_runner.bash failed"
     exit 1
   fi
 fi
@@ -331,9 +336,9 @@ fi
 if [[ "${PLOT_TREE}" == "t" ]]; then
     
   if [[ ! -d "${REF_PKG_DIR}/${DOMAIN}.refpkg" ]]; then
-    echo echo "No refpkg for ${DOMAIN}. Skipping tree placement ..."
-    continue
-  fi  
+    echo "Warning. No refpkg for ${DOMAIN}. Skipping tree placement ..."
+    exit 0
+  fi
   
   if [[ "${ONLY_REP}" == "t" ]]; then
     "${SOFTWARE_DIR}"/extract_only_rep_seqs.bash \
@@ -346,13 +351,17 @@ if [[ "${PLOT_TREE}" == "t" ]]; then
       exit 1
     fi
 
+    # to be used in tree_pplacer.bash
     TREE_INPUT_SEQ="${TMP_NAME}_onlyrep_dom_seqs.faa"
+    # to be used in tree_drawer.bash 
     TREE_CLUST_ABUND="${TMP_NAME}_onlyrep_cluster2abund.tsv"
 
   else
 
-    TREE_INPUT_SEQ="${NAME}_dom_seqs.faa"
-    TREE_CLUST_ABUND="${NAME}_cluster2abund.tsv"
+    # to be used in tree_pplacer.bash
+    TREE_INPUT_SEQ="${NAME}_dom_seqs.faa" 
+    # to be used in tree_drawer.bash 
+    TREE_CLUST_ABUND="${NAME}_cluster2abund.tsv" 
 
   fi
     
@@ -362,7 +371,7 @@ if [[ "${PLOT_TREE}" == "t" ]]; then
   --input "${TREE_INPUT_SEQ}" 2>&1 | handleoutput
      
   if [[ "$?" -ne "0" ]]; then
-    echo "${DOMAIN}: tree placing failed"
+    echo "${DOMAIN}: tree_pplacer.bash failed"
     exit 1
   fi
  
@@ -372,7 +381,7 @@ if [[ "${PLOT_TREE}" == "t" ]]; then
   --abund_table "${TREE_CLUST_ABUND}" 2>&1 | handleoutput
      
   if [[ "$?" -ne "0" ]]; then
-    echo "${DOMAIN}: tree drawing failed"
+    echo "${DOMAIN}: tree_drawer.bash failed"
     exit 1
   fi
 fi

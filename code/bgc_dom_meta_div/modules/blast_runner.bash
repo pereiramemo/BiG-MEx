@@ -92,3 +92,4 @@ REF_SEQ_DB="${REF_SEQ_DIR}/${DOMAIN}.faa"
 -db "${REF_SEQ_DB}" \
 -num_threads "${NSLOTS}" \
 -out "${NAME}_dom_seqs.blout"
+

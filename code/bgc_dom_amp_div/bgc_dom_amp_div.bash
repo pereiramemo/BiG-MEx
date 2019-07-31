@@ -443,7 +443,21 @@ if [[ "${NSEQ}" -lt "5" ]]; then
 fi
 
 ###############################################################################
-# 12. Get ORFs
+# 12. Check if file is compressed
+###############################################################################
+
+GZIP_CHECK=$(egrep "gzip compressed data" <(file "${R}"))
+
+if [[ -n "${GZIP_CHECK}" ]]; then
+
+  UNCOMPRESSED_FILE="${THIS_JOB_TMP_DIR}/$(basename ${R/.gz/})"
+  gunzip --stdout "${R}" > "${UNCOMPRESSED_FILE}"
+  R="${UNCOMPRESSED_FILE}"
+  
+fi  
+
+###############################################################################
+# 13. Get ORFs
 ###############################################################################
 
 "${fraggenescan}" \
@@ -454,14 +468,14 @@ fi
 -thread="${NSLOTS}" 2>&1 | handleoutput
    
 if [[ "$?" -ne "0" ]]; then
-  echo "${DOMAIN}: fraggenescan ORFs identification failed"
+  echo "${DOMAIN}: fraggenescan failed"
   exit 1
 fi 
 
 AMP_ORFS="${NAME}_dom_seqs.faa"
     
 #############################################################################
-# 17. Cluster
+# 14. Cluster
 #############################################################################
   
 "${SOFTWARE_DIR}"/mmseqs_runner.bash \
@@ -500,7 +514,7 @@ fi
 --plot_model_violin t 2>&1  | handleoutput
     
 if [[ "$?" -ne "0" ]]; then
-  echo "${DOMAIN}: diversity model failed"
+  echo "${DOMAIN}: model_div_plot.bash failed"
   exit 1
 fi 
 
@@ -516,7 +530,7 @@ fi
   --prefix "${NAME}" 2>&1 | handleoutput
       
   if [[ "$?" -ne "0" ]]; then
-    echo "${DOMAIN}: blast failed"
+    echo "${DOMAIN}: blast_runner.bash failed"
     exit 1
   fi
 fi
@@ -543,13 +557,17 @@ if [[ "${PLOT_TREE}" == "t" ]]; then
       echo "${DOMAIN}: extract_only_rep_seqs.bash failed"
       exit 1
     fi
-
+   
+    # to be used in tree_pplacer.bash
     TREE_INPUT_SEQ="${TMP_NAME}_onlyrep.faa"
+    # to be used in tree_drawer.bash 
     TREE_CLUST_ABUND="${TMP_NAME}_onlyrep_cluster2abund.tsv"
 
   else
 
+    # to be used in tree_pplacer.bash
     TREE_INPUT_SEQ="${AMP_ORFS}"
+    # to be used in tree_drawer.bash 
     TREE_CLUST_ABUND="${NAME}_cluster2abund.tsv"
 
   fi
@@ -559,7 +577,7 @@ if [[ "${PLOT_TREE}" == "t" ]]; then
   --input "${TREE_INPUT_SEQ}" 2>&1 | handleoutput
      
   if [[ "$?" -ne "0" ]]; then
-    echo "${DOMAIN}: tree placing failed"
+    echo "${DOMAIN}: tree_pplacer.bash failed"
     exit 1
   fi
  
@@ -568,7 +586,7 @@ if [[ "${PLOT_TREE}" == "t" ]]; then
   --abund_table "${TREE_CLUST_ABUND}" 2>&1 | handleoutput
      
   if [[ "$?" -ne "0" ]]; then
-    echo "${DOMAIN}: tree drawing failed"
+    echo "${DOMAIN}: tree_drawer.bash failed"
     exit 1
   fi
 fi

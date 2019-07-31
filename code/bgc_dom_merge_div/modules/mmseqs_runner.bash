@@ -108,15 +108,30 @@ if [[ -d "${TMP_FOLDER}" ]]; then
 fi  
     
 "${mmseqs}" createdb "${TMP_NAME}_all.faa" "${TMP_NAME}_db"
+
+if [[ "$?" -ne "0" ]]; then
+  echo "${DOMAIN}: mmseqs createdb failed"
+  exit 1
+fi  
+
 mkdir "${TMP_FOLDER}"
 
 "${mmseqs}" cluster "${TMP_NAME}_db" "${TMP_NAME}_all_clu" \
 "${TMP_FOLDER}" \
 --min-seq-id "${ID}" \
---remove-tmp-files \
 -c 0.8 \
 -s 7.5 \
 --threads "${NSLOTS}"
 
+if [[ "$?" -ne "0" ]]; then
+  echo "${DOMAIN}: mmseqs cluster failed"
+  exit 1
+fi  
+
 "${mmseqs}" createtsv "${TMP_NAME}_db" "${TMP_NAME}_db" \
 "${TMP_NAME}_all_clu" "${TMP_NAME}_all_clu".tsv 
+
+if [[ "$?" -ne "0" ]]; then
+  echo "${DOMAIN}: mmseqs createtsv failed"
+  exit 1
+fi  

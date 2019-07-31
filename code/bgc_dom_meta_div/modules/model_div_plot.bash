@@ -104,17 +104,13 @@ THIS_OUTPUT_TMP_IMAGE="${NAME}_violin_div_est.pdf"
 "${r_interpreter}" --vanilla --slave <<RSCRIPT
 
   options(warn=-1)
-  library(vegan, quietly = TRUE, warn.conflicts = FALSE)
-  library(dplyr, quietly = TRUE, warn.conflicts = FALSE)
-  library(tidyr, quietly = TRUE, warn.conflicts = FALSE)
-  library(tibble, quietly = TRUE, warn.conflicts = FALSE)
-  library(ggplot2, quietly = TRUE, warn.conflicts = FALSE)
+  library('vegan', quietly = TRUE, warn.conflicts = FALSE)
+  library('tidyverse', quietly = TRUE, warn.conflicts = FALSE)
+  # Note: tidyverse quietly not working now, but it will in future releases
   options(warn=0)
   
   ### load data
-  CLUSTER <- read.table(file = "${NAME}_cluster2abund.tsv",
-             sep = "\t",
-             header = F)
+  CLUSTER <- read_tsv(file = "${NAME}_cluster2abund.tsv", col_names = F)
   colnames(CLUSTER) <- c("clust_id","seq_id","abund")
   ### 
 

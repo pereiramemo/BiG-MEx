@@ -63,7 +63,7 @@ for D in $( echo "${INPUT_DIRS}" ); do
     exit 1
   fi  
   
-  awk -v FC="${SAMPLE_NAME}" 'BEGIN {OFS="\t" }{
+  awk -v FC="${SAMPLE_NAME}" 'BEGIN {OFS="\t"}{
     sub(/^/,FC"_bf_",$2)
     print $2,$3;
   }' "${CLUSTER2ABUND}"

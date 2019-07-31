@@ -102,6 +102,11 @@ unset MAFFT_BINARIES
 --reorder \
 "${REF_ALIGN}" > "${OUT_DIR}/ref_added_query.align.fasta"
 
+if [[ "$?" -ne "0" ]]; then
+  echo "${DOMAIN}: mafft alignment failed"
+  exit 1
+fi
+
 ###############################################################################
 # 6. Place sequences onto tree
 ###############################################################################
@@ -113,6 +118,11 @@ unset MAFFT_BINARIES
 --discard-nonoverlapped \
 -c "${REF_PKG}" \
    "${OUT_DIR}/ref_added_query.align.fasta"
+   
+if [[ "$?" -ne "0" ]]; then
+  echo "${DOMAIN}: pplacer failed"
+  exit 1
+fi
 
 ###############################################################################
 # 7. Visualize tree
@@ -124,6 +134,11 @@ unset MAFFT_BINARIES
 --pp \
 -o "${OUT_DIR}/${DOMAIN}_query.phyloxml" \
 "${OUT_DIR}/${DOMAIN}_query.jplace"
+   
+if [[ "$?" -ne "0" ]]; then
+  echo "${DOMAIN}: guppy fat failed"
+  exit 1
+fi
 
 "${guppy}" tog \
 --node-numbers \
@@ -131,6 +146,11 @@ unset MAFFT_BINARIES
 --out-dir "${OUT_DIR}" \
 -o "${DOMAIN}_query.newick" \
 "${OUT_DIR}/${DOMAIN}_query.jplace"
+
+if [[ "$?" -ne "0" ]]; then
+  echo "${DOMAIN}: guppy tog failed"
+  exit 1
+fi
 
 ###############################################################################
 # 8. Compute stats
@@ -142,6 +162,11 @@ unset MAFFT_BINARIES
 -o "${OUT_DIR}/${DOMAIN}_query_info.csv" \
 "${OUT_DIR}/${DOMAIN}_query.jplace"
 
+if [[ "$?" -ne "0" ]]; then
+  echo "${DOMAIN}: guppy to_csv failed"
+  exit 1
+fi
+
 ###############################################################################
 # 9. Compute edpl
 ###############################################################################
@@ -152,18 +177,22 @@ unset MAFFT_BINARIES
 -o "${OUT_DIR}/${DOMAIN}_query_edpl.csv" \
 "${OUT_DIR}/${DOMAIN}_query.jplace"
   
+if [[ "$?" -ne "0" ]]; then
+  echo "${DOMAIN}: guppy edpl failed"
+  exit 1
+fi  
+  
 ###############################################################################
 # 10. Left join tables: info and edpl
 ###############################################################################
 
 awk 'BEGIN {FS=","; OFS="," } { 
   if (NR==FNR) {
-
     array_edpl[$1]=$2;
     next;
   }
 
-  if ( FNR == 1) {
+  if (FNR == 1) {
   
     print $0,"edpl"
   
@@ -177,6 +206,11 @@ awk 'BEGIN {FS=","; OFS="," } {
   }
 }' "${OUT_DIR}/${DOMAIN}_query_edpl.csv" "${OUT_DIR}/${DOMAIN}_query_info.csv" \
 > "${OUT_DIR}/${DOMAIN}_tmp.csv"
+
+if [[ "$?" -ne "0" ]]; then
+  echo "${DOMAIN}: awk command crossing tables failed"
+  exit 1
+fi
 
 ###############################################################################
 # 11. Clean

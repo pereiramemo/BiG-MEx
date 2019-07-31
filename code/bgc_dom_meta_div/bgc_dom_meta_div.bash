@@ -539,11 +539,10 @@ fi
 ###############################################################################
 
 cut -f2 -d"," "${INPUT_SUBSET}" | sort | uniq > "${ALL_HEADERS}"
+NSEQ=$(wc -l "${ALL_HEADERS}" | cut -f1 -d" ")
 
-NSEQ=$( wc -l "${ALL_HEADERS}" | cut -f1 -d" ")
-
-if [[ "${NSEQ}" -lt "0" ]]; then
-  echo "no reads found"
+if [[ "${NSEQ}" -eq "0" ]]; then
+  echo "No reads found"
   exit 1
 fi
 
@@ -623,6 +622,10 @@ for DOMAIN in $(cat "${DOM_ALL_TMP}"); do
   "${SOFTWARE_DIR}"/extract_assembly_cluster_and_place_wrap.bash \
   --domain "${DOMAIN}" \
   --env "${ENV}" 
+  
+  if [[ $? -ne 0 ]]; then
+    exit 1
+  fi  
    
 done
 

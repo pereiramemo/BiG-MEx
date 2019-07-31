@@ -99,6 +99,11 @@ awk 'BEGIN {OFS="\t"} {
   print $0;
 }'  "${ABUND_TABLE}" > "${THIS_JOB_TMP_DIR}/abund2clust_clean.tsv"
 
+if [[ "$?" -ne "0" ]]; then
+  echo "${DOMAIN}: awk command cleaning table failed"
+  exit 1
+fi
+
 ABUND_TABLE="${THIS_JOB_TMP_DIR}/abund2clust_clean.tsv"
 
 ###############################################################################
@@ -108,9 +113,8 @@ ABUND_TABLE="${THIS_JOB_TMP_DIR}/abund2clust_clean.tsv"
 "${r_interpreter}" --vanilla --slave <<RSCRIPT
 
   options(warn=-1)
-  library(ggplot2, quietly = TRUE, warn.conflicts = FALSE)
-  library(ggtree, quietly = TRUE, warn.conflicts = FALSE)
-  library(dplyr, quietly = TRUE, warn.conflicts = FALSE)
+  library('ggtree', quietly = TRUE, warn.conflicts = FALSE)
+  library('tidyverse', quietly = TRUE, warn.conflicts = FALSE)
   options(warn=0)
   
   NWK <- read.newick("${TREE}")
@@ -172,6 +176,11 @@ ABUND_TABLE="${THIS_JOB_TMP_DIR}/abund2clust_clean.tsv"
   dev.off()
 
 RSCRIPT
+
+if [[ "$?" -ne "0" ]]; then
+  echo "${DOMAIN}: tree plotting R-code (ggtree) failed"
+  exit 1
+fi
 
 ###############################################################################
 # 7. Clean

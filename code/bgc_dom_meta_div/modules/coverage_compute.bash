@@ -101,18 +101,39 @@ awk 'OFS="\t" {print $1,$2*3,$3*3 }' \
   -bed "${TMP_NAME}_nuc.bed"  \
   -fo "${NAME}_dom_seqs.ffn"
 
+if [[ $? -ne "0" ]]; then
+  echo "${TMP_NAME}_orfs.ffn and ${TMP_NAME}_nuc.bed: fastaFromBed failed"
+  exit 1
+fi
+
 ###############################################################################
 # 6. Map
 ###############################################################################
 
 "${bwa}" index -p "${TMP_NAME}" "${NAME}_dom_seqs.ffn"
 
+if [[ $? -ne "0" ]]; then
+  echo "${NAME}_dom_seqs.ffn: bwa index failed"
+  exit 1
+fi
+
 "${bwa}" mem -M -t "${NSLOTS}" "${TMP_NAME}" \
 "${TMP_NAME}_r1.fasta" "${TMP_NAME}_r2.fasta" > "${TMP_NAME}-PE.sam"
+
+if [[ $? -ne "0" ]]; then
+  echo "${TMP_NAME}_r1.fasta and ${TMP_NAME}_r2.fasta: bwa mem mapping failed"
+  exit 1
+fi
 
 if [[ -f "${TMP_NAME}_sr.fasta" ]]; then
   "${bwa}" mem -M -t "${NSLOTS}" "${TMP_NAME}" \
   "${TMP_NAME}_sr.fasta" > "${TMP_NAME}-SE.sam"
+  
+  if [[ $? -ne "0" ]]; then
+    echo "${TMP_NAME}_sr.fasta: bwa mem mapping failed"
+    exit 1
+  fi
+
 fi
   
 ###############################################################################
@@ -122,9 +143,20 @@ fi
 "${samtools}" view -@ "${NSLOTS}" -q 10 -F 4 -b \
 "${TMP_NAME}-PE.sam" > "${TMP_NAME}-PE.bam"
 
+if [[ $? -ne "0" ]]; then
+  echo "${TMP_NAME}-PE.sam: samtools convert bam failed"
+  exit 1
+fi
+
 if [[ -f "${TMP_NAME}-SE.sam" ]]; then
   "${samtools}" view -@ "${NSLOTS}" -q 10 -F 4 -b \
   "${TMP_NAME}-SE.sam" > "${TMP_NAME}-SE.bam"
+  
+  if [[ $? -ne "0" ]]; then
+    echo " ${TMP_NAME}-SE.sam: samtools convert to bam failed"
+    exit 1
+  fi
+  
 fi
 
 ###############################################################################
@@ -134,9 +166,21 @@ fi
 "${samtools}" sort  -@ "${NSLOTS}" \
 "${TMP_NAME}-PE.bam" > "${TMP_NAME}-PE.sorted.bam"
 
+if [[ $? -ne "0" ]]; then
+  echo "${TMP_NAME}-PE.bam: samtools sort failed"
+  exit 1
+fi
+
 if [[ -f "${TMP_NAME}-SE.bam" ]]; then
+
   "${samtools}" sort  -@ "${NSLOTS}" \
   "${TMP_NAME}-SE.sam" > "${TMP_NAME}-SE.sorted.bam"
+  
+  if [[ $? -ne "0" ]]; then
+    echo "${TMP_NAME}-SE.bam: samtools sort failed"
+    exit 1
+  fi
+  
 fi
 
 ###############################################################################
@@ -149,19 +193,37 @@ if [[ -f "${TMP_NAME}_sr.fasta" ]]; then
   "${TMP_NAME}.bam" \
   "${TMP_NAME}-PE.sorted.bam" \
   "${TMP_NAME}-SE.sorted.bam"
+  
+  if [[ $? -ne "0" ]]; then
+    echo "${TMP_NAME}-PE.sorted.bam and ${TMP_NAME}-SE.sorted.bam: samtools \
+    merge failed"
+    exit 1
+  fi
    
   "${samtools}" sort -@ "${NSLOTS}" \
-  "${TMP_NAME}.bam"  > "${TMP_NAME}.sorted.bam"
-
+  "${TMP_NAME}.bam" > "${TMP_NAME}.sorted.bam"
+  
+  if [[ $? -ne "0" ]]; then
+    echo "${TMP_NAME}.bam: samtools sort failed"
+    exit 1
+  fi
+   
 else
+
   mv "${TMP_NAME}-PE.sorted.bam" "${TMP_NAME}.sorted.bam"
+  
 fi
 
 ###############################################################################
-# 10. Sort merged data
+# 10. Index merged data
 ###############################################################################
 
 "${samtools}" index -@ "${NSLOTS}" "${TMP_NAME}.sorted.bam"
+
+if [[ $? -ne "0" ]]; then
+  echo "${TMP_NAME}.sorted.bam: samtools index failed"
+  exit 1
+fi
 
 ###############################################################################
 # 11. Remove duplicates
@@ -175,6 +237,11 @@ java -jar "${picard}" MarkDuplicates \
         ASSUME_SORTED=TRUE \
         MAX_FILE_HANDLES_FOR_READ_ENDS_MAP=900
 
+if [[ $? -ne "0" ]]; then
+  echo "${TMP_NAME}.sorted.bam: picard MarkDuplicates failed"
+  exit 1
+fi        
+        
 ###############################################################################
 # 12. Compute coverage
 ###############################################################################
@@ -182,97 +249,97 @@ java -jar "${picard}" MarkDuplicates \
 "${genomecoveragebed}" \
 -d -ibam "${TMP_NAME}.sorted.markdup.bam" > "${TMP_NAME}-coverage.list"
 
-awk  '{ if ( Gp==$1 ) {
-      Gp=$1;
-      tot = $3 + tot;
-      n = n + 1;
+if [[ $? -ne "0" ]]; then
+  echo "${TMP_NAME}.sorted.markdup.bam: genomecoveragebed failed"
+  exit 1
+fi 
 
-      if ($3!=0) {
-        C = C + 1
-        }
+awk  '{ 
+  
+  # depth
+  array_id2depth[$1] = array_id2depth[$1] + $3
+  
+  #breath
+  if ($3 != 0) {
+    array_id2covered[$1] = array_id2covered[$1] + 1 
+  }
+  
+  # length
+  array_id2length[$1]=$2
+  
+} END {
 
-      } else {
+  for (i in array_id2depth) {
+  
+    coverage=array_id2depth[i]/array_id2length[i]
+    breath=array_id2covered[i]/array_id2length[i]
+    n=array_id2length[i]
+    c=array_id2covered[i]
+    
+    printf "%s\t%.4f\t%.4f\t%s\t%s\n", i,coverage,breath,n,c;
+  
+  }  
+}' "${TMP_NAME}-coverage.list" > "${TMP_NAME}-coverage.table"
 
-      if (NR >=2 ) {
-        mean= tot/n ;
-        breadth=C/n;
-        print Gp, mean, breadth, n ,C;
-        tot="";
-        mean="";
-        breadth="";
-        n="";
-        C="";
-        Gp=$1;
-        }
-
-        if (NR == 1 ) {
-          Gp=$1;
-          tot = $3 + tot;
-          n = n + 1;
-          if ($3!=0) { C = C + 1 }
-        }
-      }
-    } END {
-           mean= tot/n ;
-           breadth=C/n;
-           print Gp, mean, breadth, n ,C
-           };' \
-"${TMP_NAME}-coverage.list" > "${TMP_NAME}-coverage.table"
-
+if [[ $? -ne "0" ]]; then
+  echo "${TMP_NAME}-coverage.table: awk command failed"
+  exit 1
+fi 
 
 ###############################################################################
 # 13. Cross tables
 ###############################################################################
 
-awk 'BEGIN {OFS="\t"} {  
-  if (NR == FNR ) {
+awk '{  
+
+  if (NR == FNR) {
+  
+    # convert prot to nuc coords in id
     split($1,id,":");
     split(id[2],coords,"-");
     id_aa=id[1]":"coords[1]/3"-"coords[2]/3
+    
+    # create id to abundance array
     array_id2abund[id_aa]=$2;
+    
     next;
   }
-  
-  if (cluster_id != $1) {
-    cluster_id = $1;
-    cluster = "cluster_"n++;
-    id_aa = $2
-    repseq = 1
-  } else {
-    id_aa = $2
-    repseq = 0 
+ 
+  id_repseq = $1
+  id_aa = $2
+   
+  # cluster count for each repseq
+  if (!array_cluster_count[id_repseq]) {
+    array_cluster_count[id_repseq] = n++ 
   }
   
-  array_id2cluster[id_aa] = cluster
+  array_id2cluster[id_aa] = array_cluster_count[id_repseq]
+  array_id_aa2repseq[id_aa] = id_repseq
   
-  if ( array_id2abund[id_aa] == "" ) {
+  # unusual case: no abundance assigned above to dom_seq
+  if (array_id2abund[id_aa] == "") {
     array_id2abund[id_aa] = 0;
   }
   
-  if ( repseq == 1 ) {
-    printf "%s\t%s\t%s\n", \
-    array_id2cluster[id_aa],id_aa"_repseq",array_id2abund[id_aa];
-  }  
-  if ( repseq == 0 ) {
-    printf "%s\t%s\t%s\n", \
-    array_id2cluster[id_aa],id_aa,array_id2abund[id_aa];
-  } 
+} END {
+
+  for (i in array_id2cluster) {
+  
+    cluster = "cluster_"array_id2cluster[i]
+    abund = array_id2abund[i]
+    
+    # classify as repseq or not
+    if (array_id_aa2repseq[i] == i) {
+      printf "%s\t%s\t%s\n", cluster, i"_repseq", abund 
+    } else {
+      printf "%s\t%s\t%s\n", cluster, i, abund 
+    }
+  }
 }' "${TMP_NAME}-coverage.table" "${TMP_NAME}_clu.tsv" > \
    "${NAME}_cluster2abund.tsv"
 
-###############################################################################
-# 14. Clean
-###############################################################################
+if [[ $? -ne "0" ]]; then
+  echo "${NAME}_cluster2abund.tsv: awk command tables failed"
+  exit 1
+fi 
 
-rm \
-"${TMP_NAME}-PE.bam" \
-"${TMP_NAME}-PE.sam" \
-"${TMP_NAME}.sorted.markdup.bam"
-
-
-if [[ -f "${SR_DOM_FASTQ}" ]]; then
-  rm \
-  "${TMP_NAME}-SE.sorted.bam" \
-  "${TMP_NAME}-SE.bam" \
-  "${TMP_NAME}-SE.sam"
-fi
