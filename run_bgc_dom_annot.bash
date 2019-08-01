@@ -4,10 +4,10 @@ set -o errexit
 
 function realpath() {
   CURRENT_DIR=$(pwd)
-  DIR=$(dirname $1);
+  DIR=$(dirname $1)
   FILE=$(basename $1)
-  cd "${DIR}";
-  echo $(pwd)/"${FILE}"
+  cd "${DIR}"
+  echo "$(pwd)/${FILE}"
   cd "${CURRENT_DIR}"
 }
 

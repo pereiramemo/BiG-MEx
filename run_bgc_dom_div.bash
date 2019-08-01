@@ -3,11 +3,11 @@
 set -o errexit
 
 function realpath() {
-  CURRENT_DIR=$( pwd )
-  DIR=$( dirname $1 );
-  FILE=$( basename $1 )
-  cd "${DIR}";
-  echo $( pwd )/"${FILE}"
+  CURRENT_DIR=$(pwd)
+  DIR=$(dirname $1)
+  FILE=$(basename $1)
+  cd "${DIR}"
+  echo "$(pwd)/${FILE}"
   cd "${CURRENT_DIR}"
 }
 
@@ -16,8 +16,7 @@ if [[ "${1}" == "amp" ]]; then
 
   # check input parameters
   if [[ "$#" -lt 2 ]]; then
-    echo -e "Failed. Missing parameters.\nSee run_bgc_dom_div.bash amp . . 
---help"
+    echo -e "Failed. Missing parameters.\nSee run_bgc_dom_div.bash amp . . --help"
     exit
   fi
 
@@ -60,8 +59,7 @@ if [[ "${1}" == "meta" ]]; then
 
   # check input parameters
   if [[ "$#" -lt 3 ]]; then
-    echo -e "Failed. Missing parameters.\n\
-See run_bgc_dom_div.bash meta . . . --help"
+    echo -e "Failed. Missing parameters.\nSee run_bgc_dom_div.bash meta . . . --help"
     exit
   fi
   
@@ -136,8 +134,7 @@ if [[ "${1}" == "merge" ]]; then
 
   # check input parameters
   if [[ "$#" -lt 2 ]]; then
-    echo -e "Failed. Missing parameters.\nSee run_bgc_dom_div.bash merge . . 
---help"
+    echo -e "Failed. Missing parameters.\nSee run_bgc_dom_div.bash merge . . --help"
     exit
   fi
   
