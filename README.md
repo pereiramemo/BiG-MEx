@@ -25,7 +25,6 @@ git clone git@github.com:pereiramemo/BiG-MEx.git
 All four images are in [dockerhub](https://hub.docker.com/). These will be downloaded automatically the first time you run the scripts.
 
 ## Documentation
-
 The run_bgc_\*.bash scripts run the docker images, which include all the code, dependencies and data used in the analysis. Given that we are using [docker](https://www.docker.com/), if your user is not in the [docker group](https://docs.docker.com/engine/installation/linux/linux-postinstall/#manage-docker-as-a-non-root-user) in Linux or Mac OS, the run_bgc_\*.bash scripts have to be executed with sudo.
 
 ### 1. bgc_dom_annot
