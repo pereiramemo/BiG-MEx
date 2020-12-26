@@ -19,7 +19,7 @@ Before running BiG-MEx it is necessary to install [docker](https://www.docker.co
 
 Then just clone the GitHub repository:
 ```
-git clone git@github.com:pereiramemo/BiG-MEx.git
+git clone https://github.com/pereiramemo/BiG-MEx.git
 ```
 
 All four images are in [dockerhub](https://hub.docker.com/). These will be downloaded automatically the first time you run the scripts.
