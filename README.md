@@ -5,7 +5,7 @@ BiG-MEx: a tool for the mining of Biosynthetic Gene Cluster (BGC) domains and cl
 3. run_bgc_class_pred: BGC class abundance predictions.  
 
 ## Citation
-Pereira-Flores, E., Buttigieg, P. L., Medema, M. H., Meinicke, P., Glöckner, F. O. and Fernandez-Guerra, A.. (2018+). _Mining metagenomes for natural product biosynthetic gene clusters: unlocking new potential with ultrafast techniques_. Under review.
+Pereira-Flores, E., Buttigieg, P. L., Medema, M. H., Meinicke, P., Glöckner, F. O. and Fernandez-Guerra, A.. (2021). _Mining metagenomes for natural product biosynthetic gene clusters: unlocking new potential with ultrafast techniques_. bioRxiv doi: 10.1101/2021.01.20.427441
 
 ## Installation
 BiG-MEx consists of five docker images: 
