@@ -12,7 +12,7 @@ BiG-MEx consists of five container images (docker or singularity):
 2. bgc_dom_meta_div  
 3. bgc_dom_merge_div  
 
-Before running BiG-MEx it is necessary to install either [docker](https://www.docker.com/) or [singularity](https://sylabs.io/)
+Before running BiG-MEx it is necessary to install either [docker](https://www.docker.com/) or [singularity](https://sylabs.io/).
 Then just clone the GitHub repository:
 ```
 git clone https://github.com/pereiramemo/BiG-MEx.git
