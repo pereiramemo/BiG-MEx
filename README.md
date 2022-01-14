@@ -1,4 +1,7 @@
 # BiG-MEx
+## Repository under construction. Links and tools might not work as expected or not work at all.
+
+
 BiG-MEx: a tool for the mining of Biosynthetic Gene Cluster (BGC) domains and classes in metagenomic data. It consists of the following modules:
 1. run_bgc_profiler: BGC protein domains annotation and BGC class abundance predictions  
 2. run_bgc_dom_div: BGC domain-based diversity analysis.  
@@ -13,11 +16,18 @@ BiG-MEx consists of three container images (docker or singularity):
 3. bgc_dom_merge_div  
 
 Before running BiG-MEx it is necessary to install either [docker](https://www.docker.com/) or [singularity](https://sylabs.io/).
-Then just clone the GitHub repository:
+Then simply download the scripts from below:
 ```
+Using docker container images:
+run_bgc_profiler_doc.bash
+run_bgc_dom_div_doc.bash
+
+Using singularity container images:
+run_bgc_profiler_sif.bash
+run_bgc_dom_div_sif.bash
+
 git clone https://github.com/pereiramemo/BiG-MEx.git
 ```
-
 All conatiner images will be downloaded automatically the first time you run the scripts.
 
 ## Documentation
@@ -26,7 +36,6 @@ When using [docker](https://www.docker.com/), if your user is not in the [docker
 
 ### 1. bgc_profiler
 This module first runs [UProC](http://uproc.gobics.de/) using a BGC domain database. It takes as an input metagenomic unassembled data and outputs the BGC domain counts profile. Then, based on the [bgcpred](https://github.com/pereiramemo/bgcpred) R package and using the BGC domains as predictor variables, it computes the BGC class abundance profile.
-
 
 See help
 ```
