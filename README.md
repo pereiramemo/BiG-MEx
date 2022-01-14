@@ -17,16 +17,15 @@ BiG-MEx consists of three container images (docker or singularity):
 
 Before running BiG-MEx it is necessary to install either [docker](https://www.docker.com/) or [singularity](https://sylabs.io/).
 Then simply download the scripts from below:
-```
+
 Using docker container images:
 [run_bgc_profiler_doc.bash](https://raw.githubusercontent.com/pereiramemo/BiG-MEx/master/run_scripts/run_bgc_profiler_doc.bash)
 [run_bgc_dom_div_doc.bash](https://raw.githubusercontent.com/pereiramemo/BiG-MEx/master/run_scripts/run_bgc_dom_div_doc.bash)
 
 Using singularity container images:
-run_bgc_profiler_sif.bash
-run_bgc_dom_div_sif.bash
+[run_bgc_profiler_sif.bash]()
+[run_bgc_dom_div_sif.bash]()
 
-```
 All conatiner images will be downloaded automatically the first time you run the scripts.
 
 ## Documentation
