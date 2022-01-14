@@ -1,31 +1,28 @@
 # BiG-MEx
 BiG-MEx: a tool for the mining of Biosynthetic Gene Cluster (BGC) domains and classes in metagenomic data. It consists of the following modules:
-1. run_bgc_dom_annot: fast identification of BGC protein domains.  
+1. run_bgc_profiler: BGC protein domains annotation and BGC class abundance predictions  
 2. run_bgc_dom_div: BGC domain-based diversity analysis.  
-3. run_bgc_class_pred: BGC class abundance predictions.  
 
 ## Citation
 Pereira-Flores, E., Buttigieg, P. L., Medema, M. H., Meinicke, P., Glöckner, F. O. and Fernandez-Guerra, A.. (2021). _Mining metagenomes for natural product biosynthetic gene clusters: unlocking new potential with ultrafast techniques_. bioRxiv doi: 10.1101/2021.01.20.427441
 
 ## Installation
-BiG-MEx consists of five docker images: 
-1. epereira/bgc_dom_annot  
-2. epereira/bgc_dom_amp_div  
-3. epereira/bgc_dom_meta_div  
-4. epereira/bgc_dom_merge_div  
-5. epereira/bgc_class_pred  
+BiG-MEx consists of five container images (docker or singularity): 
+1. epereira/bgc_profiler  
+2. epereira/bgc_dom_meta_div  
+3. epereira/bgc_dom_merge_div  
 
-Before running BiG-MEx it is necessary to install [docker](https://www.docker.com/).
-
+Before running BiG-MEx it is necessary to install either [docker](https://www.docker.com/) or [singularity](https://sylabs.io/)
 Then just clone the GitHub repository:
 ```
 git clone https://github.com/pereiramemo/BiG-MEx.git
 ```
 
-All four images are in [dockerhub](https://hub.docker.com/). These will be downloaded automatically the first time you run the scripts.
+All conatiner images will be downloaded automatically the first time you run the scripts.
 
 ## Documentation
-The run_bgc_\*.bash scripts run the docker images, which include all the code, dependencies and data used in the analysis. Given that we are using [docker](https://www.docker.com/), if your user is not in the [docker group](https://docs.docker.com/engine/installation/linux/linux-postinstall/#manage-docker-as-a-non-root-user) in Linux or Mac OS, the run_bgc_\*.bash scripts have to be executed with sudo.
+The run_bgc_\*.bash scripts run the container images, which include all the code, dependencies, and data used in the analysis. 
+When using [docker](https://www.docker.com/), if your user is not in the [docker group](https://docs.docker.com/engine/installation/linux/linux-postinstall/#manage-docker-as-a-non-root-user) in Linux or Mac OS, the run_bgc_\*.bash scripts have to be executed with sudo.
 
 ### 1. bgc_dom_annot
 This first module runs [UProC](http://uproc.gobics.de/) using a BGC domain profile database. It takes as an input metagenomic unassembled data and outputs a BGC domain abundance profile table.
