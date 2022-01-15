@@ -19,12 +19,8 @@ Before running BiG-MEx it is necessary to install either [docker](https://www.do
 Then simply download the scripts from below:
 
 Using docker container images:  
-{% raw %}
-<button onclick="window.open('source/run_scripts/run_bgc_profiler_doc.bash')">Download</button>
-{% endraw %}
-  
-  
-[run_bgc_profiler_doc.bash](source/run_scripts/run_bgc_profiler_doc.bash)  
+
+<a href="run_scripts/run_bgc_profiler_doc.bash">Download run_bgc_profiler.bash</a>
 [run_bgc_dom_div_doc.bash](https://github.com/pereiramemo/BiG-MEx/blob/master/run_scripts/run_bgc_dom_div_doc.bash)  
   
 Using singularity container images:  
