@@ -22,7 +22,7 @@ Using docker container images:
 
 
 <a href="run_bgc_profiler_doc.bash" download target="_blank">run_bgc_profiler_doc.bash</a>  
-[run_bgc_dom_div_doc.bash](https://github.com/pereiramemo/BiG-MEx/blob/master/run_scripts/run_bgc_dom_div_doc.bash)  
+[run_bgc_dom_div_doc.bash](blob/master/run_scripts/run_bgc_dom_div_doc.bash)  
   
 Using singularity container images:  
 [run_bgc_profiler_sif.bash]()  
