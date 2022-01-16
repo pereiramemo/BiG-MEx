@@ -20,8 +20,8 @@ Then simply download the scripts from below:
 
 Using docker container images:  
 
-[run_bgc_profiler.bash](https://github.com/pereiramemo/BiG-MEx/wiki/files/run_bgc_profiler.bash)
-[run_bgc_dom_div_doc.bash](https://github.com/pereiramemo/BiG-MEx/wiki/files/run_bgc_dom_div.bash)  
+[run_bgc_profiler.bash](https://github.com/pereiramemo/BiG-MEx/wiki/files/run_bgc_profiler_doc.bash)  
+[run_bgc_dom_div_doc.bash](https://github.com/pereiramemo/BiG-MEx/wiki/files/run_bgc_dom_div_doc.bash)  
   
 Using singularity container images:  
 [run_bgc_profiler_sif.bash]()  
