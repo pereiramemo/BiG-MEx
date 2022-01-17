@@ -10,7 +10,7 @@ BiG-MEx: a tool for the mining of Biosynthetic Gene Cluster (BGC) domains and cl
 Pereira-Flores, E., Buttigieg, P. L., Medema, M. H., Meinicke, P., Glöckner, F. O. and Fernandez-Guerra, A.. (2021). _Mining metagenomes for natural product biosynthetic gene clusters: unlocking new potential with ultrafast techniques_. bioRxiv doi: 10.1101/2021.01.20.427441
 
 ## Installation
-BiG-MEx consists of three container images (docker or singularity): 
+BiG-MEx consists of three docker images: 
 1. bgc_profiler  
 2. bgc_dom_meta_div  
 3. bgc_dom_merge_div  
@@ -18,12 +18,12 @@ BiG-MEx consists of three container images (docker or singularity):
 Before running BiG-MEx it is necessary to install either [docker](https://www.docker.com/) or [singularity](https://sylabs.io/).
 Then simply download the scripts from below:
 
-Using docker container images:  
+Using docker:  
 
-[run_bgc_profiler.bash](https://raw.githubusercontent.com/pereiramemo/BiG-MEx/master/run_bgc_dom_div_doc.bash)  
+[run_bgc_profiler_doc.bash](https://raw.githubusercontent.com/pereiramemo/BiG-MEx/master/run_bgc_dom_div_doc.bash)  
 [run_bgc_dom_div_doc.bash](https://raw.githubusercontent.com/pereiramemo/BiG-MEx/master/run_bgc_dom_div_doc.bash)  
   
-Using singularity container images:  
+Using singularity:  
 
 [run_bgc_profiler_sif.bash]()  
 [run_bgc_dom_div_sif.bash]()  
