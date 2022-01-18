@@ -20,13 +20,13 @@ Then simply download the scripts from below:
 
 Using docker:  
 
-[run_bgc_profiler_doc.bash](https://raw.githubusercontent.com/pereiramemo/BiG-MEx/master/run_bgc_dom_div_doc.bash)  
-[run_bgc_dom_div_doc.bash](https://raw.githubusercontent.com/pereiramemo/BiG-MEx/master/run_bgc_dom_div_doc.bash)  
+[run_bgc_profiler.bash](https://raw.githubusercontent.com/pereiramemo/BiG-MEx/master/docker_run_scripts/run_bgc_profiler.bash)  
+[run_bgc_dom_div.bash](https://raw.githubusercontent.com/pereiramemo/BiG-MEx/master/docker_run_scripts/run_bgc_dom_div.bash)  
   
 Using singularity:  
 
-[run_bgc_profiler_sif.bash]()  
-[run_bgc_dom_div_sif.bash]()  
+[run_bgc_profiler.bash](https://raw.githubusercontent.com/pereiramemo/BiG-MEx/master/singularity_run_scripts/run_bgc_profiler.bash)  
+[run_bgc_dom_div.bash](https://raw.githubusercontent.com/pereiramemo/BiG-MEx/master/singularity_run_scripts/run_bgc_dom_div.bash)  
 
 All conatiner images will be downloaded automatically the first time you run the scripts.
 
