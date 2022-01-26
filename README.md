@@ -28,7 +28,7 @@ Using singularity:
 [run_bgc_profiler.bash](https://raw.githubusercontent.com/pereiramemo/BiG-MEx/master/singularity_run_scripts/run_bgc_profiler.bash)  
 [run_bgc_dom_div.bash](https://raw.githubusercontent.com/pereiramemo/BiG-MEx/master/singularity_run_scripts/run_bgc_dom_div.bash)  
 
-All conatiner images will be downloaded automatically the first time you run the scripts.
+All container images will be downloaded automatically the first time you run the scripts.
 
 ## Documentation
 The run_bgc_\*.bash scripts run the container images, which include all the code, dependencies, and data used in the analysis. 
