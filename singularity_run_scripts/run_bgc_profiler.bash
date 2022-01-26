@@ -1,7 +1,6 @@
 #!/bin/bash
 
 set -o errexit
-SIF_PATH="/home/epereira/workspace/repositories/BiG-MEx/singularity/bgc_profiler/"
 
 function realpath() {
   CURRENT_DIR=$(pwd)
@@ -14,7 +13,7 @@ function realpath() {
 
 # check input parameters
 if [[ "$#" -lt 2 ]]; then
-  echo -e "Failed. Missing parameters.\nSee run_bgc_dom2class_prof . . --help"
+  echo -e "Failed. Missing parameters.\nSee run_bgc_bgc_profiler.bash . . --help"
   exit
 fi
 
@@ -62,7 +61,7 @@ if [[ -n "${INPUT_FILE2}" && -n "${MODELS}" ]]; then
   singularity run \
     --bind ${INPUT_DIR1}:${CONTAINER_SRC_DIR}:rw \
     --bind ${OUTPUT_DIR}:${CONTAINER_DST_DIR}:rw \
-    docker-daemon:epereira/bgc_profiler:latest \
+    docker://epereira/bgc_profiler:latest \
     --reads1 "${CONTAINER_SRC_DIR}/${INPUT_FILE1}" \
     --reads2 "${CONTAINER_SRC_DIR}/${INPUT_FILE2}" \
     --bgc_models "${CONTAINER_SRC_DIR}/${MODELS}" \
@@ -75,7 +74,7 @@ if [[ -z "${INPUT_FILE2}" && -n "${MODELS}" ]]; then
   singularity run \
     --bind ${INPUT_DIR1}:${CONTAINER_SRC_DIR}:rw \
     --bind ${OUTPUT_DIR}:${CONTAINER_DST_DIR}:rw \
-    docker-daemon:epereira/bgc_profiler:latest \
+    docker://epereira/bgc_profiler:latest \
     --single_reads "${CONTAINER_SRC_DIR}/${INPUT_FILE1}" \
     --bgc_models "${CONTAINER_SRC_DIR}/${MODELS}" \
     --outdir "${OUTPUT}" \
@@ -87,7 +86,7 @@ if [[ -n "${INPUT_FILE2}" && -z "${MODELS}" ]]; then
   singularity run \
     --bind ${INPUT_DIR1}:${CONTAINER_SRC_DIR}:rw \
     --bind ${OUTPUT_DIR}:${CONTAINER_DST_DIR}:rw \
-    docker-daemon:epereira/bgc_profiler:latest \
+    docker://epereira/bgc_profiler:latest \
     --reads1 "${CONTAINER_SRC_DIR}/${INPUT_FILE1}" \
     --reads2 "${CONTAINER_SRC_DIR}/${INPUT_FILE2}" \
     --outdir "${OUTPUT}" \
@@ -99,7 +98,7 @@ if [[ -z "${INPUT_FILE2}" && -z "${MODELS}" ]]; then
   singularity run \
     --bind ${INPUT_DIR1}:${CONTAINER_SRC_DIR}:rw \
     --bind ${OUTPUT_DIR}:${CONTAINER_DST_DIR}:rw \
-    docker-daemon:epereira/bgc_profiler:latest \
+    docker://epereira/bgc_profiler:latest \
     --single_reads "${CONTAINER_SRC_DIR}/${INPUT_FILE1}" \
     --outdir "${OUTPUT}" \
     $@
