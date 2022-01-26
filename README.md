@@ -3,7 +3,7 @@
 
 
 BiG-MEx: a tool for the mining of Biosynthetic Gene Cluster (BGC) domains and classes in metagenomic data. It consists of the following modules:
-1. run_bgc_profiler: BGC protein domains annotation and BGC class abundance predictions  
+1. run_bgc_profiler: BGC protein domain annotation and BGC class abundance predictions  
 2. run_bgc_dom_div: BGC domain-based diversity analysis.  
 
 ## Citation
@@ -12,8 +12,8 @@ Pereira-Flores, E., Buttigieg, P. L., Medema, M. H., Meinicke, P., Glöckner, F.
 ## Installation
 BiG-MEx consists of three docker images: 
 1. bgc_profiler  
-2. bgc_dom_meta_div  
-3. bgc_dom_merge_div  
+2. meta_bgc_dom_div  
+3. merge_bgc_dom_div  
 
 Before running BiG-MEx it is necessary to install either [docker](https://www.docker.com/) or [singularity](https://sylabs.io/).
 Then simply download the scripts from below:
