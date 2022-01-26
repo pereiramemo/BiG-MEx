@@ -13,7 +13,7 @@ function realpath() {
 
 # check input parameters
 if [[ "$#" -lt 2 ]]; then
-  echo -e "Failed. Missing parameters.\nSee run_bgc_dom2class_prof . . --help"
+  echo -e "Failed. Missing parameters.\nSee run_bgc_profiler.bash . . --help"
   exit
 fi
 
