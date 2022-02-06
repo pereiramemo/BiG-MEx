@@ -3,8 +3,8 @@
 
 
 BiG-MEx: a tool for the mining of Biosynthetic Gene Cluster (BGC) domains and classes in metagenomic data. It consists of the following modules:
-1. run_bgc_profiler: BGC protein domain annotation and BGC class abundance predictions  
-2. run_bgc_dom_div: BGC domain-based diversity analysis.  
+1. bgc_profiler: BGC protein domain annotation and BGC class abundance predictions  
+2. bgc_dom_div: BGC domain-based diversity analysis.  
 
 ## Citation
 Pereira-Flores, E., Buttigieg, P. L., Medema, M. H., Meinicke, P., Glöckner, F. O. and Fernandez-Guerra, A.. (2021). _Mining metagenomes for natural product biosynthetic gene clusters: unlocking new potential with ultrafast techniques_. bioRxiv doi: 10.1101/2021.01.20.427441
