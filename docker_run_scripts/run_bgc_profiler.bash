@@ -11,17 +11,29 @@ function realpath() {
   cd "${CURRENT_DIR}"
 }
 
-# check input parameters
+# run help
+if [[ $1 == "--help" ]]; then
+  docker run \
+    --detach=false \
+    --rm \
+    --user $(id -u):$(id -g) \
+     epereira/bgc_profiler:latest --help
+  exit 0    
+fi
+
+# check number of parameters
 if [[ "$#" -lt 2 ]]; then
-  echo -e "Failed. Missing parameters.\nSee run_bgc_profiler.bash . . --help"
-  exit
+  echo -e "Failed. Missing parameters.\nSee run_bgc_bgc_profiler.bash --help"
+  exit 1
 fi
 
 # handle input file1
-INPUT_FILE1=$(basename $1)
-INPUT_DIR1=$(dirname $(realpath $1))
-shift
-
+if [[ -f $1 && $1 != *.RData ]]; then
+  INPUT_FILE1=$(basename $1)
+  INPUT_DIR1=$(dirname $(realpath $1))
+  shift
+fi
+  
 # handle input file2
 if [[ -f $1 && $1 != *.RData ]]; then
   INPUT_FILE2=$(basename $1)
@@ -48,10 +60,19 @@ if [[ -f $1 && $1 == *.RData ]]; then
   
 fi
 
-OUTPUT_DIR=$(dirname $(realpath $1))
-OUTPUT=$(basename $1)
-shift
-
+# handle output dir
+if [[ ! -f $1 && $1 != *.RData ]]; then
+  OUTPUT_DIR=$(dirname $(realpath $1))
+  OUTPUT=$(basename $1)
+  shift
+fi
+ 
+# check parameters
+if [[ $1 != "--"* ]]; then
+  echo -e "Positional parameters were not processed correctly.\nSee run_bgc_profiler.bash --help"
+  exit
+fi
+  
 # Links within the container
 CONTAINER_SRC_DIR=/input
 CONTAINER_DST_DIR=/output
