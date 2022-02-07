@@ -39,7 +39,7 @@ This module first runs [UProC](http://uproc.gobics.de/) using a BGC domain datab
 
 See help
 ```
-./run_bgc_profiler.bash . . --help
+./run_bgc_profiler.bash --help
 ```
 
 ### 2. bgc_dom_div
@@ -49,9 +49,9 @@ The merge mode integrates the metagenome diversity results of different samples 
 
 See help
 ```
-./run_bgc_dom_div.bash meta . . . --help
+./run_bgc_dom_div.bash meta --help
 
-./run_bgc_dom_div.bash merge . .  --help
+./run_bgc_dom_div.bash merge --help
 ```
 
 ### See the [wiki](https://github.com/pereiramemo/BiG-MEx/wiki) for further documentation.
