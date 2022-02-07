@@ -16,7 +16,7 @@ BiG-MEx consists of three docker images:
 3. merge_bgc_dom_div  
 
 Before running BiG-MEx it is necessary to install either [docker](https://www.docker.com/) or [singularity](https://sylabs.io/).
-Then simply download the corresponding scripts from below:
+Then, simply download the corresponding scripts from below:
 
 Using docker:  
 
@@ -31,11 +31,11 @@ Using singularity:
 All container images will be downloaded automatically the first time you run the scripts.
 
 ## Documentation
-The run_bgc_\*.bash scripts run the container images, which include all the code, dependencies, and data used in the analysis. 
+These run_bgc_\*.bash scripts run the container images, which include all the code, dependencies, and data used in the analyses. 
 When using [docker](https://www.docker.com/), if your user is not in the [docker group](https://docs.docker.com/engine/installation/linux/linux-postinstall/#manage-docker-as-a-non-root-user) in Linux or Mac OS, the run_bgc_\*.bash scripts have to be executed with sudo.
 
 ### 1. bgc_profiler
-This module first runs [UProC](http://uproc.gobics.de/) using a BGC domain database. It takes as an input metagenomic unassembled data and outputs the BGC domain counts profile. Then, based on the [bgcpred](https://github.com/pereiramemo/bgcpred) R package and using the BGC domains as predictor variables, it computes the BGC class abundance profile.
+This module first runs [UProC](http://uproc.gobics.de/) using a BGC domain database. It takes as an input metagenomic unassembled data and outputs the BGC domain counts profile. Then, based on the [bgcpred](https://github.com/pereiramemo/bgcpred) R package and using the BGC domain counts as predictor variables, it computes the BGC class abundance profile.
 
 See help
 ```
