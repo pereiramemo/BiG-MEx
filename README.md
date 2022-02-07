@@ -16,7 +16,7 @@ BiG-MEx consists of three docker images:
 3. merge_bgc_dom_div  
 
 Before running BiG-MEx it is necessary to install either [docker](https://www.docker.com/) or [singularity](https://sylabs.io/).
-Then simply download the scripts from below:
+Then simply download the corresponding scripts from below:
 
 Using docker:  
 
