@@ -44,7 +44,7 @@ See help
 
 ### 2. bgc_dom_div
 
-The **bgc_dom_div** has two different modes: metagenome (meta) and merge. The first mode has the objective of analyzing the BGC domain diversity in metagenomic samples. The diversity analysis consists of estimating the operational domain unit (ODU) diversity, blasting the domain sequences against a reference database, and placing the domain sequences onto reference phylogenies.
+The **bgc_dom_div** has two different modes: metagenome (meta) and merge. The first mode has the objective of analyzing the BGC domain diversity in metagenomic samples. This analysis consists of estimating the operational domain unit (ODU) diversity, blasting the domain sequences against a reference database, and placing the domain sequences onto reference phylogenies.
 The merge mode integrates the metagenome diversity results of different samples to provide a comparative analysis.
 
 See help
